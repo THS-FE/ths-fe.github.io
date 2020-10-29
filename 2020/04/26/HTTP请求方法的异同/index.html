@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>HTTP请求方法的异同 - 思路大前端团队</title><link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#f7f7f7"><meta name="application-name" content="思路大前端"><meta name="msapplication-TileImage" content="/img/favicon.ico"><meta name="msapplication-TileColor" content="#f7f7f7"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="思路大前端"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta description="HTTP（HyperText Transfer Protocol，超文本传输协议）中定义的请求方法有八种（GET、HEAD、POST、PUT、DELETE、CONNECT、OPTIONS、TRACE。"><meta property="og:type" content="blog"><meta property="og:title" content="HTTP请求方法的异同"><meta property="og:url" content="https://ths-fe.github.io/2020/04/26/HTTP%E8%AF%B7%E6%B1%82%E6%96%B9%E6%B3%95%E7%9A%84%E5%BC%82%E5%90%8C/"><meta property="og:site_name" content="思路大前端团队"><meta property="og:description" content="HTTP（HyperText Transfer Protocol，超文本传输协议）中定义的请求方法有八种（GET、HEAD、POST、PUT、DELETE、CONNECT、OPTIONS、TRACE。"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://ths-fe.github.io/2020/04/26/HTTP%E8%AF%B7%E6%B1%82%E6%96%B9%E6%B3%95%E7%9A%84%E5%BC%82%E5%90%8C/cover.jpg"><meta property="article:published_time" content="2020-04-26T06:37:15.000Z"><meta property="article:modified_time" content="2020-04-27T01:09:15.000Z"><meta property="article:author" content="天下布武"><meta property="article:tag" content="HTTP"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="/2020/04/26/HTTP%E8%AF%B7%E6%B1%82%E6%96%B9%E6%B3%95%E7%9A%84%E5%BC%82%E5%90%8C/cover.jpg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://ths-fe.github.io/2020/04/26/HTTP%E8%AF%B7%E6%B1%82%E6%96%B9%E6%B3%95%E7%9A%84%E5%BC%82%E5%90%8C/"},"headline":"思路大前端团队","image":["https://ths-fe.github.io/2020/04/26/HTTP%E8%AF%B7%E6%B1%82%E6%96%B9%E6%B3%95%E7%9A%84%E5%BC%82%E5%90%8C/cover.jpg"],"datePublished":"2020-04-26T06:37:15.000Z","dateModified":"2020-04-27T01:09:15.000Z","author":{"@type":"Person","name":"天下布武"},"description":"HTTP（HyperText Transfer Protocol，超文本传输协议）中定义的请求方法有八种（GET、HEAD、POST、PUT、DELETE、CONNECT、OPTIONS、TRACE。"}</script><link rel="canonical" href="https://ths-fe.github.io/2020/04/26/HTTP%E8%AF%B7%E6%B1%82%E6%96%B9%E6%B3%95%E7%9A%84%E5%BC%82%E5%90%8C/"><link rel="icon" href="/img/favicon.ico"><link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.13.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/monokai.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><script>var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?fd8cc3421abec7b8f4e6bc337e25c7d1";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();</script><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><script src="https://www.googletagmanager.com/gtag/js?id=UA-72716512-3" async></script><script>window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+    
+        gtag('config', 'UA-72716512-3');</script><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><script data-ad-client="ca-pub-6826040978803389" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" async></script><meta name="generator" content="Hexo 5.2.0"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/ths.png" alt="思路大前端团队" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">博客</a><a class="navbar-item" href="/fe">大前端技术体系</a><a class="navbar-item" href="/gis">GIS技术体系</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/about">关于我们</a></div><div class="navbar-end"><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><div class="card-image"><span class="image is-7by3"><img class="fill" src="/2020/04/26/HTTP%E8%AF%B7%E6%B1%82%E6%96%B9%E6%B3%95%E7%9A%84%E5%BC%82%E5%90%8C/cover.jpg" alt="HTTP请求方法的异同"></span></div><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2020-04-26T06:37:15.000Z" title="2020-04-26T06:37:15.000Z">2020-04-26</time>发表</span><span class="level-item"><time dateTime="2020-04-27T01:09:15.000Z" title="2020-04-27T01:09:15.000Z">2020-04-27</time>更新</span><span class="level-item"> 天下布武 </span><span class="level-item"><a class="link-muted" href="/categories/%E5%8D%8F%E8%AE%AE/">协议</a><span> / </span><a class="link-muted" href="/categories/%E5%8D%8F%E8%AE%AE/HTTP/">HTTP</a></span><span class="level-item">12 分钟读完 (大约1864个字)</span><span class="level-item" id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv">0</span>次访问</span></div></div><h1 class="title is-3 is-size-4-mobile">HTTP请求方法的异同</h1><div class="content"><p>HTTP（HyperText Transfer Protocol，超文本传输协议）中定义的请求方法共八种（GET、HEAD、POST、PUT、DELETE、CONNECT、OPTIONS、TRACE，参看<a target="_blank" rel="noopener" href="https://tools.ietf.org/rfcmarkup/7231">RFC7231</a>）。工作中我们最常接触到的是其中的GET、POST、PUT和DELETE。网上有很多针对这四种方法的说明和比较，但内容都不尽如人意。为了能让大家更清晰地了解这些方法，在实际工作中灵活运用，我将从定义和实现两个方面详细地阐述一下它们的异同。</p>
+<p>首先，看一些基本概念。超文本传输协议是<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/OSI%E6%A8%A1%E5%9E%8B">网络七层结构</a>中应用层的协议。我们看到“超文本”一般会联想到另一个词：HTML(HyperText Mark-up Language，超文本标记语言)。那什么是“超文本”？“超文本”是1965年美国人<a target="_blank" rel="noopener" href="https://gigaom.com/2015/08/24/hypertext-50/">Ted Nelson创造</a>的，简单的说就是<strong>包含有其他文本链接的文本</strong> (<a target="_blank" rel="noopener" href="https://www.w3.org/WhatIs.html">Hypertext is text which contains links to other texts</a>)，通过这些链接可以访问指向的文本。HTML就是用来创建超文本(如Web页面)的。<a target="_blank" rel="noopener" href="https://hpbn.co/brief-history-of-http/">最初设计HTTP的目的</a>是为了<strong>能够在客户端和服务器端之间传输超文本文档 (HTML)**。不过随着时代的发展，“超文本”已经从最初的纯文本扩展成为包括文本、图像、音频、视频等在内的多媒体。现今，</strong>把HTTP称为超媒体传输协议可能更为合适些**。</p>
+<img src="/2020/04/26/HTTP%E8%AF%B7%E6%B1%82%E6%96%B9%E6%B3%95%E7%9A%84%E5%BC%82%E5%90%8C/hypertext.png" class="">
+
+<p>针对HTTP，有文档明确定义的版本有0.9（1991）、1.0（1996）、1.1（1997）和2（2015）。目前使用最广泛的是1.1，该规范由IETF（Internet Engineering Task Force，互联网工程任务组）中的<a target="_blank" rel="noopener" href="http://httpwg.org/">HTTP Working Group</a>（HTTP工作组）于2014年更新，定义的内容在RFC7230–RFC7235六个文档中。</p>
+<img src="/2020/04/26/HTTP%E8%AF%B7%E6%B1%82%E6%96%B9%E6%B3%95%E7%9A%84%E5%BC%82%E5%90%8C/rfc.png" class="">
+
+<p>接下来，开始正式的对比：</p>
+<h1 id="1-定义上"><a href="#1-定义上" class="headerlink" title="1 定义上"></a>1 定义上</h1><p>RFC文档定义了三种方法属性：安全、幂等、可缓存。</p>
+<p>安全</p>
+<p>如果请求方法的语义是只读的(如GET、HEAD、OPTIONS、TRACE )，那么该方法就是安全的。也就是说客户端不会请求和期望改变服务器上目标资源的任何状态。</p>
+<p>幂等</p>
+<p>如果使用该方法对服务器发送多次相同请求和一次请求的效果是一样的，那么该方法就被认为是幂等的。PUT, DELETE及上面提到的安全方法都是幂等的。</p>
+<p>可缓存</p>
+<p>对于请求方法的响应被允许存储以备将来重用，那么该方法就可以定义为“可缓存”。一般来说，不依赖于当前响应的安全方法被定义为可缓存的。规范<strong>将GET，HEAD和POST定义为可缓存</strong>，尽管绝大多数缓存实现只支持GET和HEAD。</p>
+<table>
+<thead>
+<tr>
+<th align="center">属性</th>
+<th align="center">GET</th>
+<th align="center">POST</th>
+<th align="center">PUT</th>
+<th align="center">DELETE</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">安全</td>
+<td align="center">是</td>
+<td align="center">否</td>
+<td align="center">否</td>
+<td align="center">否</td>
+</tr>
+<tr>
+<td align="center">幂等</td>
+<td align="center">是</td>
+<td align="center">否</td>
+<td align="center">是</td>
+<td align="center">是</td>
+</tr>
+<tr>
+<td align="center">可缓存</td>
+<td align="center">是</td>
+<td align="center">是</td>
+<td align="center">否</td>
+<td align="center">否</td>
+</tr>
+<tr>
+<td align="center">语义</td>
+<td align="center">检索信息（查）</td>
+<td align="center">创建或附加资源（增、改）</td>
+<td align="center">创建或替换资源（增、改）</td>
+<td align="center">删除资源（删）</td>
+</tr>
+</tbody></table>
+<p>⚠️ 以上的“是”，指的是定义中有明确要求的。“否”指的是没有明确要求，可做可不做的。</p>
+<p>稍微解释下：</p>
+<ul>
+<li>安全：使用GET方法，不能修改服务器上的数据，而其它方法是可以的。</li>
+<li>幂等：同样是添加资源，使用PUT只能添加一条数据，无论执行多少次。而使用POST可以是执行一次就添加一条新数据。</li>
+</ul>
+<p>补充：</p>
+<ol>
+<li><p>所有通用的服务器必须支持GET和HEAD方法，其他方法是可选的。<br>这和大部分的实现还算是比较吻合，因为一般的服务器是做网站用途的，在地址栏中访问对应的URL地址、图片引入、JS文件引入、CSS文件引入等都是发送的GET请求。</p>
+</li>
+<li><p><strong>无论是GET还是POST都没有限制请求参数的长度和位置</strong>（URL后还是消息体message body里）。</p>
+</li>
+</ol>
+<h1 id="2-实现上"><a href="#2-实现上" class="headerlink" title="2 实现上"></a>2 实现上</h1><ol>
+<li><p>GET能被缓存，POST很少能被缓存 。</p>
+</li>
+<li><p>GET 和 POST 请求参数的位置不同，GET 请求的参数放在 URL 中（以?分割URL和传输数据，参数之间以&amp;相连，如：login?name=zqc&amp;password=zqc。如果数据是英文字母/数字，原样发送，如果是空格，转换为+，如果是中文/其他字符，则直接把字符串用BASE64编码，得出如：%E4%BD%A0%E5%A5%BD，其中％XX中的XX为该符号以16进制表示的ASCII），而 POST 请求的参数放在消息体中。</p>
+</li>
+<li><p>由于以上2的缘故，再加上有些服务器会记录和打印GET请求的地址，因此，POST比GET相对安全一些。但是使用抓包工具的话，只要不加密，参数都能被轻而易举地获取。</p>
+</li>
+<li><p>华为手机浏览器不支持PUT方法，因此有些公司会规定添加和修改都使用POST。</p>
+</li>
+<li><p>GET和POST请求参数的大小主要是由浏览器和Web服务器决定。以下是利用node.js做服务端进行的一系列测试（感谢 <a target="_blank" rel="noopener" href="https://github.com/SYJjuzijun">橘子君</a>）：</p>
+</li>
+</ol>
+<table>
+   <tr>
+        <th>浏览器</th>
+        <th>请求类型</th>
+        <th>GET(Bytes)</th>
+        <th>POST(Bytes)</th>
+    <tr>
+    <tr>
+        <td rowspan="2">IE11</td>
+        <td>地址栏</td>
+        <td>2047</td>
+        <td>--</td>
+    <tr>
+        <td>ajax</td>
+        <td>81593</td>
+        <td>102400</td>
+    <tr>
+        <td rowspan="2">IE11</td>
+        <td>地址栏</td>
+        <td>2047</td>
+        <td>--</td>
+    </tr>
+    <tr>
+        <td>ajax</td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td rowspan="2">Edge</td>
+        <td>地址栏</td>
+        <td>2083</td>
+        <td>--</td>
+    </tr>
+    <tr>
+        <td>ajax</td>
+        <td>81488</td>
+        <td>102400</td>
+    </tr>
+    <tr>
+        <td rowspan="3">Chrome</td>
+        <td>地址栏只粘贴</td>
+        <td>81550</td>
+        <td>--</td>
+    </tr>
+    <tr>
+        <td>粘贴加输入</td>
+        <td>如果超32791，则为：32791+一次性新输入个数</td>
+        <td>--</td>
+    </tr>
+        <tr>
+        <td>ajax</td>
+        <td>有可能是服务器端限制 81459</td>
+        <td>102400</td>
+    </tr>
+     <tr>
+        <td>python</td>
+        <td>ajax</td>
+        <td>81825</td>
+        <td>102400</td>
+    </tr>
+</table>
+
+<p>也就是说除了<strong>在地址栏中输入URL发送GET请求有明显的限制，而直接通过代码发送请求，Get(80K左右)和Post(100K)发送的数据大小相差不多</strong>。</p>
+<h1 id="3-误区"><a href="#3-误区" class="headerlink" title="3 误区"></a>3 误区</h1><ol>
+<li><p>一般认为HTTP请求方法与<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/iis-administration/api/crud">CRUD</a>(Create, Read, Update, Delete)操作的对应关系如下：<br>而实际上，<strong>除了GET和DELETE可以这样对应，POST和PUT都可以作为增加或修改操作</strong>。</p>
+<table>
+<thead>
+<tr>
+<th align="center">CRUD</th>
+<th align="center">HTTP</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">增加</td>
+<td align="center">POST</td>
+</tr>
+<tr>
+<td align="center">查询</td>
+<td align="center">GET</td>
+</tr>
+<tr>
+<td align="center">更新</td>
+<td align="center">PUT</td>
+</tr>
+<tr>
+<td align="center">删除</td>
+<td align="center">DELETE</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>GET请求能够被保存在浏览器的浏览历史里面</p>
+<p> 不准确！只有是在浏览器地址栏内输入的URL地址才可以在浏览器历史中查看。</p>
+</li>
+<li><p>GET参数是带在URL后面，传统IE中URL的最大可用长度为2048字符，其他浏览器对URL长度限制实现上有所不同，POST请求无长度限制</p>
+</li>
+</ol>
+<p>不准确！上方已经写出了结论：除了<strong>在地址栏中输入URL发送GET请求有明显的限制，而直接通过代码发送请求，Get(80K左右)和Post(100K)发送的数据大小相差不多</strong>。</p>
+<p>最后，再看下HTTP状态码，简单易懂：</p>
+<img src="/2020/04/26/HTTP%E8%AF%B7%E6%B1%82%E6%96%B9%E6%B3%95%E7%9A%84%E5%BC%82%E5%90%8C/status.png" class="">
+</div><div class="article-licensing box"><div class="licensing-title"><p>HTTP请求方法的异同</p><p><a href="https://ths-fe.github.io/2020/04/26/HTTP%E8%AF%B7%E6%B1%82%E6%96%B9%E6%B3%95%E7%9A%84%E5%BC%82%E5%90%8C/">https://ths-fe.github.io/2020/04/26/HTTP%E8%AF%B7%E6%B1%82%E6%96%B9%E6%B3%95%E7%9A%84%E5%BC%82%E5%90%8C/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>天下布武</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2020-04-26</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2020-04-27</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a class="" rel="noopener" target="_blank" title="CC BY-NC-SA 4.0" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a></p></div></div></div></div></div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/HTTP/">HTTP</a></div><div class="sharethis-inline-share-buttons"></div><script src="https://platform-api.sharethis.com/js/sharethis.js#property=5ea1492221690600121bcf3a&amp;product=inline-share-buttons&amp;cms=sop" defer></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/img/alipayqr.jpg" alt="支付宝"></span></a><a class="button donate" href="https://www.buymeacoffee.com/zapzqc?new=1" target="_blank" rel="noopener" data-type="buymeacoffee"><span class="icon is-small"><i class="fas fa-coffee"></i></span><span>送我杯咖啡</span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/img/wechatqr.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2020/04/29/Vue-js2%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">Vue.js2最佳实践(持续更新至Vue.js3出来😁)</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2020/04/24/%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/"><span class="level-item">博客使用指南</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div class="content" id="valine-thread"></div><script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script><script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script><script>new Valine({
+            el: '#valine-thread' ,
+            appId: "4o5OfjCIGaSyqIwg7jop80Ge-gzGzoHsz",
+            appKey: "Rj9jcPLhW8WgWd6bDmXGmKaA",
+            placeholder: "欢迎评论交流",
+            avatar: "mm",
+            
+            meta: ["nick","mail","link"],
+            pageSize: 10,
+            lang: "zh-CN",
+            
+            highlight: true,
+            
+            
+            
+            
+            
+            requiredFields: [],
+        });</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="level is-mobile" href="#1-定义上"><span class="level-left"><span class="level-item">1 定义上</span></span></a></li><li><a class="level is-mobile" href="#2-实现上"><span class="level-left"><span class="level-item">2 实现上</span></span></a></li><li><a class="level is-mobile" href="#3-误区"><span class="level-left"><span class="level-item">3 误区</span></span></a></li></ul></div></div><style>.menu-list > li > a.is-active + .menu-list { display: block; }.menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div><div class="card widget" data-type="adsense"><div class="card-content"><div class="menu"><h3 class="menu-label"> </h3><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6826040978803389" data-ad-slot="1033672070" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/ths.png" alt="思路大前端团队" height="28"></a><p class="is-size-7"><span>&copy; 2020 天下布武</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a><br><span id="busuanzi_container_site_uv">共<span id="busuanzi_value_site_uv">0</span>个访客</span></p></div><div class="level-end"></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" async></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>

@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>Storybook的基本使用指南 - 思路大前端团队</title><link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#f7f7f7"><meta name="application-name" content="思路大前端"><meta name="msapplication-TileImage" content="/img/favicon.ico"><meta name="msapplication-TileColor" content="#f7f7f7"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="思路大前端"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta description="Storybook的基本使用指南"><meta property="og:type" content="blog"><meta property="og:title" content="Storybook的基本使用指南"><meta property="og:url" content="https://ths-fe.github.io/2020/09/27/storybook%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/"><meta property="og:site_name" content="思路大前端团队"><meta property="og:description" content="Storybook的基本使用指南"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://ths-fe.github.io/2020/09/27/storybook%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/cover.jpg"><meta property="article:published_time" content="2020-09-27T14:01:51.000Z"><meta property="article:modified_time" content="2020-09-27T14:01:51.000Z"><meta property="article:author" content="老吕"><meta property="article:tag" content="Storybook"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="/2020/09/27/storybook%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/cover.jpg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://ths-fe.github.io/2020/09/27/storybook%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/"},"headline":"思路大前端团队","image":["https://ths-fe.github.io/2020/09/27/storybook%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/cover.jpg"],"datePublished":"2020-09-27T14:01:51.000Z","dateModified":"2020-09-27T14:01:51.000Z","author":{"@type":"Person","name":"老吕"},"description":"Storybook的基本使用指南"}</script><link rel="canonical" href="https://ths-fe.github.io/2020/09/27/storybook%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/"><link rel="icon" href="/img/favicon.ico"><link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.13.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/monokai.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><script>var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?fd8cc3421abec7b8f4e6bc337e25c7d1";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();</script><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><script src="https://www.googletagmanager.com/gtag/js?id=UA-72716512-3" async></script><script>window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+    
+        gtag('config', 'UA-72716512-3');</script><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><script data-ad-client="ca-pub-6826040978803389" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" async></script><meta name="generator" content="Hexo 5.2.0"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/ths.png" alt="思路大前端团队" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">博客</a><a class="navbar-item" href="/fe">大前端技术体系</a><a class="navbar-item" href="/gis">GIS技术体系</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/about">关于我们</a></div><div class="navbar-end"><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><div class="card-image"><span class="image is-7by3"><img class="fill" src="/2020/09/27/storybook%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/cover.jpg" alt="Storybook的基本使用指南"></span></div><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2020-09-27T14:01:51.000Z" title="2020-09-27T14:01:51.000Z">2020-09-27</time>发表</span><span class="level-item"><time dateTime="2020-09-27T14:01:51.000Z" title="2020-09-27T14:01:51.000Z">2020-09-27</time>更新</span><span class="level-item"> 老吕 </span><span class="level-item"><a class="link-muted" href="/categories/%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/">基础建设</a><span> / </span><a class="link-muted" href="/categories/%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/%E7%BB%84%E4%BB%B6%E5%BA%93/">组件库</a></span><span class="level-item">15 分钟读完 (大约2198个字)</span><span class="level-item" id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv">0</span>次访问</span></div></div><h1 class="title is-3 is-size-4-mobile">Storybook的基本使用指南</h1><div class="content"><h1 id="1-什么是-Storybook"><a href="#1-什么是-Storybook" class="headerlink" title="1 什么是 Storybook"></a>1 什么是 Storybook</h1><p>让我们来看看 Storybook 的官网咋说的：</p>
+<blockquote>
+<p>”<strong>Build bulletproof UI components</strong> <strong>faster” ——</strong>更快地创建一个坚不可摧的 UI 组件库。</p>
+<p><strong>“Storybook is an open source tool for developing UI components in isolation for React,Vue, Angular, and more. It makes building stunning UIs organized and efficient.”</strong>——故事书是一个开源的工具，用于独立开发 React、Vue、Angular 等的 UI 组件。它能有组织且高效地构建 UI 组件。</p>
+</blockquote>
+<p>简而言之，Storybook 是一个开源的项目，该项目已经为我们搭好了架子，我们只需要在该架子的基础上添砖加瓦，就能够将所有 UI 组件集成在一个项目中，展示和分类组件，提供组件全面的示例，并进行组件测试。</p>
+<p>每一个 UI 组件的示例就是一个 story <strong>。</strong>所有的示例的集合，就是 Storybook 了。</p>
+<h1 id="2-Storybook-的开发流程"><a href="#2-Storybook-的开发流程" class="headerlink" title="2 Storybook 的开发流程"></a>2 Storybook 的开发流程</h1><p>一般在开发完成一个 UI 组件之后，如果你想让其他人查看并复用你的 UI 组件，就可以进行 story 的开发了。当前的开发流程如下图所示：</p>
+<img src="/2020/09/27/storybook%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/storybook%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B.png" class="">
+
+<p>未来我们还会走另一种开发流程，Storybook 项目将作为 vue-component-ts 的一部分，直接导入 vue-component-ts 中的 UI 组件。所以未来我们会省去在 npm 上注册插件的这一步，而改为导入组件库中的 UI 组件。</p>
+<h1 id="3-Storybook-的文件目录"><a href="#3-Storybook-的文件目录" class="headerlink" title="3 Storybook 的文件目录"></a>3 Storybook 的文件目录</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">│  .eslintrc.js</span><br><span class="line">│  babel.config.js</span><br><span class="line">│  package.json</span><br><span class="line">│</span><br><span class="line">├─.Storybook</span><br><span class="line">│      main.js   <span class="comment">// 配置Storybook的行为信息，还可以在次配置webpack、babel信息。</span></span><br><span class="line">│      manager.js <span class="comment">// 设置插件的行为信息，比如修改插件主题色。</span></span><br><span class="line">│</span><br><span class="line">├─src</span><br><span class="line">│  ├─components <span class="comment">// 若不使用组件注册的方式来引用UI组件，还可以将UI组件放在该文件夹下，然后在story中引用。</span></span><br><span class="line">│  │  └─t-button.vue <span class="comment">// UI组件源码</span></span><br><span class="line">│  │</span><br><span class="line">│  └─stories <span class="comment">// 所有的UI组件示例都会放在该文件夹下</span></span><br><span class="line">│      └─charts.stories.js <span class="comment">// 这是一个关于charts组件的stories，里面包含了多个charts的story</span></span><br><span class="line">│</span><br><span class="line">└─<span class="keyword">static</span> <span class="comment">// 静态目录，放置静态文件</span></span><br><span class="line">    └─mds <span class="comment">// 存放有关于story介绍的markdown文档</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>注意</strong>：修改 main.js 后要想使其生效，需要重启项目。</p>
+</blockquote>
+<h1 id="4-快速构建一个-Storybook"><a href="#4-快速构建一个-Storybook" class="headerlink" title="4 快速构建一个 Storybook"></a>4 快速构建一个 Storybook</h1><h2 id="4-1-编写一个最基本的-story"><a href="#4-1-编写一个最基本的-story" class="headerlink" title="4.1 编写一个最基本的 story"></a>4.1 编写一个最基本的 story</h2><p>一个组件可以编写多个 story 。编写一个组件的 story 有两种方式，一种是 <strong>CSF</strong> 方式，另一种是 <strong>StoriesOf</strong> 方式。由于 StoriesOf 是新出的写法，在实践的过程中会存在一些问题，所以还是比较推荐 CSF 方式</p>
+<p>首先，我们需要新建一个 xxx.stories.js 文件，或者新建一个文件夹，里面包含着该 UI 组件的所有，每个 UI 组件的 story 都写在这里面。</p>
+<h3 id="4-1-1-CSF（-Component-Story-Format-）方式"><a href="#4-1-1-CSF（-Component-Story-Format-）方式" class="headerlink" title="4.1.1 CSF（ Component Story Format ）方式"></a><strong>4.1.1 CSF</strong>（ Component Story Format ）方式</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> TVue = <span class="built_in">require</span>(<span class="string">&#x27;ths-vue&#x27;</span>);</span><br><span class="line"><span class="comment">// 控制页面如何绘制出你的story，以及如何提供插件使用的信息</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">    title: ‘echarts/xx’</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 柱状统计图就相当于一个story了，所有有关于该story的参数在配置项中配置</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> 柱状统计图 = <span class="function">() =&gt;</span> (&#123;</span><br><span class="line">    props: &#123;…&#125;,</span><br><span class="line">    data ()&#123;…&#125;,</span><br><span class="line">    components: &#123;<span class="attr">thsBarChart</span>: TVue.thsBarChart.thsBarChart&#125;,</span><br><span class="line">    template: <span class="string">`</span></span><br><span class="line"><span class="string">    &lt;ths-bar-chart :basic=&quot;basic“ :options=&quot;options&quot;&gt;&lt;/ths-bar-chart&gt;</span></span><br><span class="line"><span class="string">    `</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>export default 的常用参数介绍:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> md <span class="keyword">from</span> <span class="string">&#x27;../../static/mds/thsBarChart.md&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span>: &#123;</span><br><span class="line">title: ‘大标题|文件夹/组件名’, <span class="comment">// story所在文件目录的定义，可以控制左侧菜单栏的显示</span></span><br><span class="line"><span class="comment">// story的参数可以用于在story或stories的层次上为各种插件提供配置</span></span><br><span class="line">parameters: &#123;</span><br><span class="line">    notes: md, <span class="comment">// notes是一个插件</span></span><br><span class="line">&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-1-2-StoriesOf-方式"><a href="#4-1-2-StoriesOf-方式" class="headerlink" title="4.1.2 StoriesOf 方式"></a>4.1.2 StoriesOf 方式</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;storiesOf&#125; <span class="keyword">from</span> <span class="string">&#x27;@storybook/vue&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> TButton <span class="keyword">from</span> <span class="string">&#x27;../components/t-button.vue&#x27;</span>;</span><br><span class="line">storiesOf(<span class="string">&#x27;PC|统计图&#x27;</span>, <span class="built_in">module</span>).add(<span class="string">&#x27;柱图&#x27;</span>, <span class="function">() =&gt;</span> (&#123;</span><br><span class="line">  components: &#123;TButton&#125;,</span><br><span class="line">  props: &#123;</span><br><span class="line">    color: <span class="string">&#x27;#FF0000&#x27;</span>,</span><br><span class="line">    label: <span class="string">&#x27;确定&#x27;</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  template: <span class="string">&#x27;&lt;t-button :color=&quot;color&quot; &gt;&#123;&#123;label&#125;&#125;&lt;/t-button&gt;&#x27;</span>,</span><br><span class="line">&#125;));</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>注</strong>：两种方式不建议写在同一个 story 里。</p>
+</blockquote>
+<h2 id="4-2-Storybook-插件的安装与配置"><a href="#4-2-Storybook-插件的安装与配置" class="headerlink" title="4.2 Storybook 插件的安装与配置"></a>4.2 Storybook 插件的安装与配置</h2><ol>
+<li><p>npm i –D 插件名</p>
+</li>
+<li><p>以 addon-knobs 插件为例在 .storybook/main.js 中 module.exports 导出的对象中添加以下内容：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">addons: [<span class="string">&#x27;@storybook/addon-knobs&#x27;</span>];</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在 story 中引用该插件就 OK 了：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;color, text, boolean&#125; <span class="keyword">from</span> <span class="string">&#x27;@storybook/addon-knobs&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h2 id="4-3-常用插件的使用"><a href="#4-3-常用插件的使用" class="headerlink" title="4.3 常用插件的使用"></a>4.3 常用插件的使用</h2><h3 id="4-3-1-Storybook-插件之-Knobs"><a href="#4-3-1-Storybook-插件之-Knobs" class="headerlink" title="4.3.1 Storybook 插件之 Knobs"></a>4.3.1 Storybook 插件之 Knobs</h3><p>Knobs 可以用于设置组件传入的参数信息，并实时更新，查看效果（不会改变组件的源码）。</p>
+<p>使用方法（这是一段关键代码，props 为一个 story 的其中一个配置参数）：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; object &#125; <span class="keyword">from</span> <span class="string">&#x27;@storybook/addon-knobs&#x27;</span>;</span><br><span class="line">props:&#123;</span><br><span class="line">    basic: &#123;</span><br><span class="line">      <span class="keyword">default</span>: object(</span><br><span class="line">        <span class="string">&#x27;基础配置&#x27;</span>,</span><br><span class="line">        &#123;</span><br><span class="line">          width: <span class="string">&#x27;100%&#x27;</span>,</span><br><span class="line">          height: <span class="string">&#x27;240&#x27;</span>,</span><br><span class="line">          backgroundColor: <span class="string">&#x27;#fff&#x27;</span>,</span><br><span class="line">        &#125;,</span><br><span class="line">      ),</span><br><span class="line">    &#125;,</span><br></pre></td></tr></table></figure>
+
+<p>效果：</p>
+<img src="/2020/09/27/storybook%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/knobs.png" class="">
+
+<p>修改 width 、height 、backgroundColor 参数就可以在界面上给组件传参啦~</p>
+<h3 id="4-3-2-Storybook-插件之-notes"><a href="#4-3-2-Storybook-插件之-notes" class="headerlink" title="4.3.2 Storybook 插件之 notes"></a>4.3.2 Storybook 插件之 notes</h3><p>Notes 可以用于读取指定的 markdown 文档，展示组件的配置参数的类型、含义，介绍组件的配置方式和安装方式等信息。</p>
+<p>使用方法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> md <span class="keyword">from</span> <span class="string">&#x27;../../static/mds/thsBarChart.md&#x27;</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  parameters: &#123;</span><br><span class="line">    notes: md,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这样就能将 markdown 文档引入到故事中显示了~</p>
+<blockquote>
+<p>友情链接：</p>
+<p><a target="_blank" rel="noopener" href="https://storybook.js.org/">Storybook 官网链接</a></p>
+<p>Storybook 使用示例：<a target="_blank" rel="noopener" href="http://182.48.115.106:8090/svn/Products/%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%911.0/%E5%B7%A5%E7%A8%8B/%E4%BB%A3%E7%A0%81/%E6%80%9D%E8%B7%AF%E7%BB%84%E4%BB%B6%E5%BA%93/Vue/storybook">http://182.48.115.106:8090/svn/Products/前端开发1.0/工程/代码/思路组件库/Vue/storybook</a></p>
+</blockquote>
+<h1 id="5-md-示例"><a href="#5-md-示例" class="headerlink" title="5 md 示例"></a>5 md 示例</h1><p>一个组件主要要介绍的内容有：组件功能简介、组件引用配置示例（即组件源码）和组件配置项说明。以 thsBarChart 组件为例，列举了该组件的 markdown 文档该具备哪些内容：</p>
+<h2 id="5-1-组件功能简介"><a href="#5-1-组件功能简介" class="headerlink" title="5.1 组件功能简介"></a>5.1 组件功能简介</h2><p>用 vue + echars 实现的柱状统计图，可以选择性地显示多个系列的数据。鼠标 hover 上某段数据能够显示该段数据上所有系列的数据信息。</p>
+<h2 id="5-2-组件引用配置示例"><a href="#5-2-组件引用配置示例" class="headerlink" title="5.2 组件引用配置示例"></a>5.2 组件引用配置示例</h2><p>在 main.js 中：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Vue <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123;thsBarChart&#125; <span class="keyword">from</span> <span class="string">&#x27;ths-vue&#x27;</span>;</span><br><span class="line">Vue.use(thsBarChart);</span><br></pre></td></tr></table></figure>
+
+<p>在 xxx.vue 文件中：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;ths-bar-chart</span><br><span class="line">    :basic&#x3D;&quot;basic&quot;</span><br><span class="line">    :options&#x3D;&quot;options&quot;</span><br><span class="line">    :nameAlias&#x3D;&quot;nameAlias&quot;</span><br><span class="line">    :valueAlias&#x3D;&quot;valueAlias&quot;</span><br><span class="line">    :data&#x3D;&quot;data&quot;</span><br><span class="line">  &gt;&lt;&#x2F;ths-bar-chart&gt;</span><br><span class="line">&lt;&#x2F;template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line">export default &#123;</span><br><span class="line">  data() &#123;</span><br><span class="line">    return &#123;</span><br><span class="line">      basic: &#123;</span><br><span class="line">        width: &#39;100%&#39;,</span><br><span class="line">        height: &#39;240&#39;,</span><br><span class="line">        backgroundColor: &#39;#fff&#39;,</span><br><span class="line">      &#125;,</span><br><span class="line">      options: &#123;</span><br><span class="line">        color: [</span><br><span class="line">          &#39;#538FFF&#39;,</span><br><span class="line">          &#39;#FFBF27&#39;,</span><br><span class="line">          &#39;#FC807A&#39;,</span><br><span class="line">          &#39;#7BD25F&#39;,</span><br><span class="line">          &#39;#BE90EA&#39;,</span><br><span class="line">          &#39;#FF9F37&#39;,</span><br><span class="line">        ],</span><br><span class="line">        tooltip: &#123;</span><br><span class="line">          show: true,</span><br><span class="line">          backgroundColor: &#39;#fff&#39;,</span><br><span class="line">          textStyle: &#123;</span><br><span class="line">            color: &#39;#333&#39;,</span><br><span class="line">            fontSize: &#39;12&#39;,</span><br><span class="line">            fontFamily: &#39;PF&#39;,</span><br><span class="line">            fontWeight: &#39;normal&#39;,</span><br><span class="line">          &#125;,</span><br><span class="line">        &#125;,</span><br><span class="line">        title: &#123;</span><br><span class="line">          show: false,</span><br><span class="line">          text: &#39;这是标题&#39;,</span><br><span class="line">          textStyle: &#123;</span><br><span class="line">            color: &#39;#666&#39;,</span><br><span class="line">            fontSize: &#39;16&#39;,</span><br><span class="line">            fontFamily: &#39;PF&#39;,</span><br><span class="line">            fontWeight: &#39;bold&#39;,</span><br><span class="line">          &#125;,</span><br><span class="line">          left: &#39;center&#39;,</span><br><span class="line">        &#125;,</span><br><span class="line">        legend: &#123;</span><br><span class="line">          padding: [0, 0, 0, 50],</span><br><span class="line">          show: true,</span><br><span class="line">          left: &#39;center&#39;,</span><br><span class="line">          top: 20,</span><br><span class="line">          orient: &#39;horizontal&#39;,</span><br><span class="line">          textStyle: &#123;</span><br><span class="line">            color: &#39;#666&#39;,</span><br><span class="line">            fontSize: &#39;12&#39;,</span><br><span class="line">            fontFamily: &#39;PF&#39;,</span><br><span class="line">            fontWeight: &#39;normal&#39;,</span><br><span class="line">          &#125;,</span><br><span class="line">          data: [&#39;示例&#39;, &#39;示例2&#39;],</span><br><span class="line">        &#125;,</span><br><span class="line">        grid: &#123;</span><br><span class="line">          left: 40,</span><br><span class="line">          right: 30,</span><br><span class="line">          top: 50,</span><br><span class="line">          bottom: 40,</span><br><span class="line">        &#125;,</span><br><span class="line">        xAxis: &#123;</span><br><span class="line">          show: true,</span><br><span class="line">          name: &#39;&#39;,</span><br><span class="line">          nameTextStyle: &#123;</span><br><span class="line">            color: &#39;#666&#39;,</span><br><span class="line">            fontSize: &#39;12&#39;,</span><br><span class="line">            fontFamily: &#39;PF&#39;,</span><br><span class="line">            fontWeight: &#39;normal&#39;,</span><br><span class="line">          &#125;,</span><br><span class="line">          nameGap: 10,</span><br><span class="line">          boundaryGap: true,</span><br><span class="line">          axisLine: &#123;</span><br><span class="line">            show: true,</span><br><span class="line">            lineStyle: &#123;</span><br><span class="line">              color: &#39;#eee&#39;,</span><br><span class="line">              width: 1,</span><br><span class="line">              type: &#39;solid&#39;,</span><br><span class="line">            &#125;,</span><br><span class="line">          &#125;,</span><br><span class="line">          axisTick: &#123;</span><br><span class="line">            show: false,</span><br><span class="line">          &#125;,</span><br><span class="line">          splitLine: &#123;</span><br><span class="line">            show: false,</span><br><span class="line">            lineStyle: &#123;</span><br><span class="line">              color: &#39;#eee&#39;,</span><br><span class="line">              width: 1,</span><br><span class="line">              type: &#39;solid&#39;,</span><br><span class="line">            &#125;,</span><br><span class="line">          &#125;,</span><br><span class="line">          axisLabel: &#123;</span><br><span class="line">            show: true,</span><br><span class="line">            interval: 0,</span><br><span class="line">            color: &#39;#666&#39;,</span><br><span class="line">            rotate: 0,</span><br><span class="line">            fontFamily: &#39;PF&#39;,</span><br><span class="line">            fontSize: &#39;12&#39;,</span><br><span class="line">          &#125;,</span><br><span class="line">          data: [&#39;周一&#39;, &#39;周二&#39;, &#39;周三&#39;, &#39;周四&#39;, &#39;周五&#39;, &#39;周六&#39;, &#39;周日&#39;],</span><br><span class="line">        &#125;,</span><br><span class="line">        yAxis: &#123;</span><br><span class="line">          show: true,</span><br><span class="line">          name: &#39;单位&#39;,</span><br><span class="line">          nameTextStyle: &#123;</span><br><span class="line">            color: &#39;#666&#39;,</span><br><span class="line">            fontSize: &#39;12&#39;,</span><br><span class="line">            fontFamily: &#39;PF&#39;,</span><br><span class="line">            fontWeight: &#39;normal&#39;,</span><br><span class="line">          &#125;,</span><br><span class="line">          nameGap: 10,</span><br><span class="line">          inverse: false,</span><br><span class="line">          boundaryGap: false,</span><br><span class="line">          splitNumber: 15,</span><br><span class="line">          axisLine: &#123;</span><br><span class="line">            show: true,</span><br><span class="line">            lineStyle: &#123;</span><br><span class="line">              color: &#39;#eee&#39;,</span><br><span class="line">              width: 1,</span><br><span class="line">              type: &#39;solid&#39;,</span><br><span class="line">            &#125;,</span><br><span class="line">          &#125;,</span><br><span class="line">          axisTick: &#123;</span><br><span class="line">            show: false,</span><br><span class="line">          &#125;,</span><br><span class="line">          splitLine: &#123;</span><br><span class="line">            show: true,</span><br><span class="line">            lineStyle: &#123;</span><br><span class="line">              color: &#39;#eee&#39;,</span><br><span class="line">              width: 1,</span><br><span class="line">              type: &#39;dashed&#39;,</span><br><span class="line">            &#125;,</span><br><span class="line">          &#125;,</span><br><span class="line">          axisLabel: &#123;</span><br><span class="line">            show: true,</span><br><span class="line">            interval: 0,</span><br><span class="line">            color: &#39;#666&#39;,</span><br><span class="line">            rotate: 0,</span><br><span class="line">            fontFamily: &#39;PF&#39;,</span><br><span class="line">            fontSize: &#39;12&#39;,</span><br><span class="line">          &#125;,</span><br><span class="line">        &#125;,</span><br><span class="line">        series: [</span><br><span class="line">          &#123;</span><br><span class="line">            name: &#39;示例&#39;,</span><br><span class="line">            label: &#123;</span><br><span class="line">              show: false,</span><br><span class="line">              position: &#39;top&#39;,</span><br><span class="line">              distance: 5,</span><br><span class="line">              color: &#39;#666&#39;,</span><br><span class="line">              fontFamily: &#39;PF&#39;,</span><br><span class="line">              fontSize: &#39;12&#39;,</span><br><span class="line">            &#125;,</span><br><span class="line">            barColor: &#39;&#39;,</span><br><span class="line">            barWidth: 4,</span><br><span class="line">            borderColor: &#39;rgba(0,0,0,0)&#39;,</span><br><span class="line">            borderWidth: 2,</span><br><span class="line">            backgroundColor: &#39;&#39;,</span><br><span class="line">            data: [120, 132, 101, 134, 90, 230, 210],</span><br><span class="line">            stack: &#39;示例2&#39;,</span><br><span class="line">          &#125;,</span><br><span class="line">          &#123;</span><br><span class="line">            name: &#39;示例2&#39;,</span><br><span class="line">            label: &#123;</span><br><span class="line">              show: false,</span><br><span class="line">              position: &#39;top&#39;,</span><br><span class="line">              distance: 5,</span><br><span class="line">              color: &#39;#666&#39;,</span><br><span class="line">              fontFamily: &#39;PF&#39;,</span><br><span class="line">              fontSize: &#39;12&#39;,</span><br><span class="line">            &#125;,</span><br><span class="line">            barColor: &#39;&#39;,</span><br><span class="line">            barWidth: 4,</span><br><span class="line">            borderColor: &#39;rgba(0,0,0,0)&#39;,</span><br><span class="line">            borderWidth: 2,</span><br><span class="line">            backgroundColor: &#39;&#39;,</span><br><span class="line">            data: [12, 13, 10, 13, 9, 23, 21],</span><br><span class="line">          &#125;,</span><br><span class="line">          &#123;</span><br><span class="line">            name: &#39;示例3&#39;,</span><br><span class="line">            label: &#123;</span><br><span class="line">              show: false,</span><br><span class="line">              position: &#39;top&#39;,</span><br><span class="line">              distance: 5,</span><br><span class="line">              color: &#39;#666&#39;,</span><br><span class="line">              fontFamily: &#39;PF&#39;,</span><br><span class="line">              fontSize: &#39;12&#39;,</span><br><span class="line">            &#125;,</span><br><span class="line">            barColor: &#39;&#39;,</span><br><span class="line">            barWidth: 4,</span><br><span class="line">            borderColor: &#39;rgba(0,0,0,0)&#39;,</span><br><span class="line">            borderWidth: 2,</span><br><span class="line">            backgroundColor: &#39;&#39;,</span><br><span class="line">            data: [122, 13, 10, 13, 9, 23, 21],</span><br><span class="line">          &#125;,</span><br><span class="line">        ],</span><br><span class="line">        dataZoom: &#123;</span><br><span class="line">          show: false,</span><br><span class="line">          maxPointNum: 10,</span><br><span class="line">        &#125;,</span><br><span class="line">      &#125;,</span><br><span class="line">      nameAlias: &#39;date&#39;,</span><br><span class="line">      valueAlias: &#39;revenue&#39;,</span><br><span class="line">      data: [</span><br><span class="line">        &#123;date: &#39;星期一&#39;, revenue: 43&#125;,</span><br><span class="line">        &#123;date: &#39;星期二&#39;, revenue: 54&#125;,</span><br><span class="line">        &#123;date: &#39;星期三&#39;, revenue: 82&#125;,</span><br><span class="line">        &#123;date: &#39;星期四&#39;, revenue: 48&#125;,</span><br><span class="line">        &#123;date: &#39;星期五&#39;, revenue: 10&#125;,</span><br><span class="line">        &#123;date: &#39;星期六&#39;, revenue: 82&#125;,</span><br><span class="line">        &#123;date: &#39;星期天&#39;, revenue: 28&#125;,</span><br><span class="line">      ],</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br><span class="line">&lt;&#x2F;script&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="5-3-组件配置项说明"><a href="#5-3-组件配置项说明" class="headerlink" title="5.3 组件配置项说明"></a>5.3 组件配置项说明</h2><ul>
+<li><p>basic（即 knobs 中的基础配置）</p>
+<table>
+<thead>
+<tr>
+<th>属性名</th>
+<th>属性含义</th>
+<th>数值类型</th>
+<th>示例（默认值）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>width</td>
+<td>整个统计图的宽度</td>
+<td>百分比 | 数值</td>
+<td>“width”: “500”</td>
+</tr>
+<tr>
+<td>height</td>
+<td>整个统计图的高度</td>
+<td>数值</td>
+<td>“height”: “400”</td>
+</tr>
+<tr>
+<td>backgroundColor</td>
+<td>统计图背景颜色</td>
+<td>颜色值</td>
+<td>“backgroundColor”: “#fff”</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>options</p>
+<p>options 的配置项比较多，配置了 tooltip 、title 、legend 、grid 、xAxis 、yAxis 、series：</p>
+<p>（以下仅举例 tooltip 、title 、legend 这三种配置项的说明作为参考）</p>
+<ol>
+<li><p>tooltip（提示框组件）</p>
+<table>
+<thead>
+<tr>
+<th>属性名</th>
+<th>属性含义</th>
+<th align="center">数值类型</th>
+<th align="left">示例（默认值）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>show</td>
+<td>是否显示提示框组件</td>
+<td align="center">布尔值</td>
+<td align="left">“show”: true</td>
+</tr>
+<tr>
+<td>textStyle</td>
+<td>提示框组件的字体样式配置</td>
+<td align="center">对象</td>
+<td align="left">“textStyle”: { “color”: “#333”, “fontSize”: “12”, “fontFamily”: “PF”, “fontWeight”: “normal” }</td>
+</tr>
+<tr>
+<td>backgroundColor</td>
+<td>统计图背景颜色</td>
+<td align="center">颜色值</td>
+<td align="left">backgroundColor: ‘#fff’</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>title（统计图标题）</p>
+<table>
+<thead>
+<tr>
+<th>属性名</th>
+<th>属性含义</th>
+<th>数值类型</th>
+<th>示例（默认值）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>show</td>
+<td>是否显示统计图标题</td>
+<td>布尔值</td>
+<td>“show”: false</td>
+</tr>
+<tr>
+<td>text</td>
+<td>统计图标题的文本内容</td>
+<td>字符串</td>
+<td>“text”: “这是标题”</td>
+</tr>
+<tr>
+<td>textStyle</td>
+<td>统计图标题的字体样式配置</td>
+<td>对象</td>
+<td>“textStyle”: { “color”: “#666”, “fontSize”: “16”, “fontFamily”: “PF”, “fontWeight”: “bold” }</td>
+</tr>
+<tr>
+<td>left</td>
+<td>统计图标题的排版设置</td>
+<td>字符串 | 数字</td>
+<td>“left”: “center”</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>legend（图例）</p>
+<table>
+<thead>
+<tr>
+<th>属性名</th>
+<th>属性含义</th>
+<th>数值类型</th>
+<th>示例（默认值）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>padding</td>
+<td>图例的内边距</td>
+<td>数组</td>
+<td>“padding”: [0, 0, 0, 50]</td>
+</tr>
+<tr>
+<td>show</td>
+<td>是否显示图例</td>
+<td>布尔值</td>
+<td>“show”: true</td>
+</tr>
+<tr>
+<td>left</td>
+<td>图例的排版设置</td>
+<td>字符串 | 数字</td>
+<td>“left”: “center”</td>
+</tr>
+<tr>
+<td>top</td>
+<td>图例到统计图顶部距离</td>
+<td>字符串| 数字</td>
+<td>“top”: 20</td>
+</tr>
+<tr>
+<td>orient</td>
+<td>图例的排列方向</td>
+<td>字符串</td>
+<td>“orient”: “horizontal”（水平排列）</td>
+</tr>
+<tr>
+<td>textStyle</td>
+<td>图例的字体样式</td>
+<td>对象</td>
+<td>“textStyle”: { “color”: “#666”, “fontSize”: “12”, “fontFamily”: “PF”, “fontWeight”: “normal” }</td>
+</tr>
+<tr>
+<td>data</td>
+<td>图例的数据</td>
+<td>数组</td>
+<td>“data”: [“示例”, “示例 2”]</td>
+</tr>
+</tbody></table>
+</li>
+</ol>
+</li>
+</ul>
+</div><div class="article-licensing box"><div class="licensing-title"><p>Storybook的基本使用指南</p><p><a href="https://ths-fe.github.io/2020/09/27/storybook%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/">https://ths-fe.github.io/2020/09/27/storybook%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>老吕</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2020-09-27</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2020-09-27</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a class="" rel="noopener" target="_blank" title="CC BY-NC-SA 4.0" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a></p></div></div></div></div></div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/Storybook/">Storybook</a></div><div class="sharethis-inline-share-buttons"></div><script src="https://platform-api.sharethis.com/js/sharethis.js#property=5ea1492221690600121bcf3a&amp;product=inline-share-buttons&amp;cms=sop" defer></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/img/alipayqr.jpg" alt="支付宝"></span></a><a class="button donate" href="https://www.buymeacoffee.com/zapzqc?new=1" target="_blank" rel="noopener" data-type="buymeacoffee"><span class="icon is-small"><i class="fas fa-coffee"></i></span><span>送我杯咖啡</span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/img/wechatqr.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2020/09/30/%E4%BC%98%E5%8C%96if-else%E9%80%BB%E8%BE%91%E5%88%A4%E6%96%AD/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">if-else逻辑判断优化</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2020/09/14/Vue3-js%E6%A8%A1%E6%9D%BF%E9%A1%B9%E7%9B%AE%E5%88%9B%E5%BB%BA/"><span class="level-item">Vue3.js模板项目创建</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div class="content" id="valine-thread"></div><script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script><script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script><script>new Valine({
+            el: '#valine-thread' ,
+            appId: "4o5OfjCIGaSyqIwg7jop80Ge-gzGzoHsz",
+            appKey: "Rj9jcPLhW8WgWd6bDmXGmKaA",
+            placeholder: "欢迎评论交流",
+            avatar: "mm",
+            
+            meta: ["nick","mail","link"],
+            pageSize: 10,
+            lang: "zh-CN",
+            
+            highlight: true,
+            
+            
+            
+            
+            
+            requiredFields: [],
+        });</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="level is-mobile" href="#1-什么是-Storybook"><span class="level-left"><span class="level-item">1 什么是 Storybook</span></span></a></li><li><a class="level is-mobile" href="#2-Storybook-的开发流程"><span class="level-left"><span class="level-item">2 Storybook 的开发流程</span></span></a></li><li><a class="level is-mobile" href="#3-Storybook-的文件目录"><span class="level-left"><span class="level-item">3 Storybook 的文件目录</span></span></a></li><li><a class="level is-mobile" href="#4-快速构建一个-Storybook"><span class="level-left"><span class="level-item">4 快速构建一个 Storybook</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#4-1-编写一个最基本的-story"><span class="level-left"><span class="level-item">4.1 编写一个最基本的 story</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#4-1-1-CSF（-Component-Story-Format-）方式"><span class="level-left"><span class="level-item">4.1.1 CSF（ Component Story Format ）方式</span></span></a></li><li><a class="level is-mobile" href="#4-1-2-StoriesOf-方式"><span class="level-left"><span class="level-item">4.1.2 StoriesOf 方式</span></span></a></li></ul></li><li><a class="level is-mobile" href="#4-2-Storybook-插件的安装与配置"><span class="level-left"><span class="level-item">4.2 Storybook 插件的安装与配置</span></span></a></li><li><a class="level is-mobile" href="#4-3-常用插件的使用"><span class="level-left"><span class="level-item">4.3 常用插件的使用</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#4-3-1-Storybook-插件之-Knobs"><span class="level-left"><span class="level-item">4.3.1 Storybook 插件之 Knobs</span></span></a></li><li><a class="level is-mobile" href="#4-3-2-Storybook-插件之-notes"><span class="level-left"><span class="level-item">4.3.2 Storybook 插件之 notes</span></span></a></li></ul></li></ul></li><li><a class="level is-mobile" href="#5-md-示例"><span class="level-left"><span class="level-item">5 md 示例</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#5-1-组件功能简介"><span class="level-left"><span class="level-item">5.1 组件功能简介</span></span></a></li><li><a class="level is-mobile" href="#5-2-组件引用配置示例"><span class="level-left"><span class="level-item">5.2 组件引用配置示例</span></span></a></li><li><a class="level is-mobile" href="#5-3-组件配置项说明"><span class="level-left"><span class="level-item">5.3 组件配置项说明</span></span></a></li></ul></li></ul></div></div><style>.menu-list > li > a.is-active + .menu-list { display: block; }.menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div><div class="card widget" data-type="adsense"><div class="card-content"><div class="menu"><h3 class="menu-label"> </h3><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6826040978803389" data-ad-slot="1033672070" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/ths.png" alt="思路大前端团队" height="28"></a><p class="is-size-7"><span>&copy; 2020 老吕</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a><br><span id="busuanzi_container_site_uv">共<span id="busuanzi_value_site_uv">0</span>个访客</span></p></div><div class="level-end"></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" async></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>
