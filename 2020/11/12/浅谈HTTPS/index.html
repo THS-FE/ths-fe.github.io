@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>浅谈HTTPS - 思路大前端团队</title><link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#f7f7f7"><meta name="application-name" content="思路大前端"><meta name="msapplication-TileImage" content="/img/favicon.ico"><meta name="msapplication-TileColor" content="#f7f7f7"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="思路大前端"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta description="本文主要介绍了OSI模型以及HTTPS的相关概念及SSL证书申请"><meta property="og:type" content="blog"><meta property="og:title" content="浅谈HTTPS"><meta property="og:url" content="https://ths-fe.github.io/2020/11/12/%E6%B5%85%E8%B0%88HTTPS/"><meta property="og:site_name" content="思路大前端团队"><meta property="og:description" content="本文主要介绍了OSI模型以及HTTPS的相关概念及SSL证书申请"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://ths-fe.github.io/2020/11/12/%E6%B5%85%E8%B0%88HTTPS/cover.jpg"><meta property="article:published_time" content="2020-11-12T04:00:00.000Z"><meta property="article:modified_time" content="2020-11-12T04:00:00.000Z"><meta property="article:author" content="苏永蓬"><meta property="article:tag" content="HTTPS"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="/2020/11/12/%E6%B5%85%E8%B0%88HTTPS/cover.jpg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://ths-fe.github.io/2020/11/12/%E6%B5%85%E8%B0%88HTTPS/"},"headline":"思路大前端团队","image":["https://ths-fe.github.io/2020/11/12/%E6%B5%85%E8%B0%88HTTPS/cover.jpg"],"datePublished":"2020-11-12T04:00:00.000Z","dateModified":"2020-11-12T04:00:00.000Z","author":{"@type":"Person","name":"苏永蓬"},"description":"本文主要介绍了OSI模型以及HTTPS的相关概念及SSL证书申请"}</script><link rel="canonical" href="https://ths-fe.github.io/2020/11/12/%E6%B5%85%E8%B0%88HTTPS/"><link rel="icon" href="/img/favicon.ico"><link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.13.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/monokai.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><script>var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?fd8cc3421abec7b8f4e6bc337e25c7d1";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();</script><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><script src="https://www.googletagmanager.com/gtag/js?id=UA-72716512-3" async></script><script>window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+    
+        gtag('config', 'UA-72716512-3');</script><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><script data-ad-client="ca-pub-6826040978803389" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" async></script><meta name="generator" content="Hexo 5.2.0"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/ths.png" alt="思路大前端团队" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">博客</a><a class="navbar-item" href="/fe">大前端技术体系</a><a class="navbar-item" href="/gis">GIS技术体系</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/about">关于我们</a></div><div class="navbar-end"><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><div class="card-image"><span class="image is-7by3"><img class="fill" src="/2020/11/12/%E6%B5%85%E8%B0%88HTTPS/cover.jpg" alt="浅谈HTTPS"></span></div><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2020-11-12T04:00:00.000Z" title="2020-11-12T04:00:00.000Z">2020-11-12</time>发表</span><span class="level-item"><time dateTime="2020-11-12T04:00:00.000Z" title="2020-11-12T04:00:00.000Z">2020-11-12</time>更新</span><span class="level-item"> 苏永蓬 </span><span class="level-item"><a class="link-muted" href="/categories/%E5%8D%8F%E8%AE%AE/">协议</a></span><span class="level-item">1 小时读完 (大约8879个字)</span><span class="level-item" id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv">0</span>次访问</span></div></div><h1 class="title is-3 is-size-4-mobile">浅谈HTTPS</h1><div class="content"><h1 id="1-OSI模型"><a href="#1-OSI模型" class="headerlink" title="1 OSI模型"></a>1 OSI模型</h1><p><strong>开放式系统互联通信参考模型</strong>（英语：Open System Interconnection Reference Model，缩写为 OSI），简称为OSI模型（OSI model），一种概念模型，用来表述任意两台计算机数据交互的过程。</p>
+<p><img src="7model.png" alt="OSI七层模型"></p>
+<h2 id="1-1-为什么需要会有OSi模型呢"><a href="#1-1-为什么需要会有OSi模型呢" class="headerlink" title="1.1 为什么需要会有OSi模型呢"></a>1.1 为什么需要会有OSi模型呢</h2><p>在网络建立的初始阶段，是由各个厂商自己建立两台主机的数据交换方式，从而导致<strong>异构（不同网络结构的）</strong>的主机不能互联。为了解决这个问题，由国际标准化组织提出创建了OSI模型。</p>
+<h2 id="1-2-为什么要使用分层网络模型"><a href="#1-2-为什么要使用分层网络模型" class="headerlink" title="1.2 为什么要使用分层网络模型"></a>1.2 为什么要使用分层网络模型</h2><ul>
+<li>降低复杂性</li>
+<li>标准化接口</li>
+<li>简化模块化设计</li>
+<li>确保技术的互操作性</li>
+<li>加快发展速度</li>
+<li>简化教学</li>
+</ul>
+<h2 id="1-3-OSI七层模型"><a href="#1-3-OSI七层模型" class="headerlink" title="1.3 OSI七层模型"></a>1.3 OSI七层模型</h2><p>OSI 将<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84">计算机网络体系结构</a>( architecture ）划分为以下七层：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%BA%94%E7%94%A8%E5%B1%82/16412033">应用层</a><br>提供为应用软件而设的接口，以设置与另一应用软件之间的通信。例如: HTTP，HTTPS，FTP，TELNET，SSH，SMTP，POP3等。</li>
+<li>表达层<br>把数据转换为能与接收者的系统格式兼容并适合传输的格式<ul>
+<li>确保接收系统可以读出数据</li>
+<li>格式化数据</li>
+<li>构建数据</li>
+<li>协商用于应用层的数据传输语法</li>
+<li>提供加密</li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E4%BC%9A%E8%AF%9D%E5%B1%82">会话层</a><br>建立、管理和终止在<strong>应用程序</strong>之间的会话（不同应用之间不能接收消息）</li>
+<li><a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E4%BC%A0%E8%BE%93%E5%B1%82">传输层</a><ul>
+<li>建立端到端（主机到主机）的连接</li>
+<li>把传输表头（TH）加至数据以形成数据包。传输表头包含了所使用的协议等发送信息。例如:传输控制协议（TCP）等。</li>
+<li>确保数据传输的可靠性</li>
+<li>建立、维护和终止虚拟电路</li>
+<li>通过错误检测和回复</li>
+<li>信息流控制来保障可靠性</li>
+</ul>
+</li>
+<li>网络层<br>决定数据的路径选择和转寄，将网络表头（NH）加至数据包，以形成分组。网络表头包含了网络数据。例如:互联网协议（IP）等。<ul>
+<li>路由数据包</li>
+<li>选择传递数据的最佳路径</li>
+<li>支持网逻辑寻址（IP）和路径选择</li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82">数据链路层</a><br>负责网络寻址、错误侦测和改错。当表头和表尾被加至数据包时，会形成帧。数据链表头（DLH）是包含了物理地址和错误侦测及改错的方法。数据链表尾（DLT）是一串指示数据包末端的字符串。例如以太网、无线局域网（Wi-Fi）和通用分组无线服务（GPRS）等。<br>分为两个子层：逻辑链路控制（logic link control，LLC）子层和介质访问控制（media access control，MAC）子层。<ul>
+<li>定义如何格式化数据以便进行传输以及如何控制对网络的访问。</li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E7%89%A9%E7%90%86%E5%B1%82">物理层</a><br>物理层（Physical Layer）在局部局域网上传送数据帧（data frame），它负责管理计算机通信设备和网络媒体之间的互通。为启动、维护以及关闭物理链路定义了电器规范、机械规范、过程规范和功能规范，包括了网线、针脚、电压、线缆规范、集线器、中继器、网卡、主机适配器等，不符合规范的将不能互联。</li>
+</ul>
+<p>我们做的是软件相关的，所以只关注<strong>应用层、表示层、会话层</strong>就行，下面传输层、网络层、数据链路层是由专业的网络架构人员维护的，物理层一般是都已经定义好了的。</p>
+<h2 id="1-4-形象示例"><a href="#1-4-形象示例" class="headerlink" title="1.4 形象示例"></a>1.4 形象示例</h2><p>下面我以QQ甲向QQ乙发送一个笑脸表情为例来分析各层的处理：</p>
+<ol>
+<li>应用层：输入一个笑脸</li>
+<li>表达层：把笑脸命令通过加密等操作转换为机器能识别的语言（比如说二进制数据 101010）</li>
+<li>会话层：维持QQ甲与QQ乙的会话连接</li>
+<li>传输层：建立QQ甲与QQ乙的连接，QQ使用的是<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/UDP/571511?fromtitle=UDP%E5%8D%8F%E8%AE%AE&fromid=421768&fr=aladdin">UDP协议</a>,并把相关表头加到表达层的数据中</li>
+<li>网络层：路由寻址，找到乙所在的位置（IP），并把这些信息加到传输层中</li>
+<li>数据链路层：数据链路层是找到能唯一标识设备的<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/MAC%E5%9C%B0%E5%9D%80/1254181?fr=aladdin">MAC</a>(用于在网络中唯一标示一个网卡)信息,并把数据加到网络层数据中</li>
+<li>物理层：把所有数据转为二进制来传输</li>
+</ol>
+<h2 id="1-5-TCP-IP协议栈"><a href="#1-5-TCP-IP协议栈" class="headerlink" title="1.5 TCP/IP协议栈"></a>1.5 <a target="_blank" rel="noopener" href="https://baike.baidu.com/item/TCP%2FIP%E5%8D%8F%E8%AE%AE/212915?fromtitle=tcp/ip&fromid=214077&fr=aladdin">TCP/IP协议栈</a></h2><p>TCP/IP（Transmission Control Protocol/Internet Protocol，传输控制协议/网际协议）是指能够在多个不同网络间实现信息传输的协议<strong>簇</strong>，也是OSI模型的一个实例。</p>
+<p><img src="TCPIP.png" alt="TCP/IP协议栈与OSI模型"></p>
+<h1 id="2-HTTP的四次挥手"><a href="#2-HTTP的四次挥手" class="headerlink" title="2 HTTP的四次挥手"></a>2 HTTP的四次挥手</h1><h2 id="2-1-过程描述"><a href="#2-1-过程描述" class="headerlink" title="2.1 过程描述"></a>2.1 过程描述</h2><p><img src="close1.jpg" alt="计算机网络-谢希仁-四次挥手"></p>
+<p>几个报文的标识的解释:</p>
+<ul>
+<li><p>SYN: synchronization (同步)</p>
+</li>
+<li><p>ACK: acknowledgement (确认:告知已收到)</p>
+</li>
+<li><p>FIN: finish (结束)</p>
+</li>
+</ul>
+<p>首先，当前客户端和服务器的状态都为<strong>连接状态（ESTABLISHED）</strong>，接下来我们详细讲解下上图的过程：</p>
+<ul>
+<li>客户主机发起连接释放的请求，设置 FIN 为1，当然，序号 seq 也会带上，这里假设为 u ；发送完毕后，客户端进入 FIN-WAIT-1 状态</li>
+</ul>
+<p><img src="close2.jpg" alt="第一次挥手 FIN 报文"></p>
+<ul>
+<li>服务端接收到 FIN 报文后，会返回一个 ACK 报文回去，此时设置 ACK 为 1 ，确认号为 u + 1 ；表明自己接受到了客户端关闭连接的请求，但还没有准备好关闭连接。发送完毕后，服务器端进入 CLOSE-WAIT 状态，客户端接收到这个确认包之后，进入 FIN-WAIT-2 状态，等待服务器端关闭连接。</li>
+</ul>
+<p><img src="close3.jpg" alt="第二次挥手 ACK 报文"></p>
+<ul>
+<li>服务器端准备好关闭连接时，向客户端发送结束连接请求，FIN 置为 1 ；发送完毕后，服务器端进入 LAST-ACK 状态，等待来自客户端的最后一个 ACK 。</li>
+</ul>
+<p><img src="close4.jpg" alt="第三次挥手 FIN 报文"></p>
+<ul>
+<li>客户端接收到服务端传来的FIN 报文后，知道服务器已经准备好关闭了，发送一个确认包，并进入 TIME-WAIT状态，等待可能出现的要求重传的ACK 报文；服务器端接收到这个确认包之后，关闭连接，进入 CLOSED 状态。<br>客户端等待了某个固定时间（两个最大段生命周期，2MSL，2 Maximum Segment Lifetime）之后，没有收到服务器端的 ACK ，认为服务器端已经正常关闭连接，于是自己也关闭连接，进入 CLOSED 状态。</li>
+</ul>
+<p><img src="close5.jpg" alt="第四次挥手 ACK 报文"></p>
+<h2 id="2-2-形象示例"><a href="#2-2-形象示例" class="headerlink" title="2.2 形象示例"></a>2.2 形象示例</h2><p>儿子（客户端）和妈（服务端）的最后对话：<br>儿子向妈：妈，我挂电话啦？<br>妈向儿子：行。<br>妈向儿子：挂吧。<br>儿子向妈：挂啦，妈，拜拜！<br>儿子稍微等一下，确定妈没有其他事了，就挂断了电话。</p>
+<h2 id="2-3-为什么挥手是四次不是三次（为什么握手是三次挥手是四次）"><a href="#2-3-为什么挥手是四次不是三次（为什么握手是三次挥手是四次）" class="headerlink" title="2.3 为什么挥手是四次不是三次（为什么握手是三次挥手是四次）"></a>2.3 为什么挥手是四次不是三次（为什么握手是三次挥手是四次）</h2><p>因为只有在<strong>客户端和服务端都没有数据发送的时候才能断开连接</strong>，客户端发出 FIN 报文时只能保证客户端没有数据发了，服务端还有没有数据发给客户端是不知道的。所以服务端收到客户端的 FIN 报文后只能先回复客户端一个确认报文来告诉客户端服务端已经收到你的 FIN 报文了，但服务端还有一些数据没发完，等这些数据发完了服务端才能给客户端发 FIN 报文(所以不能一次性将确认报文和 FIN 报文发给客户端)。</p>
+<h2 id="2-4-为什么客户端发出第四次挥手的确认报文后不会立刻释放TCP连接"><a href="#2-4-为什么客户端发出第四次挥手的确认报文后不会立刻释放TCP连接" class="headerlink" title="2.4 为什么客户端发出第四次挥手的确认报文后不会立刻释放TCP连接"></a>2.4 为什么客户端发出第四次挥手的确认报文后不会立刻释放TCP连接</h2><p>这里同样是要考虑<strong>丢包</strong>的问题，如果第四次挥手的报文丢失，服务端没收到确认 ACK 报文就会重发第三次挥手的报文，这样报文一去一回最长时间就是 2MSL ，所以客户端需要等这么长时间来确认服务端确实已经收到了。</p>
+<h2 id="2-5-已经建立了连接如果客户端突然出现故障了怎么办"><a href="#2-5-已经建立了连接如果客户端突然出现故障了怎么办" class="headerlink" title="2.5 已经建立了连接如果客户端突然出现故障了怎么办"></a>2.5 已经建立了连接如果客户端突然出现故障了怎么办</h2><p>TCP 有一个计时器机制，服务端每次接收到客户端的请求都会复位这个计时器，当一定时间没有收到客户端的信息服务端就会发送一个探测报文，如果依然没有响应之后每隔 75s 重新发送一次，如果连着 10 个探测报文没有响应服务器就认为客户端出现了故障，会主动关闭连接。</p>
+<h1 id="3-HTTPS与HTTP的区别"><a href="#3-HTTPS与HTTP的区别" class="headerlink" title="3 HTTPS与HTTP的区别"></a>3 HTTPS与HTTP的区别</h1><p>我们现在都只知道 https 已经是<strong>大势所趋</strong>，但对 https 和 http 之间的区别还不是特别清楚，下面是我总结的他们的对比：</p>
+<table>
+<thead>
+<tr>
+<th align="left">http</th>
+<th align="left">vs</th>
+<th align="left">https</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">明文传输，网站或相关服务与用户之间的<strong>数据交互无加密</strong>，极易被监听，破解甚至篡改</td>
+<td align="left">传输方式</td>
+<td align="left">在 HTTP 下加入了 SSL 层，是<strong>数据传输变成加密模式</strong>，从而保护了交换数据隐私和完整性，简单来说它就是安全版的 HTTP</td>
+</tr>
+<tr>
+<td align="left"><strong>无任何身份认证</strong>，用户无法通过http辨认出网站的真实身份</td>
+<td align="left">身份认证</td>
+<td align="left"><strong>经过证书颁发机构（CA, Certificate Authority）多重认证</strong>，包括域名管理权限认证，单位身份合法性确认等。EV证书甚至可以直接在浏览器地址栏显示单位名称，提升用户体验</td>
+</tr>
+<tr>
+<td align="left">无任何使用成本，所有网站默认即 http 模式</td>
+<td align="left">实现成本</td>
+<td align="left"><strong>需要申请SSL证书</strong>来实现https，价格几百元到上万元不等</td>
+</tr>
+<tr>
+<td align="left">80端口</td>
+<td align="left">端口</td>
+<td align="left">443端口</td>
+</tr>
+<tr>
+<td align="left">1.提示网站不安全 <img src="no-safe.png" alt=" "> 2.当您的网站上有类似注册登陆等表单时，用户一旦进行输入，浏览器便红色高亮显示“不安全” <img src="no-safe2.png" alt=" "></td>
+<td align="left">浏览器兼容性</td>
+<td align="left">1.提示网站连接是安全的<br> <img src="safe.jpg" alt=" "> 2.当您申请的是“EVSSL证书”时，浏览器地址栏会直接显示您的单位名称，可显著提升网站用户的信任度和单位形象 <img src="safe2.jpg" alt=" "></td>
+</tr>
+<tr>
+<td align="left">对http网站无任何优待</td>
+<td align="left">SEO优化</td>
+<td align="left">百度谷歌等官方声明提高 https 网站的排名权重</td>
+</tr>
+<tr>
+<td align="left">极易被黑客或者恶意的同行进行流量劫持</td>
+<td align="left">网站劫持</td>
+<td align="left">隐私信息加密，防止流量劫持</td>
+</tr>
+<tr>
+<td align="left">访问速度根据网站服务器配置和客户端的浏览环境而定</td>
+<td align="left">访问速度</td>
+<td align="left">在同样配置的服务器以及客户端浏览环境下，可明显提高网页加载速度</td>
+</tr>
+<tr>
+<td align="left">当网站需要与第三方平台进行对接时，通常不接受http这种连接。例如微信小程序，苹果ATS，抖音上做广告等等</td>
+<td align="left">数据对接</td>
+<td align="left">微信小程序，抖音，苹果等等越来越多的平台只接受https这种加密的安全链接</td>
+</tr>
+<tr>
+<td align="left">经常因为没有https,而被各个浏览器或者其他平台显示风险警告，导致损害用户的信任度</td>
+<td align="left">网站形象</td>
+<td align="left">为网站的用户营造安全的浏览环境，是网站的基本责任，也是赢得用户信赖的一个重要因素</td>
+</tr>
+<tr>
+<td align="left">无任何风险保障，当网站数据传输被截取导致重大损失时，只有网站运营者自己承担</td>
+<td align="left">风险保障</td>
+<td align="left">拥有10万-175万美元的商业保险，当网站数据传输被破解时，有巨额的保障额度</td>
+</tr>
+</tbody></table>
+<h1 id="4-HTTPS-特性"><a href="#4-HTTPS-特性" class="headerlink" title="4 HTTPS 特性"></a>4 HTTPS 特性</h1><p>为了解决这些不足，HTTPS 多了以下特性：</p>
+<ul>
+<li>TLS/SSL内容加密</li>
+<li>数字证书(CA)验明身份: 防范中间人攻击</li>
+<li>MD5、SHA-1等散列值方法防止信息篡改</li>
+</ul>
+<p>HTTPS 相对于 HTTP 性能上差点，因为多了 SSL/TLS 的几次握手和加密解密的运算处理，但是加密解密的运算处理已经可以通过特有的硬件来加速处理。</p>
+<h2 id="4-1-SSL-TLS"><a href="#4-1-SSL-TLS" class="headerlink" title="4.1 SSL/TLS"></a>4.1 SSL/TLS</h2><p>SSL(Secure Sockets Layer 安全套接层),及其继任者传输层安全（Transport Layer Security，TLS）是为网络通信提供安全及数据完整性的一种安全协议。TLS与SSL在传输层对网络连接进行加密。</p>
+<div align=center><img src="ssltls.png" alt="SSL/TLS"></div>
+
+<p>为了保护敏感数据在传送过程中的安全，全球许多知名企业采用SSL加密机制，也随着数据安全的重要性和趋势，越来越多的网站都开始接入HTTPS。</p>
+<p>SSL协议提供的安全通道有以下三个特性：</p>
+<ul>
+<li>机密性：SSL协议使用密钥加密通信数据。</li>
+<li>可靠性：服务器和客户都会被认证，客户的认证是可选的。</li>
+<li>完整性：SSL协议会对传送的数据进行完整性检查。</li>
+</ul>
+<p>简单地讲，SSL/TLS 就是同时结合各种密码算法、数字签名算法及数字证书等技术的一套协议，目的就是为了保证通信的安全性。 采用SSL/TLS协议，通信双方建立连接之前需要进行握手，目的是协商出会话密钥，用于后续对通信数据的加解密操作</p>
+<h1 id="4-2-HTTPS-加密方式"><a href="#4-2-HTTPS-加密方式" class="headerlink" title="4.2 HTTPS 加密方式"></a>4.2 HTTPS 加密方式</h1><p>加密的目的是保证传输的内容只有对话双方能看懂</p>
+<p>下面以中国的张大胖于米国的 Bill 进行通信为例</p>
+<p>方式一、使用对称密钥</p>
+<hr>
+<p><img src="jiami1.png" alt="使用对称密钥"></p>
+<p>两人商量了一下，可以使用对称密钥进行加密。（对称密钥也就是加密和解密使用的是同一个密钥）</p>
+<p>但是问题又来了，既然网络是不安全的，那么最开始的时候怎么将这个对称密钥发送出去呢？如果对称密钥在发送的时候就已经被拦截，那么发送的信息还是会被篡改和窥视啊~~</p>
+<p>所以这种对称密钥的弊端就是，可能被中间人拦截，这样中间人就可以获取到了密钥，就可以对传输的信息进行窥视和篡改。</p>
+<p>方式二、使用非对称密钥</p>
+<hr>
+<p><img src="jiami2.png" alt="使用非对称密钥"></p>
+<p>RSA（非对称加密算法）：双方必须协商一对密钥，一个私钥一个公钥。用私钥加密的数据，只有对应的公钥才能解密，用公钥加密的数据， 只有对应的私钥才能解密。</p>
+<p><img src="jiami3.png" alt="非对称加密算法"></p>
+<p>这样的话 Bill 将自己的公钥给张大胖，张大胖发送的信息使用 Bill 的公钥加密，这样，只有 Bill 使用自己的私钥才能获取</p>
+<p>但是这样有个弊端：</p>
+<ul>
+<li>RSA 算法很慢= =，要慢很多</li>
+</ul>
+<p>所以为了解决这个问题，我们使用非对称密钥+对称密钥结合的方式</p>
+<p>方式三、非对称密钥+对称密钥</p>
+<hr>
+<p>使用对称密钥的好处是速度比较快，使用非对称密钥的好处是可以使得传输的内容不能被破解，因为就算你拦截到了数据，但是没有 Bill 的私钥，也是不能破解内容的。就比如说你抢了一个保险柜，但是没有保险柜的钥匙也不能打开保险柜。<br>所以我们要结合两者的优点。使用 RSA 的方法将加密算法的对称密钥发送过去，之后就可以使用这个密钥，利用对称密钥来通信了。就比如说我将钥匙放进了保险柜，然后将保险柜寄给对方。</p>
+<p>中间人攻击</p>
+<hr>
+<p>还有一个问题就是在使用非对称密钥的时候，首先需要将 Bill 的公钥给张大胖，那么在这个过程中，安全是没有保障的，中间人可以拦截到 Bill 的公钥，就可以对拦截到的公钥进行篡改。</p>
+<p>这也就是相当于我有手机号，虽然是公开的，谁都可以给我打电话，但是刚开始你并不知道我的手机号，我需要将我的手机号发给你，在我发给你我的手机号的时候，被中间人拦截了，然后将我正确的手机号换成了错误的手机号，比如：110，然后，你收到的就是错误的手机号：110，但是你自己还不知道你收到的是错的手机号，这时候，你要是给我打电话，就尴尬了~~</p>
+<p>确认身份 —— 数字证书</p>
+<hr>
+<p>所以以上的步骤都是可行的，只需要最后一点就可以了，要确定 Bill 给张大胖的公钥确实是 Bill 的公钥，而不是别人的。（刚刚电话号码的那个例子，也就是说，需要确定我给你发的电话号码是我的，没有被修改的）</p>
+<p>那怎么确认 Bill 给张大胖的公钥确实是 Bill 的呢？</p>
+<p>这个时候就需要公证处的存在了。也就是说我需要先将我的电话号码到公证处去公证一下，然后我将电话号码传给你之后，你在将你收到的电话号码和公证处的比对下，就知道是不是我的了。</p>
+<p>对应到计算机世界，那就是数字签名</p>
+<p><img src="ca1.png" alt="数字签名"></p>
+<p>数字签名也就是相当于公证处在公证书上盖章。</p>
+<p><img src="ca2.png" alt="数字证书"></p>
+<p>数字签名和原始信息合在一起称为数字证书，Bill 只需将数字证书发送给张大胖就可以了。</p>
+<p>在拿到数字证书之后，就用同样的 Hash 算法， 再次生成消息摘要，然后用 CA 的公钥对数字签名解密， 得到CA创建的消息摘要， 两者一比，就知道有没有人篡改了！</p>
+<p><img src="ca3.png" alt="对比消息摘要是否相同"></p>
+<h2 id="4-3-SSL协议的握手过程"><a href="#4-3-SSL协议的握手过程" class="headerlink" title="4.3 SSL协议的握手过程"></a>4.3 SSL协议的握手过程</h2><h3 id="4-3-1-形象示例"><a href="#4-3-1-形象示例" class="headerlink" title="4.3.1 形象示例"></a>4.3.1 形象示例</h3><p>在正式分析之前，先引入阮一峰老师的图解 SSL/TLS 协议帮大家快速理解下基础概念，这边 john 将对话内容翻译成中文:</p>
+<p><img src="ssltls1.png" alt="阮一峰-SSL/TLS对话"></p>
+<p>握手阶段分成五步：</p>
+<ol>
+<li>第一步，爱丽丝给出协议版本号、一个客户端生成的随机数（Client random），<br>以及客户端支持的加密方法。</li>
+<li>第二步，鲍勃确认双方使用的加密方法，并给出数字证书、以及一个服务器生成的随机数<br>（Server random）。</li>
+<li>第三步，爱丽丝确认数字证书有效，然后生成一个新的随机数（Premaster secret），<br>并使用数字证书中的公钥，加密这个随机数，发给鲍勃。</li>
+<li>第四步，鲍勃使用自己的私钥，获取爱丽丝发来的随机数（即Premaster secret）。</li>
+<li>第五步，爱丽丝和鲍勃根据约定的加密方法，使用前面的三个随机数，生成”对话密钥”<br>（session key），用来加密接下来的整个对话过程。</li>
+</ol>
+<h3 id="4-3-2-综合分析"><a href="#4-3-2-综合分析" class="headerlink" title="4.3.2 综合分析"></a>4.3.2 综合分析</h3><ol>
+<li>客户端先生成一个<strong>随机数</strong>，然后传输到服务端，并且会带上客户端这边支持的所有<strong>加密套件</strong></li>
+<li>服务端拿到这个随机数之后先存起来，服务端也生成一个随机数，这个随机数会伴随着服务端的<strong>证书</strong>，也就是我们之前说到的<strong>公钥</strong>，一起传输给客户端</li>
+<li>客户端拿到了服务端的随机数之后也先存着，通过服务端传给他的公钥生成一个<strong>预主秘钥</strong>，生成过程当中会产生一个新的随机数，所以总共是有<strong>三个随机数</strong>，客户端生成的这个随机数用公钥加密后传输给服务器这边，这个过程就是没有办法被中间人解析的一个过程，因为它使用的是公钥进行加密，只有服务端这边的<strong>私钥</strong>可以对其解密</li>
+<li>这个数据传输到服务器之后，服务器通过私钥解密，拿到了预主秘钥也就是我们说的那个随机字符串</li>
+<li>最终服务端会选择一个客户端这边支持的加密套件，然后两边确定同时使用这同一个加密套件，对这三个随机数进行一个<strong>算法</strong>的操作，生成一个<strong>主秘钥</strong>，因为最后一个随机数只有客户端和服务端知道，中间人根本拿不到，所以他们生成的这个主秘钥也是中间人根本没有办法破解的，后期传输的数据就全部是通过这个主秘钥进行加密的，因为两边主秘钥是一样的，所以两边都能够对数据加密之后进行解密，中间人因为没有办法知道这个主秘钥，所以他没有办法对数据进行解密，所以这中间的数据传输就变成了安全的传输</li>
+</ol>
+<p><img src="ssltls2.png" alt="SSL/TLS握手"></p>
+<h1 id="6-域名申请"><a href="#6-域名申请" class="headerlink" title="6 域名申请"></a>6 域名申请</h1><p>域名申请以 <a target="_blank" rel="noopener" href="https://www.west.cn/">西部数码</a> 平台为例，其他平台操作基本相同。</p>
+<ol>
+<li>注册后，在首页搜索你想要申请的域名，他会查出该域名及相关域名的注册情况和对应的首年的花费。</li>
+</ol>
+<p><img src="west1.png" alt="域名查询"></p>
+<ol start="2">
+<li>根据需求和要求填写相关资料</li>
+</ol>
+<p><img src="west2.png" alt="资料申请"></p>
+<ol start="3">
+<li>购买</li>
+</ol>
+<p><img src="west3.png" alt="购买"><br><img src="west4.png" alt="购买成功"></p>
+<ol start="4">
+<li>实名认证</li>
+</ol>
+<p><img src="west5.png" alt="实名认证"></p>
+<p><img src="west6.png" alt="实名认证成功"></p>
+<ol start="5">
+<li>域名解析</li>
+</ol>
+<p>域名解析是为了把域名和自己的服务器在<strong>整个网络中声明和绑定</strong>。</p>
+<p>点击操作 -&gt; 解析，这里以有服务器（腾讯云）为例。</p>
+<p>根据下面的<strong>温馨提示</strong>，在对应值除输入服务器的公网 IP，输入后点击保存（如果需要实名认证，请自行输入完成）。这时域名还不能直接使用，需要等待域名实名通过才行。</p>
+<p>等域名实名通过后和这里服务器 IP 填写没有问题时，点击上方的<strong>解析诊断</strong>，应该会弹出下面的提示。</p>
+<div align=center><img src="west7.png" alt="域名解析成功"></div>
+
+<p>下面提供自己电脑解析使用的方式：</p>
+<ul>
+<li>打开文件：C:\Windows\System32\drivers\etc\host</li>
+<li>在文件最后新增：</li>
+</ul>
+<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">81.70.27.70     suyp.top</span><br></pre></td></tr></table></figure>
+
+<p>注：</p>
+<ul>
+<li><p>域名解析时先会找浏览器缓存和本地的 HOST 文件，找不到才会向网络中的分布式域名存储节点查询</p>
+</li>
+<li><p>域名解析就是把你的域名和 IP 对应关系放到分布式域名存储节点中</p>
+</li>
+</ul>
+<ol start="6">
+<li>到此，在域名到期前，域名和我们的服务器就绑定在一起了</li>
+</ol>
+<h1 id="7-证书申请"><a href="#7-证书申请" class="headerlink" title="7 证书申请"></a>7 证书申请</h1><h2 id="7-1-申请平台"><a href="#7-1-申请平台" class="headerlink" title="7.1 申请平台"></a>7.1 申请平台</h2><p>下面列举了一些常见的证书申请平台：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://letsencrypt.org/">let’s encrypt</a><br>let’s encrypt可以申请免费的TLS证书，每3个月需要手动续</li>
+<li><a target="_blank" rel="noopener" href="https://console.cloud.tencent.com/ssl">腾讯云</a><br><img src="tengxun-ssl.png" alt="腾讯云证书申请"></li>
+<li><a target="_blank" rel="noopener" href="https://www.aliyun.com/product/security/markets/aliyun/product/cas?spm=5176.10695662.782131.3.7070720fdKDsQP">阿里云</a><br><img src="ali-ssl.png" alt="阿里云证书申请"></li>
+<li><a target="_blank" rel="noopener" href="https://www.west.cn/web/ssl/manage/">西部数码</a><br><img src="sibushuma-ssl.png" alt="西部数码证书申请"></li>
+<li><a target="_blank" rel="noopener" href="https://freessl.cn/">FreeSSL</a><br><img src="freeSSL.png" alt="FreeSSL西部数码证书申请"></li>
+</ul>
+<h2 id="7-2-证书的类型"><a href="#7-2-证书的类型" class="headerlink" title="7.2 证书的类型"></a>7.2 证书的类型</h2><ul>
+<li>域名验证型( DV ) SSL 证书</li>
+<li>组织验证型( OV ) SSL 证书</li>
+<li>扩展验证型( EV ) SSL 证书</li>
+</ul>
+<p>DV适用于个人，OV和EV需要身份审核，EV最高端。</p>
+<p>EV证书会在浏览器的地址栏显示证书的企业名称：</p>
+<p><img src="EV.png" alt="EV证书效果"></p>
+<h2 id="7-3-证书申请流程"><a href="#7-3-证书申请流程" class="headerlink" title="7.3 证书申请流程"></a>7.3 证书申请流程</h2><p>下面以 FreeSSL 证书申请平台为例。</p>
+<ol>
+<li><p>打开 <a target="_blank" rel="noopener" href="https://freessl.cn/">FreeSSL</a> 网站，在输入框中输入自己的域名</p>
+</li>
+<li><p>品牌选择：亚洲诚信 （品牌差异后面介绍），点击 创建免费的SSL证书</p>
+</li>
+</ol>
+<p><img src="ssl1.png" alt="输入域名"></p>
+<ol start="3">
+<li>输入自己的邮箱地址，一会用于验证，其他参数（后面介绍）如下图</li>
+</ol>
+<p><img src="ssl2.png" alt="创建证书"></p>
+<ol start="4">
+<li>下载 KeyManager 软件，注册，进入主页面，他会自动生成 CSR ，浏览器中点击继续</li>
+</ol>
+<p><img src="ssl3.png" alt=" KeyManager 软件"></p>
+<p><img src="ssl6.png" alt="生成 CSR"></p>
+<ol start="5">
+<li>两种验证方式</li>
+</ol>
+<ul>
+<li><p>DNS 验证：系统会为用户生成一条CNAME记录，用户只需在自己的域名服务商处增加此条CNAME的解析记录，即可完成域名验证。</p>
+<p>验证信息：</p>
+<p>  <img src="sll4.png" alt="验证信息"></p>
+<ul>
+<li><p>如果没有服务器，可以在 <a target="_blank" rel="noopener" href="https://www.dns.com/">DNS解析平台</a>通过 DNS 验证，步骤如下：</p>
+<p><img src="ssl4.png" alt="DNS解析平台"></p>
+<p><img src="ssl5.png" alt="添加 DNS 记录"></p>
+</li>
+<li><p>在服务器提供商处通过 DNS 验证：</p>
+<p><img src="ssl7.png" alt="添加 DNS 记录"></p>
+</li>
+</ul>
+</li>
+<li><p>文件验证：系统会为用户生成一个随机字符串，用户需将此页面放在域名指向服务器中的指定位置，并确认可通过公网访问。</p>
+<p>验证信息：</p>
+<p>  <img src="ssl12.png" alt="验证信息"></p>
+<p>  <img src="ssl20.png" alt="文件验证规则"></p>
+<p>  <img src="ssl21.png" alt="服务器验证文件"><br>注：<br>以点开头为名称的文件夹创建方式：</p>
+<ul>
+<li>cmd： 使用命令创建文件夹 <code>md .well-know</code></li>
+<li>在你命名文件夹的名称前后都加上点</li>
+</ul>
+</li>
+</ul>
+<ol start="5">
+<li>返回 FreeSSL 平台界面，点击 配置完成，检测一下</li>
+</ol>
+<p><img src="ssl9.png" alt="验证 DNS 失败"><br><img src="ssl10.png" alt="验证文件失败"></p>
+<p>域名解析指向添加成功和修改成功，需等待各地 DNS 刷新后解析方可生效。</p>
+<p><img src="sll10.png" alt="验证文件成功"><br><img src="sll11.png" alt="验证文件成功"></p>
+<ol start="6">
+<li>验证成功后，返回 FreeSSL 页面，点击验证</li>
+</ol>
+<p><img src="ssl12.png" alt="验证成功"></p>
+<p><img src="ssl13.png" alt="成功"></p>
+<ol start="7">
+<li>点击保存到 KeyManager 软件中</li>
+</ol>
+<p><img src="ssl14.png" alt="成功"></p>
+<ol start="8">
+<li>导出crt、key、pem 文件</li>
+</ol>
+<ul>
+<li>导出crt、key文件<br>在 KeyManager 中选择生成的证书 -&gt; 更多 -&gt; 导出证书</li>
+<li>导出 pem 文件<br>在 FreeSSL 网站中选择 控制台 -&gt; 证书列表 -&gt; 要导出的证书 -&gt; 更多操作 -&gt; 证书下载</li>
+<li>把三个文件的名称统一的</li>
+</ul>
+<p>到此，域名 suyp.top 的证书就申请成功了。</p>
+<p><img src="ssl22.png" alt="成功"></p>
+<h3 id="7-4-证书文件"><a href="#7-4-证书文件" class="headerlink" title="7.4 证书文件"></a>7.4 证书文件</h3><p>以下为不同后缀的ssl证书文件的作用:</p>
+<ul>
+<li><p>.key文件：属于密钥文件，SSL证书的私人密钥就包括在内。是信息内容的中枢；</p>
+</li>
+<li><p>.csr文件：文件里包括证书的公用密钥和一些公司内部重要秘密信息，要使用者通过请求签名之后才能够直接生出证书；</p>
+</li>
+<li><p>.crt文件：此文件也包含了ssl证书的公用密钥、签字讯息以及根据不同的类型伴随不同认证的信息，通常各类签名签字证书都会在这类文件中，如IP等；</p>
+</li>
+<li><p>.pem文件：该文件较其他后缀文件来说比较少见，里面包含着证书的私人密钥以及其他一部分证书重要的信息。</p>
+</li>
+</ul>
+<h3 id="7-5-证书品牌差异"><a href="#7-5-证书品牌差异" class="headerlink" title="7.5 证书品牌差异"></a>7.5 证书品牌差异</h3><ul>
+<li>Symantec</li>
+</ul>
+<p>Symantec （SSL业务已被 DigiCert 收购） 是全球最大的信息安全厂商和服务商，最权威的数字证书颁发机构，为企业、个人用户和服务供应商提供广泛的内容和网络安全解决方案，全球 500 强中有 93% 选择了 VeriSign SSL 数字证书，赛门铁克于 2010 年 8 月收购 VeriSign，目前 VeriSign 认证服务现均由赛门铁克提供，并在 2012 年 4 月对 VeriSign 的产品名称和品牌标识进行变更。</p>
+<ul>
+<li>GeoTrust</li>
+</ul>
+<p>GeoTrust 是全球第二大数字证书颁发机构( CA )，也是身份认证和信任认证领域的领导者，该公司各种先进的技术使得任何大小的机构和公司都能安全地低成本地部署 SSL 数字证书和实现各种身份认证。从 2001 年成立到 2006 年占领全球市场 25% 的市场分额， 于 2006 年 5 月 / 2006 年 9 月 VeriSign 以 1.25 亿美元收购 GeoTrust，目前也同为赛门铁克旗下 SSL 证书的性价比品牌。</p>
+<p>单纯从技术角度，symantec（原verisign）和 GeoTrust 的区别如下：</p>
+<p>算法支持上 Symantec（支持RSA DSA ECC三种算法）优于 Geotrust（支持RSA DSA两种算法）；<br>兼容性 Symantec 优于 Geotrust； Symantec 可兼容市面上所有的浏览器，对移动端的支持也是最好的<br>OCSP 响应速度上 Symantec 优于 Geotrust；<br>CA 安全性方面 Symantec 优于 Geotrust，Symantec是国际知名安全厂商，CA的安全级别也是国际第一的安全系数；<br>Symantec 证书除实现加密传输以外，还另外有恶意软件扫描和漏洞评估的附加功能；<br>Symantec 对证书有商业保险赔付保障，金额最高为175万美金，GeoTrust最高为150万美金。</p>
+<ul>
+<li>TrustAsia</li>
+</ul>
+<p>亚洲诚信是亚数信息科技（上海）有限公司应用于信息安全领域的品牌，是 Symantec™（赛门铁克）的白金合作伙伴，专业为企业提供包含数字证书在内的所有网络安全服务。同时，TrustAsia 品牌 SSL 证书由 Symantec 根证书签发</p>
+<ul>
+<li>品牌的差异</li>
+</ul>
+<p>不同品牌的证书在浏览器地址栏、加密强度、赔付保障上均存在差异，最重要的差异点在于根证书，例如 Geotrust 通配符是 Geotrust 根证书签发的，而 Symantec 通配符是 DigiCert 根证书签发的，Symantec 根证书可以兼容市面上所有的浏览器，对移动端的支持也是最好的。而 Trustasia 通配符也是赛门铁克的根证书，但是为域名型证书，在证书里面不体现公司信息，所以价格比较优惠。</p>
+<p>因此用户可以根据不同web应用选择不同认证等级(DV、OV、EV)和域名支持能力的证书，个人网站只能选择域名型DV证书，OV、EV类型证书要求是企业才能申请。</p>
+<h3 id="7-6-证书类型-RSA-和-ECC"><a href="#7-6-证书类型-RSA-和-ECC" class="headerlink" title="7.6 证书类型- RSA 和 ECC"></a>7.6 证书类型- RSA 和 ECC</h3><p>ECC: （安全性高，效率高，密钥短）<br>RSA: （最普通，算法复杂，密钥长）</p>
+<h4 id="7-7-ECC-SSL证书兼容性"><a href="#7-7-ECC-SSL证书兼容性" class="headerlink" title="7.7 ECC SSL证书兼容性"></a>7.7 ECC SSL证书兼容性</h4><p>Web服务器：Apache HTTP Server 2.2.26+，Apache Tomcat 1.1.30+，Dovecot 2.2.5+，IBM HTTP Server 8.0+，NGINX 1.1.0+，Windows Server 2008+</p>
+<p>浏览器：Firefox 2+，Apple Safari 4+ (with a compatible OS)，Google Chrome 1.0+ (with a compatible OS)，Microsoft Internet Explorer 7+ (Vista)</p>
+<p>如果你的环境低于这些版本，说明不支持使用ECC算法的SSL证书。</p>
+<h4 id="ECC算法-和-RSA算法"><a href="#ECC算法-和-RSA算法" class="headerlink" title="ECC算法 和 RSA算法"></a>ECC算法 和 RSA算法</h4><p>RSA 算法是1976 年提出来的，为了保障数据的安全，RSA 的密钥需要不断增加，导致加解密的速度大为降低。</p>
+<p>ECC算法是1985 年提出来的。和 RSA 相比，在许多方面都有对绝对的优势，抗攻击性强，CPU 占用少，内容使用少，网络消耗低，加密速度快。</p>
+<p><img src="ECC-RSA.png" alt="ECC和RSA区别"></p>
+<h4 id="7-8-如何选择"><a href="#7-8-如何选择" class="headerlink" title="7.8 如何选择"></a>7.8 如何选择</h4><p>在申请域名SSL证书的时候，该如何选择加密算法</p>
+<p>RSA：考虑到更广的适用性，兼容所有平台。</p>
+<p>ECC：更加安全高效，部分平台不支持。</p>
+<p>来此加密：申请免费证书时，选择合适的加密类型。</p>
+<h1 id="8-nginx-和-tomcat-配置"><a href="#8-nginx-和-tomcat-配置" class="headerlink" title="8 nginx 和 tomcat 配置"></a>8 nginx 和 tomcat 配置</h1><ul>
+<li>nginx</li>
+</ul>
+<ol>
+<li>把三个文件拷到 nginx/conf/ 下</li>
+<li>修改文件 nginx.conf，主要是 HTTPS server 下面的配置， 示例如下：</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">#user  nobody;</span></span><br><span class="line">worker_processes  <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">events &#123;</span><br><span class="line">    worker_connections  <span class="number">1024</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">http &#123;</span><br><span class="line">    include       mime.types;</span><br><span class="line">    default_type  application/octet-stream;</span><br><span class="line"></span><br><span class="line">    sendfile        on;</span><br><span class="line">    <span class="comment">#tcp_nopush     on;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#keepalive_timeout  0;</span></span><br><span class="line">    keepalive_timeout  <span class="number">65</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">#gzip  on;</span></span><br><span class="line"></span><br><span class="line">    server &#123;</span><br><span class="line">        listen       <span class="number">8081</span>;</span><br><span class="line">        server_name  localhost;</span><br><span class="line"></span><br><span class="line">        <span class="comment">#charset koi8-r;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">#access_log  logs/host.access.log  main;</span></span><br><span class="line"></span><br><span class="line">        location / &#123;</span><br><span class="line">            root   html;</span><br><span class="line">            index  index.html index.htm;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">#error_page  404              /404.html;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># redirect server error pages to the static page /50x.html</span></span><br><span class="line">        <span class="comment">#</span></span><br><span class="line">        error_page   <span class="number">500</span> <span class="number">502</span> <span class="number">503</span> <span class="number">504</span>  /<span class="number">50</span>x.html;</span><br><span class="line">        location = /<span class="number">50</span>x.html &#123;</span><br><span class="line">            root   html;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">     <span class="comment"># HTTPS server 配置</span></span><br><span class="line"></span><br><span class="line">    server &#123;</span><br><span class="line">        listen       <span class="number">443</span> ssl; <span class="comment"># 端口</span></span><br><span class="line">        server_name  suyp.top; <span class="comment"># 域名</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        ssl_certificate      suyptop.pem; <span class="comment"># SSL文件</span></span><br><span class="line">        ssl_certificate_key  suyptop.key; <span class="comment"># SSL文件</span></span><br><span class="line"></span><br><span class="line">        ssl_session_cache    shared:SSL:<span class="number">1</span>m;</span><br><span class="line">        ssl_session_timeout  <span class="number">5</span>m;</span><br><span class="line"></span><br><span class="line">        ssl_ciphers  HIGH:!aNULL:!MD5;</span><br><span class="line">        ssl_prefer_server_ciphers  on;</span><br><span class="line"></span><br><span class="line">        location / &#123;</span><br><span class="line">            root   html;</span><br><span class="line">            index  index.html index.htm;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>效果：</p>
+<p><img src="nginx.png" alt="nginx"></p>
+<ul>
+<li>tomcat</li>
+</ul>
+<p>版本：apache-tomcat-9.0.39</p>
+<ul>
+<li>ssl 文件准备<br>在 KeyManager 中选择域名 ssl ，导出证书（Tomcat（jks）），设置私钥加密密码，最终会导出一个 .jks文件</li>
+<li>tomcat配置<ul>
+<li>把 .jks文件拷到 tomcat/conf 下</li>
+<li>打开文件 tomcat/conf/server.xml</li>
+<li>找到代码</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">&lt;Connector port=&quot;8443&quot; protocol=&quot;org.apache.coyote.http11.Http11NioProtocol&quot;</span></span><br><span class="line"><span class="comment">            maxThreads=&quot;150&quot; SSLEnabled=&quot;true&quot;&gt;</span></span><br><span class="line"><span class="comment">    &lt;SSLHostConfig&gt;</span></span><br><span class="line"><span class="comment">        &lt;Certificate certificateKeystoreFile=&quot;conf/localhost-rsa.jks&quot;</span></span><br><span class="line"><span class="comment">                      type=&quot;RSA&quot; /&gt;</span></span><br><span class="line"><span class="comment">    &lt;/SSLHostConfig&gt;</span></span><br><span class="line"><span class="comment">&lt;/Connector&gt;</span></span><br><span class="line"><span class="comment">--&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>替换为</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Connector</span> <span class="attr">port</span>=<span class="string">&quot;443&quot;</span> <span class="attr">protocol</span>=<span class="string">&quot;org.apache.coyote.http11.Http11NioProtocol&quot;</span></span></span><br><span class="line"><span class="tag">          <span class="attr">maxThreads</span>=<span class="string">&quot;150&quot;</span> <span class="attr">SSLEnabled</span>=<span class="string">&quot;true&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">SSLHostConfig</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--certificateKeystoreFile放 .jks 的路径--&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--certificateKeystorePassword 放刚设置的私钥的加密密码--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">Certificate</span> <span class="attr">certificateKeystoreFile</span>=<span class="string">&quot;conf/suyptop.jks&quot;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">certificateKeystorePassword</span>=<span class="string">&quot;TuytPY3y&quot;</span> </span></span><br><span class="line"><span class="tag">                  <span class="attr">type</span>=<span class="string">&quot;RSA&quot;</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">SSLHostConfig</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Connector</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>效果：</p>
+<p><img src="tomcat.png" alt="tomcat"></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/103000747">阿里面试： HTTP、HTTPS、TCP/IP、三次握手四次挥手过程？（附全网最具深度讲解）</a></p>
+<p><a target="_blank" rel="noopener" href="https://juejin.im/post/6879382861284605959#heading-41">HTTP相关网络知识点汇总</a></p>
+<p><a target="_blank" rel="noopener" href="https://juejin.im/post/6844903901037084686#heading-6">再谈HTTPS</a></p>
+<p><a target="_blank" rel="noopener" href="https://juejin.im/post/6844903602494898183">HTTPS详解</a></p>
+<p><a target="_blank" rel="noopener" href="https://juejin.im/post/6844903504046211079">谈谈 HTTPS</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1UE411N7Jj?t=2243">OSI七层模型</a></p>
+<p><a target="_blank" rel="noopener" href="https://juejin.im/post/6856595606677716999">浅谈SSL协议的握手过程</a></p>
+</div><div class="article-licensing box"><div class="licensing-title"><p>浅谈HTTPS</p><p><a href="https://ths-fe.github.io/2020/11/12/%E6%B5%85%E8%B0%88HTTPS/">https://ths-fe.github.io/2020/11/12/%E6%B5%85%E8%B0%88HTTPS/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>苏永蓬</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2020-11-12</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2020-11-12</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a class="" rel="noopener" target="_blank" title="CC BY-NC-SA 4.0" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a></p></div></div></div></div></div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/HTTPS/">HTTPS</a></div><div class="sharethis-inline-share-buttons"></div><script src="https://platform-api.sharethis.com/js/sharethis.js#property=5ea1492221690600121bcf3a&amp;product=inline-share-buttons&amp;cms=sop" defer></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/img/alipayqr.jpg" alt="支付宝"></span></a><a class="button donate" href="https://www.buymeacoffee.com/zapzqc?new=1" target="_blank" rel="noopener" data-type="buymeacoffee"><span class="icon is-small"><i class="fas fa-coffee"></i></span><span>送我杯咖啡</span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/img/wechatqr.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2020/11/19/nginx%E5%85%A5%E9%97%A8/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">Nginx入门</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2020/10/23/Nest-js-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%BB%8D/"><span class="level-item">Nest.js-基本概念介绍</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div class="content" id="valine-thread"></div><script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script><script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script><script>new Valine({
+            el: '#valine-thread' ,
+            appId: "4o5OfjCIGaSyqIwg7jop80Ge-gzGzoHsz",
+            appKey: "Rj9jcPLhW8WgWd6bDmXGmKaA",
+            placeholder: "欢迎评论交流",
+            avatar: "mm",
+            
+            meta: ["nick","mail","link"],
+            pageSize: 10,
+            lang: "zh-CN",
+            
+            highlight: true,
+            
+            
+            
+            
+            
+            requiredFields: [],
+        });</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="level is-mobile" href="#1-OSI模型"><span class="level-left"><span class="level-item">1 OSI模型</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#1-1-为什么需要会有OSi模型呢"><span class="level-left"><span class="level-item">1.1 为什么需要会有OSi模型呢</span></span></a></li><li><a class="level is-mobile" href="#1-2-为什么要使用分层网络模型"><span class="level-left"><span class="level-item">1.2 为什么要使用分层网络模型</span></span></a></li><li><a class="level is-mobile" href="#1-3-OSI七层模型"><span class="level-left"><span class="level-item">1.3 OSI七层模型</span></span></a></li><li><a class="level is-mobile" href="#1-4-形象示例"><span class="level-left"><span class="level-item">1.4 形象示例</span></span></a></li><li><a class="level is-mobile" href="#1-5-TCP-IP协议栈"><span class="level-left"><span class="level-item">1.5 TCP/IP协议栈</span></span></a></li></ul></li><li><a class="level is-mobile" href="#2-HTTP的四次挥手"><span class="level-left"><span class="level-item">2 HTTP的四次挥手</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#2-1-过程描述"><span class="level-left"><span class="level-item">2.1 过程描述</span></span></a></li><li><a class="level is-mobile" href="#2-2-形象示例"><span class="level-left"><span class="level-item">2.2 形象示例</span></span></a></li><li><a class="level is-mobile" href="#2-3-为什么挥手是四次不是三次（为什么握手是三次挥手是四次）"><span class="level-left"><span class="level-item">2.3 为什么挥手是四次不是三次（为什么握手是三次挥手是四次）</span></span></a></li><li><a class="level is-mobile" href="#2-4-为什么客户端发出第四次挥手的确认报文后不会立刻释放TCP连接"><span class="level-left"><span class="level-item">2.4 为什么客户端发出第四次挥手的确认报文后不会立刻释放TCP连接</span></span></a></li><li><a class="level is-mobile" href="#2-5-已经建立了连接如果客户端突然出现故障了怎么办"><span class="level-left"><span class="level-item">2.5 已经建立了连接如果客户端突然出现故障了怎么办</span></span></a></li></ul></li><li><a class="level is-mobile" href="#3-HTTPS与HTTP的区别"><span class="level-left"><span class="level-item">3 HTTPS与HTTP的区别</span></span></a></li><li><a class="level is-mobile" href="#4-HTTPS-特性"><span class="level-left"><span class="level-item">4 HTTPS 特性</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#4-1-SSL-TLS"><span class="level-left"><span class="level-item">4.1 SSL/TLS</span></span></a></li></ul></li><li><a class="level is-mobile" href="#4-2-HTTPS-加密方式"><span class="level-left"><span class="level-item">4.2 HTTPS 加密方式</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#4-3-SSL协议的握手过程"><span class="level-left"><span class="level-item">4.3 SSL协议的握手过程</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#4-3-1-形象示例"><span class="level-left"><span class="level-item">4.3.1 形象示例</span></span></a></li><li><a class="level is-mobile" href="#4-3-2-综合分析"><span class="level-left"><span class="level-item">4.3.2 综合分析</span></span></a></li></ul></li></ul></li><li><a class="level is-mobile" href="#6-域名申请"><span class="level-left"><span class="level-item">6 域名申请</span></span></a></li><li><a class="level is-mobile" href="#7-证书申请"><span class="level-left"><span class="level-item">7 证书申请</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#7-1-申请平台"><span class="level-left"><span class="level-item">7.1 申请平台</span></span></a></li><li><a class="level is-mobile" href="#7-2-证书的类型"><span class="level-left"><span class="level-item">7.2 证书的类型</span></span></a></li><li><a class="level is-mobile" href="#7-3-证书申请流程"><span class="level-left"><span class="level-item">7.3 证书申请流程</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#7-4-证书文件"><span class="level-left"><span class="level-item">7.4 证书文件</span></span></a></li><li><a class="level is-mobile" href="#7-5-证书品牌差异"><span class="level-left"><span class="level-item">7.5 证书品牌差异</span></span></a></li><li><a class="level is-mobile" href="#7-6-证书类型-RSA-和-ECC"><span class="level-left"><span class="level-item">7.6 证书类型- RSA 和 ECC</span></span></a></li></ul></li></ul></li><li><a class="level is-mobile" href="#8-nginx-和-tomcat-配置"><span class="level-left"><span class="level-item">8 nginx 和 tomcat 配置</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#参考资料"><span class="level-left"><span class="level-item">参考资料</span></span></a></li></ul></li></ul></div></div><style>.menu-list > li > a.is-active + .menu-list { display: block; }.menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div><div class="card widget" data-type="adsense"><div class="card-content"><div class="menu"><h3 class="menu-label"> </h3><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6826040978803389" data-ad-slot="1033672070" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/ths.png" alt="思路大前端团队" height="28"></a><p class="is-size-7"><span>&copy; 2020 苏永蓬</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a><br><span id="busuanzi_container_site_uv">共<span id="busuanzi_value_site_uv">0</span>个访客</span></p></div><div class="level-end"></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" async></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>
