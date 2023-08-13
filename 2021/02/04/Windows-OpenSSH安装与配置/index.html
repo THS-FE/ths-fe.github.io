@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>Windows OpenSSH 安装与配置 - 思路大前端团队</title><link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#f7f7f7"><meta name="application-name" content="思路大前端"><meta name="msapplication-TileImage" content="/img/favicon.ico"><meta name="msapplication-TileColor" content="#f7f7f7"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="思路大前端"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta description="实现 ssh 免密远程登录到 Windows 服务，并可以进行文件传输"><meta property="og:type" content="blog"><meta property="og:title" content="Windows OpenSSH 安装与配置"><meta property="og:url" content="https://ths-fe.github.io/2021/02/04/Windows-OpenSSH%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/"><meta property="og:site_name" content="思路大前端团队"><meta property="og:description" content="实现 ssh 免密远程登录到 Windows 服务，并可以进行文件传输"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://ths-fe.github.io/2021/02/04/Windows-OpenSSH%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/cover.jpg"><meta property="article:published_time" content="2021-02-04T13:42:00.000Z"><meta property="article:modified_time" content="2023-08-05T13:20:43.731Z"><meta property="article:author" content="刘莹鑫"><meta property="article:tag" content="OpenSSH"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="/2021/02/04/Windows-OpenSSH%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/cover.jpg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://ths-fe.github.io/2021/02/04/Windows-OpenSSH%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/"},"headline":"思路大前端团队","image":["https://ths-fe.github.io/2021/02/04/Windows-OpenSSH%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/cover.jpg"],"datePublished":"2021-02-04T13:42:00.000Z","dateModified":"2023-08-05T13:20:43.731Z","author":{"@type":"Person","name":"刘莹鑫"},"description":"实现 ssh 免密远程登录到 Windows 服务，并可以进行文件传输"}</script><link rel="canonical" href="https://ths-fe.github.io/2021/02/04/Windows-OpenSSH%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/"><link rel="icon" href="/img/favicon.ico"><link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.13.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/monokai.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><script>var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?fd8cc3421abec7b8f4e6bc337e25c7d1";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();</script><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><script src="https://www.googletagmanager.com/gtag/js?id=UA-72716512-3" async></script><script>window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+    
+        gtag('config', 'UA-72716512-3');</script><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><script data-ad-client="ca-pub-6826040978803389" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" async></script><meta name="generator" content="Hexo 5.2.0"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/ths.png" alt="思路大前端团队" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">博客</a><a class="navbar-item" href="/fe">大前端技术体系</a><a class="navbar-item" href="/gis">GIS技术体系</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/about">关于我们</a></div><div class="navbar-end"><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><div class="card-image"><span class="image is-7by3"><img class="fill" src="/2021/02/04/Windows-OpenSSH%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/cover.jpg" alt="Windows OpenSSH 安装与配置"></span></div><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2021-02-04T13:42:00.000Z" title="2021-02-04T13:42:00.000Z">2021-02-04</time>发表</span><span class="level-item"><time dateTime="2023-08-05T13:20:43.731Z" title="2023-08-05T13:20:43.731Z">2023-08-05</time>更新</span><span class="level-item"> 刘莹鑫 </span><span class="level-item"><a class="link-muted" href="/categories/%E5%BC%80%E5%8F%91%E5%91%A8%E8%BE%B9/">开发周边</a><span> / </span><a class="link-muted" href="/categories/%E5%BC%80%E5%8F%91%E5%91%A8%E8%BE%B9/%E5%B7%A5%E5%85%B7/">工具</a></span><span class="level-item">8 分钟读完 (大约1198个字)</span><span class="level-item" id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv">0</span>次访问</span></div></div><h1 class="title is-3 is-size-4-mobile">Windows OpenSSH 安装与配置</h1><div class="content"><h1 id="1-目的"><a href="#1-目的" class="headerlink" title="1 目的"></a>1 目的</h1><p>实现免密远程登录到 Windows 服务，并可以进行文件传输<br>扩展知识：<a target="_blank" rel="noopener" href="https://wiki.archlinux.org/index.php/SSH_keys_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)">SSH</a></p>
+<h1 id="2-安装"><a href="#2-安装" class="headerlink" title="2 安装"></a>2 安装</h1><h2 id="2-1-根据系统情况，下载程序包"><a href="#2-1-根据系统情况，下载程序包" class="headerlink" title="2.1 根据系统情况，下载程序包"></a>2.1 根据系统情况，下载程序包</h2><pre><code>下载地址：[https://github.com/PowerShell/Win32-OpenSSH/releases](https://github.com/PowerShell/Win32-OpenSSH/releases)
+ 比如我的服务器系统是64位的，下载的[OpenSSH-Win64.zip](https://github.com/PowerShell/Win32-OpenSSH/releases/download/v8.1.0.0p1-Beta/OpenSSH-Win64.zip)</code></pre>
+<h2 id="2-2-解压在第一步下载的压缩包内容到-C-Program-Files-OpenSSH"><a href="#2-2-解压在第一步下载的压缩包内容到-C-Program-Files-OpenSSH" class="headerlink" title="2.2 解压在第一步下载的压缩包内容到 C:\Program Files\OpenSSH"></a>2.2 解压在第一步下载的压缩包内容到 C:\Program Files\OpenSSH</h2><h2 id="2-3-将以上目录配置环境变量中"><a href="#2-3-将以上目录配置环境变量中" class="headerlink" title="2.3 将以上目录配置环境变量中"></a>2.3 将以上目录配置环境变量中</h2><pre><code>  验证：</code></pre>
+<p><img src="2.3-1.png" alt="image.png"></p>
+<h2 id="2-4-使用管理员命令行工具运行以下命令，安装-SSH-服务"><a href="#2-4-使用管理员命令行工具运行以下命令，安装-SSH-服务" class="headerlink" title="2.4 使用管理员命令行工具运行以下命令，安装 SSH 服务"></a>2.4 使用管理员命令行工具运行以下命令，安装 SSH 服务</h2><p>命令行进入到OpenSSH文件夹目录（这里为：C:\Program Files\OpenSSH），执行以下命令</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">powershell.exe <span class="literal">-ExecutionPolicy</span> Bypass <span class="operator">-File</span> <span class="built_in">install-sshd</span>.ps1</span><br></pre></td></tr></table></figure>
+
+<p><img src="2.4-1.png" alt="image.png"></p>
+<h2 id="2-5-在防火墙开启端口-22-端口号-命令行窗口"><a href="#2-5-在防火墙开启端口-22-端口号-命令行窗口" class="headerlink" title="2.5 在防火墙开启端口 22 端口号(命令行窗口)"></a>2.5 在防火墙开启端口 22 端口号(命令行窗口)</h2><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">New-NetFirewallRule</span> <span class="literal">-Name</span> sshd <span class="literal">-DisplayName</span> <span class="string">&#x27;OpenSSH Server (sshd)&#x27;</span> <span class="literal">-Enabled</span> True <span class="literal">-Direction</span> Inbound <span class="literal">-Protocol</span> TCP <span class="literal">-Action</span> Allow <span class="literal">-LocalPort</span> <span class="number">22</span></span><br></pre></td></tr></table></figure>
+
+<p>注意：Windows10 以及 Windows 2008 R2 以下版本请使用以下命令(命令行窗口)</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netsh advfirewall firewall add rule name=sshd <span class="built_in">dir</span>=<span class="keyword">in</span> action=allow protocol=TCP localport=<span class="number">22</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="2.5-1.png" alt="image.png"></p>
+<h2 id="2-6-启动-SSH-服务-命令行窗口"><a href="#2-6-启动-SSH-服务-命令行窗口" class="headerlink" title="2.6 启动 SSH 服务(命令行窗口)"></a>2.6 启动 SSH 服务(命令行窗口)</h2><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">net <span class="built_in">start</span> sshd</span><br></pre></td></tr></table></figure>
+
+<p><img src="2.6-1.png" alt="image.png"></p>
+<h2 id="2-7-设置-SSH-服务开机启动（以下操作，在不同系统版本内设置稍有不同，大致操作一致）"><a href="#2-7-设置-SSH-服务开机启动（以下操作，在不同系统版本内设置稍有不同，大致操作一致）" class="headerlink" title="2.7 设置 SSH 服务开机启动（以下操作，在不同系统版本内设置稍有不同，大致操作一致）"></a>2.7 设置 SSH 服务开机启动（以下操作，在不同系统版本内设置稍有不同，大致操作一致）</h2><p>点击左下角服务器管理器     <img src="2.7-1.png" alt="image.png"><br>找到服务选项<br><img src="2.7-2.png" alt="image.png"><br>以下为 Windows server 2012 r2 截图，跟上图老版本的系统稍微有些差别<br><img src="2.7-3.png" alt="image.png"><br>找到 OpenSSH SSH Server 服务（进入列表后输入 O）可快速找到该服务，选中服务右键属性，将启动类型改为自动<br><img src="2.7-4.png" alt="image.png"></p>
+<h2 id="2-8-测试是否可以连接"><a href="#2-8-测试是否可以连接" class="headerlink" title="2.8 测试是否可以连接"></a>2.8 测试是否可以连接</h2><p>通过带有 SSH 客户端的机器测试<br>这里使用 Win10 自带 SSH 功能远程连接(命令行窗口)<br>命令格式：ssh  用户名@ip</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh weihu@<span class="number">192.168</span>.<span class="number">0.183</span></span><br></pre></td></tr></table></figure>
+
+<p>使用以上命令时，大家可能看到还需要输入用户名密码才能连接上服务器，这个还没达到咱们要实现的目的</p>
+<h1 id="3-配置免密登录"><a href="#3-配置免密登录" class="headerlink" title="3 配置免密登录"></a>3 配置免密登录</h1><h2 id="3-1-修改-SSH-配置"><a href="#3-1-修改-SSH-配置" class="headerlink" title="3.1 修改 SSH 配置"></a>3.1 修改 SSH 配置</h2><p>修改 C:\ProgramData\ssh\sshd_config 文件</p>
+<ol>
+<li>将文件中以下配置解开注释</li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">PubkeyAuthentication yes</span><br><span class="line">AuthorizedKeysFile .ssh/authorized_keys</span><br><span class="line">PasswordAuthentication no</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>将文件中以下配置注释掉</li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#Match Group administrators#AuthorizedKeysFile __PROGRAMDATA__/ssh/administrators_authorized_keys</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>修改默认配置，配置ssh 默认可访问的根目录</li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ChrootDirectory  D:\</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li> 重启 sshd 服务</li>
+</ol>
+<p><img src="3.1-1.png" alt="image.png"></p>
+<ol start="5">
+<li>配置客户端公钥</li>
+</ol>
+<p>将客户端公钥文件内容拷贝进入服务器 authorized_keys（文件不存在就创建），文件中 C:\Users\用户名.ssh\authorized_keys<br>说明：由于 Windows 默认不允许创建.开头的文件夹，这里使用命令创建（mkdir .ssh）<br>客户端公钥如何获取，请查看下面章节</p>
+<ol start="6">
+<li>免密登录验证</li>
+</ol>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh weihu@<span class="number">192.168</span>.<span class="number">0.183</span></span><br></pre></td></tr></table></figure>
+
+<p>此时再进行连接时，就不需要输入密码直接连接成功了<br><img src="3.1-2.png" alt="image.png"></p>
+<h1 id="4-其他"><a href="#4-其他" class="headerlink" title="4 其他"></a>4 其他</h1><h2 id="4-1-客户端-SSH-密钥获取"><a href="#4-1-客户端-SSH-密钥获取" class="headerlink" title="4.1 客户端 SSH 密钥获取"></a>4.1 客户端 SSH 密钥获取</h2><ol>
+<li><p>在本地（客户端）生成公钥（需要安装openssh，win10及Windows Server 2019以上版本自带ssh功能，无需再安装，如果需要安装，可按照章节“安装”中1.2.3步骤配置客户端）</p>
+<p>执行以下命令前，先检查C:\Users\你的用户.ssh目录下是否已经存在.pub结尾的文件，如果存在，无需执行以下命令，该文件即为公钥文件。不存在时，执行以下命令生成密钥</p>
+</li>
+</ol>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh<span class="literal">-keygen</span> <span class="literal">-t</span> rsa</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>使用文本编辑器打开上一步骤中.pub结尾的文件，拷贝里边的内容，即为公钥内容</li>
+</ol>
+<p><strong>注：这里的说的客户端是相对的，如果服务器 A 通过 SSH 访问服务器 B，那A也是客户端</strong>。</p>
+<h2 id="4-2-免密拷贝文件"><a href="#4-2-免密拷贝文件" class="headerlink" title="4.2 免密拷贝文件"></a>4.2 免密拷贝文件</h2><ol>
+<li>从本地复制文件到远程服务器</li>
+</ol>
+<p>命令格式：scp  [-r] 本地路径   远程服务器用户名@远程服务器ip:远程服务器相对配置根路径的目录</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">// 拷贝单个文件scp 工具\hello.txt weihu@<span class="number">192.168</span>.<span class="number">0.183</span>:/Product// 拷贝目录（多文件）scp <span class="literal">-r</span> dist/* weihu@<span class="number">192.168</span>.<span class="number">0.183</span>:/Product/test</span><br></pre></td></tr></table></figure>
+
+<p><img src="4.2-1.png" alt="image.png"><br><img src="4.2-2.png" alt="image.png"></p>
+<ol start="2">
+<li>从服务器往本地复制文件</li>
+</ol>
+<p>将以上命令本地和服务器参数对调下即可<br>了解更多：<a target="_blank" rel="noopener" href="https://www.runoob.com/linux/linux-comm-scp.html">https://www.runoob.com/linux/linux-comm-scp.html</a></p>
+<h2 id="4-3-执行远程主机上命令行"><a href="#4-3-执行远程主机上命令行" class="headerlink" title="4.3 执行远程主机上命令行"></a>4.3 执行远程主机上命令行</h2><p>命令格式：ssh  用户@主机ip  “命令”<br>以下示例实现了进入/Product/test目录，并查看目录信息及主机安装node版本信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh  weihu@192.168.0.183 &quot;cd &#x2F;Product&#x2F;test &amp;&amp;dir&amp;&amp;node -v&quot;</span><br></pre></td></tr></table></figure>
+</div><div class="article-licensing box"><div class="licensing-title"><p>Windows OpenSSH 安装与配置</p><p><a href="https://ths-fe.github.io/2021/02/04/Windows-OpenSSH%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/">https://ths-fe.github.io/2021/02/04/Windows-OpenSSH%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>刘莹鑫</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2021-02-04</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2023-08-05</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a class="" rel="noopener" target="_blank" title="CC BY-NC-SA 4.0" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a></p></div></div></div></div></div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/OpenSSH/">OpenSSH</a></div><div class="sharethis-inline-share-buttons"></div><script src="https://platform-api.sharethis.com/js/sharethis.js#property=5ea1492221690600121bcf3a&amp;product=inline-share-buttons&amp;cms=sop" defer></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/img/alipayqr.jpg" alt="支付宝"></span></a><a class="button donate" href="https://www.buymeacoffee.com/zapzqc?new=1" target="_blank" rel="noopener" data-type="buymeacoffee"><span class="icon is-small"><i class="fas fa-coffee"></i></span><span>送我杯咖啡</span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/img/wechatqr.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2021/03/11/WebRTC%E5%85%A5%E9%97%A8/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">WebRTC入门</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2021/02/02/GitLab-%E4%BB%8E%E9%9B%B6%E6%89%93%E9%80%A0%E8%87%AA%E5%B7%B1%E7%9A%84CICD%E7%B3%BB%E7%BB%9F/"><span class="level-item">GitLab-从零打造自己的 CI/CD 系统</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div class="content" id="valine-thread"></div><script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script><script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script><script>new Valine({
+            el: '#valine-thread' ,
+            appId: "4o5OfjCIGaSyqIwg7jop80Ge-gzGzoHsz",
+            appKey: "Rj9jcPLhW8WgWd6bDmXGmKaA",
+            placeholder: "欢迎评论交流",
+            avatar: "mm",
+            
+            meta: ["nick","mail","link"],
+            pageSize: 10,
+            lang: "zh-CN",
+            
+            highlight: true,
+            
+            
+            
+            
+            
+            requiredFields: [],
+        });</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="level is-mobile" href="#1-目的"><span class="level-left"><span class="level-item">1 目的</span></span></a></li><li><a class="level is-mobile" href="#2-安装"><span class="level-left"><span class="level-item">2 安装</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#2-1-根据系统情况，下载程序包"><span class="level-left"><span class="level-item">2.1 根据系统情况，下载程序包</span></span></a></li><li><a class="level is-mobile" href="#2-2-解压在第一步下载的压缩包内容到-C-Program-Files-OpenSSH"><span class="level-left"><span class="level-item">2.2 解压在第一步下载的压缩包内容到 C:\Program Files\OpenSSH</span></span></a></li><li><a class="level is-mobile" href="#2-3-将以上目录配置环境变量中"><span class="level-left"><span class="level-item">2.3 将以上目录配置环境变量中</span></span></a></li><li><a class="level is-mobile" href="#2-4-使用管理员命令行工具运行以下命令，安装-SSH-服务"><span class="level-left"><span class="level-item">2.4 使用管理员命令行工具运行以下命令，安装 SSH 服务</span></span></a></li><li><a class="level is-mobile" href="#2-5-在防火墙开启端口-22-端口号-命令行窗口"><span class="level-left"><span class="level-item">2.5 在防火墙开启端口 22 端口号(命令行窗口)</span></span></a></li><li><a class="level is-mobile" href="#2-6-启动-SSH-服务-命令行窗口"><span class="level-left"><span class="level-item">2.6 启动 SSH 服务(命令行窗口)</span></span></a></li><li><a class="level is-mobile" href="#2-7-设置-SSH-服务开机启动（以下操作，在不同系统版本内设置稍有不同，大致操作一致）"><span class="level-left"><span class="level-item">2.7 设置 SSH 服务开机启动（以下操作，在不同系统版本内设置稍有不同，大致操作一致）</span></span></a></li><li><a class="level is-mobile" href="#2-8-测试是否可以连接"><span class="level-left"><span class="level-item">2.8 测试是否可以连接</span></span></a></li></ul></li><li><a class="level is-mobile" href="#3-配置免密登录"><span class="level-left"><span class="level-item">3 配置免密登录</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#3-1-修改-SSH-配置"><span class="level-left"><span class="level-item">3.1 修改 SSH 配置</span></span></a></li></ul></li><li><a class="level is-mobile" href="#4-其他"><span class="level-left"><span class="level-item">4 其他</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#4-1-客户端-SSH-密钥获取"><span class="level-left"><span class="level-item">4.1 客户端 SSH 密钥获取</span></span></a></li><li><a class="level is-mobile" href="#4-2-免密拷贝文件"><span class="level-left"><span class="level-item">4.2 免密拷贝文件</span></span></a></li><li><a class="level is-mobile" href="#4-3-执行远程主机上命令行"><span class="level-left"><span class="level-item">4.3 执行远程主机上命令行</span></span></a></li></ul></li></ul></div></div><style>.menu-list > li > a.is-active + .menu-list { display: block; }.menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div><div class="card widget" data-type="adsense"><div class="card-content"><div class="menu"><h3 class="menu-label"> </h3><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6826040978803389" data-ad-slot="1033672070" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/ths.png" alt="思路大前端团队" height="28"></a><p class="is-size-7"><span>&copy; 2023 刘莹鑫</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a><br><span id="busuanzi_container_site_uv">共<span id="busuanzi_value_site_uv">0</span>个访客</span></p></div><div class="level-end"></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" async></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>

@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>正则表达式 - 思路大前端团队</title><link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#f7f7f7"><meta name="application-name" content="思路大前端"><meta name="msapplication-TileImage" content="/img/favicon.ico"><meta name="msapplication-TileColor" content="#f7f7f7"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="思路大前端"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta description="正则表达式语法学习，常用正则表达式设计"><meta property="og:type" content="blog"><meta property="og:title" content="正则表达式"><meta property="og:url" content="https://ths-fe.github.io/2021/01/29/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/"><meta property="og:site_name" content="思路大前端团队"><meta property="og:description" content="正则表达式语法学习，常用正则表达式设计"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://ths-fe.github.io/2021/01/29/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/cover.png"><meta property="article:published_time" content="2021-01-29T12:43:40.000Z"><meta property="article:modified_time" content="2021-01-29T12:43:40.000Z"><meta property="article:author" content="吴俊"><meta property="article:tag" content="正则表达式"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="/2021/01/29/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/cover.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://ths-fe.github.io/2021/01/29/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/"},"headline":"思路大前端团队","image":["https://ths-fe.github.io/2021/01/29/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/cover.png"],"datePublished":"2021-01-29T12:43:40.000Z","dateModified":"2021-01-29T12:43:40.000Z","author":{"@type":"Person","name":"吴俊"},"description":"正则表达式语法学习，常用正则表达式设计"}</script><link rel="canonical" href="https://ths-fe.github.io/2021/01/29/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/"><link rel="icon" href="/img/favicon.ico"><link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.13.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/monokai.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><script>var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?fd8cc3421abec7b8f4e6bc337e25c7d1";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();</script><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><script src="https://www.googletagmanager.com/gtag/js?id=UA-72716512-3" async></script><script>window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+    
+        gtag('config', 'UA-72716512-3');</script><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><script data-ad-client="ca-pub-6826040978803389" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" async></script><meta name="generator" content="Hexo 5.2.0"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/ths.png" alt="思路大前端团队" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">博客</a><a class="navbar-item" href="/fe">大前端技术体系</a><a class="navbar-item" href="/gis">GIS技术体系</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/about">关于我们</a></div><div class="navbar-end"><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><div class="card-image"><span class="image is-7by3"><img class="fill" src="/2021/01/29/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/cover.png" alt="正则表达式"></span></div><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2021-01-29T12:43:40.000Z" title="2021-01-29T12:43:40.000Z">2021-01-29</time>发表</span><span class="level-item"><time dateTime="2021-01-29T12:43:40.000Z" title="2021-01-29T12:43:40.000Z">2021-01-29</time>更新</span><span class="level-item"> 吴俊 </span><span class="level-item"><a class="link-muted" href="/categories/JavaScript/">JavaScript</a><span> / </span><a class="link-muted" href="/categories/JavaScript/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/">正则表达式</a></span><span class="level-item">9 分钟读完 (大约1282个字)</span><span class="level-item" id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv">0</span>次访问</span></div></div><h1 class="title is-3 is-size-4-mobile">正则表达式</h1><div class="content"><p>PPT 在线查看(可下载)：<a target="_blank" rel="noopener" href="https://www.yuque.com/heq286/xakx9r/10490826">https://www.yuque.com/heq286/xakx9r/10490826</a></p>
+<p>视频回放地址：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Ft4y1B768/">https://www.bilibili.com/video/BV1Ft4y1B768/</a></p>
+<div style="position: relative; width: 100%; height: 0; padding-bottom: 75%;">
+<iframe src="//player.bilibili.com/player.html?aid=628889616&bvid=BV1Ft4y1B768&cid=289579962&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="position: absolute; width: 100%; height: 100%; left: 0; top: 0;"> </iframe>
+</div>
+
+<blockquote>
+<p>以下内容为基本语法，详细请见 PPT</p>
+</blockquote>
+<h1 id="1-界定符"><a href="#1-界定符" class="headerlink" title="1 界定符"></a>1 界定符</h1><p><strong>定义</strong>：表示一个正则表达式的开始和结束</p>
+<p>在 JavaScript 中，界定符以斜线（<code>/</code>）开始和结束：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> reg = <span class="regexp">/正则表达式/</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>可以这样理解</strong>：字符串是通过单引号或者双引号界定，那么正则的界定就好理解了吧。</p>
+<h1 id="2-原子"><a href="#2-原子" class="headerlink" title="2 原子"></a>2 原子</h1><p><strong>定义</strong>：正则表达式中最小的匹配单位</p>
+<p>分为：可见原子、不可见原子（空格、换行符等）</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> reg = <span class="regexp">/A/</span>;</span><br><span class="line"><span class="keyword">const</span> reg = <span class="regexp">/,/</span>;</span><br><span class="line"><span class="keyword">const</span> reg = <span class="regexp">/ /</span>;</span><br></pre></td></tr></table></figure>
+
+<p>以上正则表达式中，均只有一个原子。</p>
+<p><strong>可以这样理解</strong>：一篇文章的最小单位是一个文字或者一个单词，他们组合在一起就是一篇文章，正则表达式也是有原子组合而来的。</p>
+<h1 id="3-元字符"><a href="#3-元字符" class="headerlink" title="3 元字符"></a>3 元字符</h1><p><strong>定义</strong>：一系列原子的集合</p>
+<p><strong>作用</strong>：定义原子的筛选方式；对某一类原子归类缩写；</p>
+<p><strong>有三种筛选方式</strong>：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">原子|原子    <span class="comment">// 表示：或（匹配其中一个原子即可）</span></span><br><span class="line">[原子原子...]  <span class="comment">// 表示：任一（匹配括号里的任一一个原子即可，原子之间不用竖线）</span></span><br><span class="line">[^原子原子...] <span class="comment">// 表示：除此之外（和前一种情况相反）</span></span><br></pre></td></tr></table></figure>
+
+<p>中括号中，如果原子是连续的（ASCII 码），那么可以用横线（<code>-</code>）表示连续：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[<span class="number">0</span>123456789] = [<span class="number">0</span>-<span class="number">9</span>]</span><br><span class="line">[abcdefghijklmn] = [a-n]</span><br></pre></td></tr></table></figure>
+
+<p><strong>内置原子集合</strong>：</p>
+<table>
+<thead>
+<tr>
+<th><strong>元字符</strong></th>
+<th><strong>解释</strong></th>
+<th><strong>等价于</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>.</strong></td>
+<td>除换行符之外任意一个字符</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>\d</strong></td>
+<td>匹配任意一个十进制数</td>
+<td><strong>[0-9]</strong></td>
+</tr>
+<tr>
+<td><strong>\D</strong></td>
+<td>匹配任意一个非十进制数</td>
+<td><strong>[^0-9]</strong></td>
+</tr>
+<tr>
+<td><strong>\s</strong></td>
+<td>匹配一个不可见原子</td>
+<td><strong>[\f\n\r\t\v]</strong></td>
+</tr>
+<tr>
+<td><strong>\S</strong></td>
+<td>匹配一个可见原子</td>
+<td><strong>[^\f\n\r\t\v]</strong></td>
+</tr>
+<tr>
+<td><strong>\w</strong></td>
+<td>匹配任意一个数字、字母、下划线</td>
+<td><strong>[0-9a-zA-Z_]</strong></td>
+</tr>
+<tr>
+<td><strong>\W</strong></td>
+<td>匹配任意一个非数字、字母、下划线</td>
+<td><strong>[^0-9a-za-z_]</strong></td>
+</tr>
+</tbody></table>
+<p><strong>可以这样理解</strong>：单词可以组成一句话，文章是由很多句话组成。元字符也是对一类原子组成的一小段，最终这些元字符汇聚就可以组成正则表达式。</p>
+<h1 id="4-量词"><a href="#4-量词" class="headerlink" title="4 量词"></a>4 量词</h1><p><strong>定义</strong>：描述原子连续出现的次数</p>
+<p><strong>用法</strong>：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">原子&#123;n&#125;      <span class="comment">// 表示要前面紧邻的这个原子要匹配n次</span></span><br><span class="line">原子&#123;n,&#125;     <span class="comment">// 表示要前面紧邻的这个原子要匹配大于等于n次：半开半闭区间 [n, +无穷)</span></span><br><span class="line">原子&#123;n,m&#125;    <span class="comment">// 表示要前面紧邻的这个原子要匹配大于等于n次，小于等于m次：[n, m]</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>特殊量词</strong>：</p>
+<table>
+<thead>
+<tr>
+<th><strong>特殊量词</strong></th>
+<th><strong>解释</strong></th>
+<th><strong>等价于</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>*</td>
+<td>匹配&gt;=0 次之前的原子（可存在）</td>
+<td>{0,}</td>
+</tr>
+<tr>
+<td><strong>+</strong></td>
+<td>匹配 1 次或多次之前的原子（存在）</td>
+<td>{1,}</td>
+</tr>
+<tr>
+<td><strong>?</strong></td>
+<td>匹配 0 次或 1 次之前的原子（可有可无）</td>
+<td>{0,1}</td>
+</tr>
+</tbody></table>
+<p>示例：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/ES\d&#123;<span class="number">4</span>&#125;/     <span class="comment">// 可以匹配到：ES000 ES2015 ES2020等</span></span><br><span class="line">/go&#123;<span class="number">2</span>,&#125;gle/   <span class="comment">// 可以匹配到：google gooooooogle等</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="5-边界控制"><a href="#5-边界控制" class="headerlink" title="5 边界控制"></a>5 边界控制</h1><p><strong>定义</strong>：对目标位置的控制，以<code>^</code>表示开始，以<code>$</code>表示结束。</p>
+<p><strong>用法</strong>：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">/go&#123;<span class="number">2</span>,&#125;gle/   <span class="comment">// &quot;This is google website!&quot;  可以匹配</span></span><br><span class="line"></span><br><span class="line">/^go&#123;<span class="number">2</span>,&#125;gle/  <span class="comment">// &quot;This is google website!&quot;  匹配失败</span></span><br><span class="line">              <span class="comment">// &quot;google&quot;  可以匹配</span></span><br></pre></td></tr></table></figure>
+
+<p>此外边界控制还有模式单元<code>()</code>，小括号的作用可以将整体作为一个原子。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[Dd](</span><br><span class="line">  <span class="comment">// 2个原子</span></span><br><span class="line">  D | d</span><br><span class="line">); <span class="comment">// 1个原子</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="6-修正模式"><a href="#6-修正模式" class="headerlink" title="6 修正模式"></a>6 修正模式</h1><p><strong>定义</strong>：给正则表达式的匹配过程设定一种模式</p>
+<table>
+<thead>
+<tr>
+<th><strong>修正表达式</strong></th>
+<th><strong>解释</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>i</strong></td>
+<td>忽略字母大小写</td>
+</tr>
+<tr>
+<td><strong>g</strong></td>
+<td>执行全局匹配（查找所有匹配而非在找到第一个匹配后停止）</td>
+</tr>
+<tr>
+<td><strong>m</strong></td>
+<td>执行多行匹配。</td>
+</tr>
+</tbody></table>
+<p><strong>用法</strong>：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/正则表达式/i;</span><br></pre></td></tr></table></figure>
+
+<h1 id="7-贪婪模式和懒惰模式"><a href="#7-贪婪模式和懒惰模式" class="headerlink" title="7 贪婪模式和懒惰模式"></a>7 贪婪模式和懒惰模式</h1><p><strong>定义</strong>：</p>
+<p>贪婪模式：在条件允许的范围内，利益最大化（得寸进尺）</p>
+<p>懒惰模式：达到最低标准即可（不思进取）</p>
+<p><strong>用法</strong>：量词后面加<code>？</code>表示懒惰模式</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tasssssk   /s+/  匹配结果：sssss  (贪婪模式，可以匹配<span class="number">1</span>个以上的s，那就全匹配)</span><br><span class="line">tasssssk   /s+?/ 匹配结果：s      (懒惰模式，可以匹配<span class="number">1</span>个以上的s，那最低标准<span class="number">1</span>个s)</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th><strong>贪婪模式</strong></th>
+<th><strong>懒惰模式</strong></th>
+<th><strong>解释</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>?</strong></td>
+<td><strong>??</strong></td>
+<td>匹配 0 个或 1 个</td>
+</tr>
+<tr>
+<td><strong>+</strong></td>
+<td><strong>+?</strong></td>
+<td>匹配 1 个或多个</td>
+</tr>
+<tr>
+<td>*</td>
+<td>*？</td>
+<td>匹配 0 个或多个</td>
+</tr>
+<tr>
+<td><strong>{n}</strong></td>
+<td><strong>{n}?</strong></td>
+<td>匹配 n 个</td>
+</tr>
+<tr>
+<td><strong>{n,m}</strong></td>
+<td><strong>{n,m}?</strong></td>
+<td>匹配 n 个或者 m 个</td>
+</tr>
+<tr>
+<td><strong>{n,}</strong></td>
+<td><strong>{n,}?</strong></td>
+<td>匹配 n 个或者多个</td>
+</tr>
+</tbody></table>
+<h1 id="8-神奇的问号"><a href="#8-神奇的问号" class="headerlink" title="8 神奇的问号?"></a>8 神奇的问号?</h1><p><strong>正向断言</strong>：<code>(?=原子)</code> 表示后面必须接正向断言的原子，且匹配结果不包括该原子</p>
+<p><strong>负向断言</strong>：<code>(?!原子)</code>表示后面不能接正向断言的原子，匹配结果不包括该原子</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/string(?=s)/   可以匹配：strings (匹配结果：stirng)  不可以匹配：stringS stringa</span><br><span class="line">/string(?!s)/   可以匹配：stringS (匹配结果：string)  不可以匹配：strings</span><br></pre></td></tr></table></figure>
+
+<p><code>?:</code>产生无编号分组：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">正则：/(ab)c(ba)/   <span class="regexp">/(?:ab)c(ba)/</span>  <span class="regexp">/((a)(b))(c)/</span></span><br><span class="line">编号：   <span class="number">1</span>    <span class="number">2</span>               <span class="number">1</span>         <span class="number">1</span>    <span class="number">2</span></span><br></pre></td></tr></table></figure>
+</div><div class="article-licensing box"><div class="licensing-title"><p>正则表达式</p><p><a href="https://ths-fe.github.io/2021/01/29/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/">https://ths-fe.github.io/2021/01/29/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>吴俊</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2021-01-29</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2021-01-29</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a class="" rel="noopener" target="_blank" title="CC BY-NC-SA 4.0" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a></p></div></div></div></div></div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/">正则表达式</a></div><div class="sharethis-inline-share-buttons"></div><script src="https://platform-api.sharethis.com/js/sharethis.js#property=5ea1492221690600121bcf3a&amp;product=inline-share-buttons&amp;cms=sop" defer></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/img/alipayqr.jpg" alt="支付宝"></span></a><a class="button donate" href="https://www.buymeacoffee.com/zapzqc?new=1" target="_blank" rel="noopener" data-type="buymeacoffee"><span class="icon is-small"><i class="fas fa-coffee"></i></span><span>送我杯咖啡</span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/img/wechatqr.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2021/01/31/30%E5%88%86%E9%92%9F%E5%BF%AB%E9%80%9F%E6%8E%8C%E6%8F%A1%E5%BE%AE%E5%89%8D%E7%AB%AFqiankun%E7%9A%84%E6%89%80%E6%9C%89%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">30分钟快速掌握微前端qiankun的所有核心技术</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2021/01/18/es6%E6%A8%A1%E5%9D%97%E5%AF%BC%E5%85%A5%E5%AF%BC%E5%87%BA/"><span class="level-item">es6模块导入导出</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div class="content" id="valine-thread"></div><script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script><script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script><script>new Valine({
+            el: '#valine-thread' ,
+            appId: "4o5OfjCIGaSyqIwg7jop80Ge-gzGzoHsz",
+            appKey: "Rj9jcPLhW8WgWd6bDmXGmKaA",
+            placeholder: "欢迎评论交流",
+            avatar: "mm",
+            
+            meta: ["nick","mail","link"],
+            pageSize: 10,
+            lang: "zh-CN",
+            
+            highlight: true,
+            
+            
+            
+            
+            
+            requiredFields: [],
+        });</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="level is-mobile" href="#1-界定符"><span class="level-left"><span class="level-item">1 界定符</span></span></a></li><li><a class="level is-mobile" href="#2-原子"><span class="level-left"><span class="level-item">2 原子</span></span></a></li><li><a class="level is-mobile" href="#3-元字符"><span class="level-left"><span class="level-item">3 元字符</span></span></a></li><li><a class="level is-mobile" href="#4-量词"><span class="level-left"><span class="level-item">4 量词</span></span></a></li><li><a class="level is-mobile" href="#5-边界控制"><span class="level-left"><span class="level-item">5 边界控制</span></span></a></li><li><a class="level is-mobile" href="#6-修正模式"><span class="level-left"><span class="level-item">6 修正模式</span></span></a></li><li><a class="level is-mobile" href="#7-贪婪模式和懒惰模式"><span class="level-left"><span class="level-item">7 贪婪模式和懒惰模式</span></span></a></li><li><a class="level is-mobile" href="#8-神奇的问号"><span class="level-left"><span class="level-item">8 神奇的问号?</span></span></a></li></ul></div></div><style>.menu-list > li > a.is-active + .menu-list { display: block; }.menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div><div class="card widget" data-type="adsense"><div class="card-content"><div class="menu"><h3 class="menu-label"> </h3><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6826040978803389" data-ad-slot="1033672070" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/ths.png" alt="思路大前端团队" height="28"></a><p class="is-size-7"><span>&copy; 2023 吴俊</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a><br><span id="busuanzi_container_site_uv">共<span id="busuanzi_value_site_uv">0</span>个访客</span></p></div><div class="level-end"></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" async></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>

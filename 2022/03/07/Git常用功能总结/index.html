@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>Git常用功能总结 - 思路大前端团队</title><link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#f7f7f7"><meta name="application-name" content="思路大前端"><meta name="msapplication-TileImage" content="/img/favicon.ico"><meta name="msapplication-TileColor" content="#f7f7f7"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="思路大前端"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta description="介绍工作中使用频率较高的 Git 功能"><meta property="og:type" content="blog"><meta property="og:title" content="Git常用功能总结"><meta property="og:url" content="https://ths-fe.github.io/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/"><meta property="og:site_name" content="思路大前端团队"><meta property="og:description" content="介绍工作中使用频率较高的 Git 功能"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://ths-fe.github.io/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/cover.jpg"><meta property="article:published_time" content="2022-03-07T09:54:11.000Z"><meta property="article:modified_time" content="2023-08-05T13:20:43.827Z"><meta property="article:author" content="杨静"><meta property="article:tag" content="Git"><meta property="article:tag" content="常用功能"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/cover.jpg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://ths-fe.github.io/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/"},"headline":"思路大前端团队","image":["https://ths-fe.github.io/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/cover.jpg"],"datePublished":"2022-03-07T09:54:11.000Z","dateModified":"2023-08-05T13:20:43.827Z","author":{"@type":"Person","name":"杨静"},"description":"介绍工作中使用频率较高的 Git 功能"}</script><link rel="canonical" href="https://ths-fe.github.io/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/"><link rel="icon" href="/img/favicon.ico"><link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.13.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/monokai.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><script>var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?fd8cc3421abec7b8f4e6bc337e25c7d1";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();</script><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><script src="https://www.googletagmanager.com/gtag/js?id=UA-72716512-3" async></script><script>window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+    
+        gtag('config', 'UA-72716512-3');</script><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><script data-ad-client="ca-pub-6826040978803389" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" async></script><meta name="generator" content="Hexo 5.2.0"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/ths.png" alt="思路大前端团队" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">博客</a><a class="navbar-item" href="/fe">大前端技术体系</a><a class="navbar-item" href="/gis">GIS技术体系</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/about">关于我们</a></div><div class="navbar-end"><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><div class="card-image"><span class="image is-7by3"><img class="fill" src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/cover.jpg" alt="Git常用功能总结"></span></div><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2022-03-07T09:54:11.000Z" title="2022-03-07T09:54:11.000Z">2022-03-07</time>发表</span><span class="level-item"><time dateTime="2023-08-05T13:20:43.827Z" title="2023-08-05T13:20:43.827Z">2023-08-05</time>更新</span><span class="level-item"> 杨静 </span><span class="level-item"><a class="link-muted" href="/categories/%E5%BC%80%E5%8F%91%E5%91%A8%E8%BE%B9/">开发周边</a><span> / </span><a class="link-muted" href="/categories/%E5%BC%80%E5%8F%91%E5%91%A8%E8%BE%B9/Git/">Git</a></span><span class="level-item">1 小时读完 (大约8252个字)</span><span class="level-item" id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv">0</span>次访问</span></div></div><h1 class="title is-3 is-size-4-mobile">Git常用功能总结</h1><div class="content"><p><a name="k0tyY"></a></p>
+<h1 id="1-基础概念"><a href="#1-基础概念" class="headerlink" title="1 基础概念"></a>1 基础概念</h1><p><a name="tNG6v"></a></p>
+<h2 id="1-1-工作区-暂存区-本地仓库-远程仓库"><a href="#1-1-工作区-暂存区-本地仓库-远程仓库" class="headerlink" title="1.1 工作区 / 暂存区 / 本地仓库 / 远程仓库"></a>1.1 工作区 / 暂存区 / 本地仓库 / 远程仓库</h2><p>首先，先了解一下 Git 的构成部分可以帮助我们在后面使用 Git 指令时容易理解其实现原理。<br /><br><br /></p>
+<img src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/git.jpg" class="">
+
+<ul>
+<li>Workspace：工作区：项目文件所在目录，可能包含一个 .git(本地仓库) 子目录</li>
+<li>Staging Area：暂存区：也称为索引，其中所存储的是我们为下一次提交准备的内容，它以快照的形式保存了相关的文件内容</li>
+<li>Local Repository：本地仓库：本机，通常驻留在项目的 .git 目录中</li>
+<li>Remote Repository：远程仓库，非本机上的 Git 仓库，一般会是 GitHub<br><a name="ayaMx"></a></li>
+</ul>
+<h2 id="1-2-相关的-Git-命令"><a href="#1-2-相关的-Git-命令" class="headerlink" title="1.2 相关的 Git 命令"></a>1.2 相关的 Git 命令</h2><p>clone 远程仓库的代码到本地：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone &lt;远程仓库地址&gt;</span><br></pre></td></tr></table></figure>
+
+<p>把工作区修改的代码提交到暂存区：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git add .</span><br></pre></td></tr></table></figure>
+
+<p>把暂存区内容提交到本地仓库：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git commit -m &quot;feat: 提交说明&quot;</span><br></pre></td></tr></table></figure>
+
+<p>把本机仓库内容 push 到远程仓库上：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push origin &lt;分支名&gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong>fetch 相关指令：</strong><br />将某个远程主机的更新，全部取回本地：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git fetch &lt;远程主机名&gt;</span><br></pre></td></tr></table></figure>
+
+<p>取回特定分支的更新，可以指定分支名：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git fetch &lt;远程主机名&gt; &lt;分支名&gt;</span><br></pre></td></tr></table></figure>
+
+<img src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/image1-1.png" class="">
+<img src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/image1-2.png" class="">
+<p><br /><strong>pull 和 fetch 的区别：</strong><br />pull 相当于 fetch 和 merge 的这两步操作：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git fetch origin master &#x2F;&#x2F; 从远程主机的 master 分支拉取最新内容</span><br><span class="line">git merge FETCH_HEAD &#x2F;&#x2F; 将拉取下来的最新内容合并到当前所在的分支中</span><br></pre></td></tr></table></figure>
+
+<p><a name="S5EzO"></a></p>
+<h1 id="2-基础配置"><a href="#2-基础配置" class="headerlink" title="2 基础配置"></a>2 基础配置</h1><p>Git 安装成功后做以下配置：<br><a name="Wjvwj"></a></p>
+<h2 id="2-1-设置提交用户"><a href="#2-1-设置提交用户" class="headerlink" title="2.1 设置提交用户"></a>2.1 设置提交用户</h2><p>每个机器都必须自报家门：你的名字和 Email 地址。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name &quot;杨静&quot;</span><br><span class="line">git config --global user.email &quot;yangjing@internal.ths.com.cn&quot;</span><br></pre></td></tr></table></figure>
+
+<p><a name="YXDk2"></a></p>
+<h2 id="2-2-设置合并方式"><a href="#2-2-设置合并方式" class="headerlink" title="2.2 设置合并方式"></a>2.2 设置合并方式</h2><p>为了能够让每一次提交都有明确的记录，统一使用 rebase 方式提交代码。在 Git Bash 中执行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --global pull.rebase true</span><br></pre></td></tr></table></figure>
+
+<p><a name="FPG8u"></a></p>
+<h2 id="2-3-设置换行符"><a href="#2-3-设置换行符" class="headerlink" title="2.3 设置换行符"></a>2.3 设置换行符</h2><p>Windows 使用回车和换行两个字符来结束一行，而 Mac 和 Linux 只使用换行一个字符。Windows 系统可以在提交代码前输入命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --global core.autocrlf false</span><br></pre></td></tr></table></figure>
+
+<p>Windows 系统如果不设置换行符的话，项目代码拉取运行后可能会报下面的错误：<br /></p>
+<img src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/image2-1.png" class="">
+<p><a name="ytcG5"></a></p>
+<h2 id="2-4-查看-Git-配置信息"><a href="#2-4-查看-Git-配置信息" class="headerlink" title="2.4 查看 Git 配置信息"></a>2.4 查看 Git 配置信息</h2><p>用户名和账号配置好后查看下最终配置信息：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --list</span><br></pre></td></tr></table></figure>
+
+<p><a name="o6gV1"></a></p>
+<h1 id="3-撤销修改"><a href="#3-撤销修改" class="headerlink" title="3 撤销修改"></a>3 撤销修改</h1><p><a name="XPXnJ"></a></p>
+<h2 id="3-1-撤销工作区内容"><a href="#3-1-撤销工作区内容" class="headerlink" title="3.1 撤销工作区内容"></a>3.1 撤销工作区内容</h2><blockquote>
+<p><strong>场景：</strong> 自从上次代码提交后，我们写了一些测试时用的代码例如 debugger、console.log() 等等。等我们测试完后我们并不想保存这些代码，想把他们从工作区删除掉，这个时候我们就可以使用 Git 的撤销功能。</p>
+</blockquote>
+<p><a name="w3cRp"></a></p>
+<h3 id="3-1-1-使用-git-checkout-撤销工作区修改"><a href="#3-1-1-使用-git-checkout-撤销工作区修改" class="headerlink" title="3.1.1 使用 git checkout 撤销工作区修改"></a>3.1.1 使用 git checkout 撤销工作区修改</h3><p>​</p>
+<p>撤销指定文件在工作区的修改：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout -- &lt;file&gt;</span><br></pre></td></tr></table></figure>
+
+<p>撤销所有文件在工作区的修改：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout -- .</span><br></pre></td></tr></table></figure>
+
+<p><br /><strong>注意：</strong><code>git checkout -- file</code>  命令中的 – 很重要，没有 <code>--</code> 就变成了 <strong>切换到另一个分支</strong> 的命令，我们在后面的分支管理中会再次遇到 <code>git checkout</code> 命令。<br><a name="F6qe4"></a></p>
+<h3 id="3-1-2-使用-git-restore-撤销工作区修改"><a href="#3-1-2-使用-git-restore-撤销工作区修改" class="headerlink" title="3.1.2 使用 git restore 撤销工作区修改"></a>3.1.2 使用 git restore 撤销工作区修改</h3><p>可能是因为 Git 版本不一样，我的电脑执行 git status 后是提示我使用 git restore 命令进行撤销的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git restore &lt;file&gt;...</span><br></pre></td></tr></table></figure>
+
+<img src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/image3-1.png" class="">
+<p><br />所以也就是说你在执行 git status 命令后，你可以使用 Git 提示的那个命令进行撤销操作。<br><a name="YQ7Eg"></a></p>
+<h3 id="3-1-3-使用小乌龟撤销工作区修改"><a href="#3-1-3-使用小乌龟撤销工作区修改" class="headerlink" title="3.1.3 使用小乌龟撤销工作区修改"></a>3.1.3 使用小乌龟撤销工作区修改</h3><p>使用小乌龟撤销工作区修改内容：<br />第一步： 选择 <strong>Revert</strong> 功能<br /></p>
+<img src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/image3-2.png" class=""><br />第二步：选中你要撤销修改的文件点确定。<br />
+<img src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/image3-3.png" class="">
+<p><a name="fy9w1"></a></p>
+<h2 id="3-2-撤销暂存区内容"><a href="#3-2-撤销暂存区内容" class="headerlink" title="3.2 撤销暂存区内容"></a>3.2 撤销暂存区内容</h2><blockquote>
+<p><strong>场景：</strong>假使自从上次提交代码后你写了一些测试代码，由于加班到凌晨三点脑子已经不好使了，习惯之下进行了 git add . 操作，庆幸的是在 commit 之前发现了这个问题，执行 git status 看一下，修改只是存到了暂存区，并没有提交。</p>
+</blockquote>
+<p><a name="J5i8z"></a></p>
+<h3 id="3-2-1-使用-git-reset-撤销暂存区内容"><a href="#3-2-1-使用-git-reset-撤销暂存区内容" class="headerlink" title="3.2.1 使用 git reset 撤销暂存区内容"></a>3.2.1 使用 git reset 撤销暂存区内容</h3><p>撤销指定文件暂存区的修改，重新放回工作区：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git reset HEAD &lt;file&gt; &#x2F;&#x2F; HEAD 也可以用 commitid 代替</span><br></pre></td></tr></table></figure>
+
+<p>撤销所有文件暂存区的修改，重新放回工作区：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git reset HEAD .</span><br></pre></td></tr></table></figure>
+
+<p>撤销所有文件暂存区的修改，直接撤销掉，不会重新放回工作区：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git reset --hard HEAD &#x2F;&#x2F; --hard 在这有一步到位的意思</span><br></pre></td></tr></table></figure>
+
+<p>已经执行 git add .  提交了暂存区，但是没有 commit：<br />可以使用 git reset HEAD <file> 把暂存区的修改撤销掉（unstage），重新放回工作区。如果工作区也想清掉的话再执行一下刚才的 git checkout – <file> 指令。git reset 命令既可以进行<strong>版本回退</strong>，也可以把暂存区的修改回退到工作区。当我们用 HEAD 时，表示最新的版本。<br><a name="wQVaO"></a></p>
+<h3 id="3-2-2-使用-git-restore-撤销暂存区内容"><a href="#3-2-2-使用-git-restore-撤销暂存区内容" class="headerlink" title="3.2.2 使用 git restore 撤销暂存区内容"></a>3.2.2 使用 git restore 撤销暂存区内容</h3><p>可能是因为 Git 版本的问题，同样，我的电脑执行 git status 命令后，Git 提示我使用 git restore 进行回退。<br /></p>
+<img src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/image3-4.png" class="">
+<p><a name="Cl8if"></a></p>
+<h2 id="3-3-撤销本地仓库内容（版本回退）"><a href="#3-3-撤销本地仓库内容（版本回退）" class="headerlink" title="3.3 撤销本地仓库内容（版本回退）"></a>3.3 撤销本地仓库内容（版本回退）</h2><blockquote>
+<p><strong>场景：</strong>git reset –hard 适合我们提交了错误的内容后进行回退的命令，因为执行这个命令后 Git 并不会将代码重新放回工作区。</p>
+</blockquote>
+<p>Git 实现版本回退的原理是通过让 HEAD 这个指针指向其它版本来完成版本回退。<br><a name="UTVRL"></a></p>
+<h3 id="3-3-1-使用-git-reset-实现版本回退"><a href="#3-3-1-使用-git-reset-实现版本回退" class="headerlink" title="3.3.1 使用 git reset 实现版本回退"></a>3.3.1 使用 git reset 实现版本回退</h3><p>如果我们已经把内容 commit 到了本地仓库里，那么如果想撤销的话可以按照以下步骤：<br />第一步：查看历史提交记录，找到你想回退到那个版本的 commitid，copy 下来备用。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git log</span><br></pre></td></tr></table></figure>
+
+<p>第二步：执行 git reset 实现版本回退</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git reset --hard commitid</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意：</strong>执行 git reset –hard 进行版本回退后，并不会重新把你提交为 commitid 的内容重新放回工作区。<br /><br><br /><strong>拓展 1：</strong>在第二个步骤中如果你想回退至上一个版本，也可以用命令 <code>git reset --hard HEAD^</code> 来实现，因为在 Git 中，使用 <code>HEAD</code> 表示当前版本，那上一个版本就是 <code>HEAD^</code>，上上个版本就是 <code>HEAD^^</code>，当然往上 100 个版本写 100个 <code>^</code> 比较容易数不过来，所以写成 <code>HEAD~100</code>。<br />​</p>
+<p><strong>拓展 2：</strong>现在，你已经成功回退到了某个版本，关掉了电脑，第二天早上就后悔了，想恢复到新版本怎么办？找不到新版本的<code>commitid</code>怎么办？<br />在 Git 中，总是有后悔药可以吃的：</p>
+<ol>
+<li>使用 <code>git reflog</code> 查看每次的提交命令。</li>
+<li>执行 git reset –hard commitid</li>
+</ol>
+<p>好了，就这样我们又乘坐时光机回到了未来。<br><a name="DPgWI"></a></p>
+<h1 id="4-分支管理"><a href="#4-分支管理" class="headerlink" title="4 分支管理"></a>4 分支管理</h1><p>下图中的 HEAD 可以理解为指向 commit 对象的可变指针。<br /></p>
+<img src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/image4-1.png" class="">
+<p><a name="hOHxd"></a></p>
+<h2 id="4-1-分支说明"><a href="#4-1-分支说明" class="headerlink" title="4.1 分支说明"></a>4.1 分支说明</h2><p>为了避免代码合并经常会出现的冲突，保证随时拥有可发布的版本，使得持续集成和持续部署成为可能，我们采用基于主干的开发方式。分支可包含以下类型：</p>
+<ul>
+<li>master：主干分支，<strong>唯一一个长期存在的分支</strong>。<strong>所有的开发人员基于此分支进行开发，无特殊情况，提交直接 push 到这个分支上</strong>。</li>
+<li>release：发布分支，紧急情况下需要进行版本发布的时候，从 master 创建发布分支，进行测试完善，最终修改代码要合并回 master 分支。非特殊情况均通过 master 分支进行发布。</li>
+</ul>
+<p>如无特殊情况，原则上禁止以下分支的创建。如想使用可以在本地按如下规范创建：</p>
+<ul>
+<li>feature/*：特性（功能）分支，用于开发新的功能，不同的功能创建不同的功能分支，功能分支开发完成并自测通过之后，需要合并到 master 分支，之后删除该分支。</li>
+<li>bugfix/*：bug 修复分支，用于修复不紧急的 bug，开发完成自测没问题合并进 master 分支后，删除该分支。</li>
+<li>hotfix/*：紧急 bug 修复分支，该分支只有在紧急情况下使用，从 release 分支创建，修复完成后，需要合并该分支到 release 分支，同时需要再合并回 master 分支。</li>
+</ul>
+<p><a name="WO58u"></a></p>
+<h2 id="4-2-创建与合并分支"><a href="#4-2-创建与合并分支" class="headerlink" title="4.2 创建与合并分支"></a>4.2 创建与合并分支</h2><blockquote>
+<p><strong>说明：</strong>使用 Git 命令在本地新建的分支都属于本地分支，push 到远程之后远程仓库上才有此分支。</p>
+</blockquote>
+<p><a name="dN6bs"></a></p>
+<h3 id="4-2-1-原理"><a href="#4-2-1-原理" class="headerlink" title="4.2.1 原理"></a>4.2.1 原理</h3><blockquote>
+<p>我们在切换分支，和新建分支的时候，有没有想过，这些操作背后的工作原理是怎样的呢？最大的功臣就是 .git 目录下的 HEAD 引用，它从一个分支跳到另一个分支，虽无声无息，却精准无比。</p>
+</blockquote>
+<p>​</p>
+<p>下面一块来看一下 Git 是如何通过改变 HEAD 指向来实现创建、合并分支的。<br />​</p>
+<p>一开始的时候，master 分支是一条线，Git 用 master 指向最新的提交，再用 HEAD 指向 master，就能确定当前分支，以及当前分支的提交点：<br /></p>
+<img src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/image4-2.png" class="">
+<p><br />当我们创建新的分支，例如 dev 时，Git 新建了一个指针叫 dev，指向 master 相同的提交，再把 HEAD 指向 dev，就表示当前分支在 dev 上：<br /></p>
+<img src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/image4-3.png" class="">
+<p><br />你看，Git创建一个分支很快，因为除了增加一个 dev 指针，改改 HEAD 的指向，工作区的文件都没有任何变化！<br />​</p>
+<p>从现在开始，对工作区的修改和提交就是针对 dev 分支了，比如新提交一次后，dev 指针往前移动一步，而 master 指针不变：<br /></p>
+<img src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/image4-4.png" class="">
+<p><br />当我们在 dev 上的工作完成了之后，就可以进行分支合并了，把 dev 分支合并到 master 分支上，其实 Git 的做法就是改变一下指针指向，把 master 分支指向 dev 的当前提交，就完成了合并。<br /></p>
+<img src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/image4-5.png" class="">
+<p><br />完成了分支合并后，就可以把本地的 dev 分支给删除掉了，删除后就又剩下一个 master 分支。<br /></p>
+<img src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/image4-6.png" class="">
+<br />
+<br />**总结**：
+
+<ol>
+<li>一条时间线就是一个分支，HEAD 指向的那个分支也就是当前分支。</li>
+<li>Git 合并分支（Fast-forward 模式）其实很快！就改改指针，工作区内容也不变。<br><a name="mMDyk"></a></li>
+</ol>
+<h3 id="4-2-2-实战"><a href="#4-2-2-实战" class="headerlink" title="4.2.2 实战"></a>4.2.2 实战</h3><p><a name="ylVER"></a></p>
+<h4 id="​"><a href="#​" class="headerlink" title="​"></a>​<br /></h4><p>首先，我们创建 dev 分支，然后切换到 dev 分支：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout -b dev</span><br><span class="line">Switched to a new branch &#39;dev&#39;</span><br></pre></td></tr></table></figure>
+
+<p>git checkout 命令加上 -b 参数表示创建并切换，相当于以下两条命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ git branch dev</span><br><span class="line">$ git checkout dev</span><br><span class="line">Switched to branch &#39;dev&#39;</span><br></pre></td></tr></table></figure>
+
+<p>然后，用 git branch 命令查看当前分支：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ git branch</span><br><span class="line">* dev</span><br><span class="line">  master</span><br></pre></td></tr></table></figure>
+
+<p>git branch 命令会列出所有分支，当前分支前面会标一个 * 号。<br />然后，我们就可以在 dev 分支上正常提交，比如对 readme.txt 做个修改，加上一行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">## 这是 dev 分支的内容</span><br></pre></td></tr></table></figure>
+
+<p>把上方内容提交之后，执行 <code>git checkout master</code> 切换回 master 分支，这时候发现刚才提交的内容不见了，这是因为 master 分支此刻的提交点并没有改变：<br /></p>
+<img src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/image4-7.png" class="">
+<p><br />现在，我们把 dev 分支的工作成果合并到 master 分支上：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ git merge dev</span><br><span class="line">Updating d46f35e..b17d20e</span><br><span class="line">Fast-forward</span><br><span class="line"> readme.txt | 1 +</span><br><span class="line"> 1 file changed, 1 insertion(+)</span><br></pre></td></tr></table></figure>
+
+<p>git merge 命令用于合并指定分支到当前分支。合并后，再查看 readme.txt 的内容，就可以看到，和 dev 分支的最新提交是完全一样的。<br />​</p>
+<p><strong>拓展：</strong>注意到上面的 Fast-forward 信息，Git 告诉我们，这次合并是“快进模式”，也就是直接把 master 指向 dev 的当前提交，所以合并速度非常快。当然，也不是每次合并都能 Fast-forward，我们后面会讲其他方式的合并。<br /><br><br />合并完成后，就可以放心地删除 dev 分支了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git branch -d dev</span><br><span class="line">Deleted branch dev (was b17d20e).</span><br></pre></td></tr></table></figure>
+
+<p>删除后，查看 branch，就只剩下 master 分支了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git branch</span><br><span class="line">* master</span><br></pre></td></tr></table></figure>
+
+<p>因为创建、合并和删除分支非常快，所以 Git 鼓励你使用分支完成某个任务，合并后再删掉分支，这和直接在 master 分支上工作效果是一样的，但过程更安全。但是分支合并时很可能要解决冲突，很可能要花时间解决冲突，所以虽然 Git 鼓励你使用分支来完成某个任务，但是要不要新建分支还是需要你视情况而定。<br />​<br /><br><a name="HYCUu"></a></p>
+<h3 id="4-2-3-拓展内容"><a href="#4-2-3-拓展内容" class="headerlink" title="4.2.3 拓展内容"></a>4.2.3 拓展内容</h3><p><a name="S7ef8"></a></p>
+<h4 id="4-2-3-1-使用-switch-命令切换分支"><a href="#4-2-3-1-使用-switch-命令切换分支" class="headerlink" title="4.2.3.1 使用 switch 命令切换分支"></a>4.2.3.1 使用 switch 命令切换分支</h4><blockquote>
+<p>刚才我们知道使用 <code>git checkout &lt;branch&gt;</code> 命令可以切换分支，前面讲撤销工作区内容的时候是使用 <code>git checkout -- &lt;file&gt;</code> 。这两种方式很容易让人弄混 <code>git checkout</code> 的用法。所以 Git 新版本就使用 <code>git switch</code> 分支来切换分支，更语义化。</p>
+</blockquote>
+<p>​</p>
+<p>创建并切换到新的 dev 分支：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git switch -c 分支名</span><br></pre></td></tr></table></figure>
+
+<p>直接切换到已有分支：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git switch 分支名</span><br></pre></td></tr></table></figure>
+
+<p><a name="wHy0l"></a></p>
+<h4 id="4-2-3-2-git-merge-和-git-merge-–no-ff-的区别"><a href="#4-2-3-2-git-merge-和-git-merge-–no-ff-的区别" class="headerlink" title="4.2.3.2 git merge 和 git merge –no-ff 的区别"></a>4.2.3.2 git merge 和 git merge –no-ff 的区别</h4><blockquote>
+<p>Fast-forward 方式就是当条件允许的时候，Git 直接把 HEAD 指针指向合并分支的头，完成合并。属于“快进方式”，不过这种情况如果删除分支，则会丢失分支信息。因为在这个过程中没有创建 commit。如果要强制禁用 Fast forward模式，Git 就会在 merge 时生成一个新的 commit，这样，从分支历史上就可以看出分支信息。</p>
+</blockquote>
+<p>​</p>
+<p>下面我们一起看一下使用–no-ff 禁用掉 Fast-forward 模式的 git merge 合并方式：<br />​</p>
+<p>首先，仍然创建并切换 dev 分支：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git switch -c dev</span><br><span class="line">Switched to a new branch &#39;dev&#39;</span><br></pre></td></tr></table></figure>
+
+<p>修改 readme.txt 文件，并提交一个新的 commit：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ git add readme.txt </span><br><span class="line">$ git commit -m &quot;add merge&quot;</span><br><span class="line">[dev f52c633] add merge</span><br><span class="line"> 1 file changed, 1 insertion(+)</span><br></pre></td></tr></table></figure>
+
+<p>现在，我们切换回 master：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git switch master</span><br><span class="line">Switched to branch &#39;master&#39;</span><br></pre></td></tr></table></figure>
+
+<p>准备合并 dev 分支，请注意 –no-ff 参数，表示禁用 Fast forward：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ git merge --no-ff -m &quot;merge with no-ff&quot; dev</span><br><span class="line">Merge made by the &#39;recursive&#39; strategy.</span><br><span class="line"> readme.txt | 1 +</span><br><span class="line"> 1 file changed, 1 insertion(+)</span><br></pre></td></tr></table></figure>
+
+<p>因为本次合并要创建一个新的 commit，所以加上 -m 参数，把 commit 描述写进去。<br />合并后，我们用 git log 看看分支历史：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ git log --graph --pretty&#x3D;oneline --abbrev-commit</span><br><span class="line">*   e1e9c68 (HEAD -&gt; master) merge with no-ff</span><br><span class="line">|\  </span><br><span class="line">| * f52c633 (dev) add merge</span><br><span class="line">|&#x2F;  </span><br><span class="line">*   cf810e4 conflict fixed</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，不使用 Fast forward 模式，merge 后就像这样：<br /></p>
+<img src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/image4-8.png" class="">
+<p><br />之前使用 Fast forward 模式合并， merge 后是这样子的：<br /></p>
+<img src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/image4-9.png" class="">
+<br />
+
+<p><a name="udTxI"></a></p>
+<h3 id="4-2-4-总结"><a href="#4-2-4-总结" class="headerlink" title="4.2.4 总结"></a>4.2.4 总结</h3><ol>
+<li>查看分支：git branch</li>
+<li>创建分支：git branch <name></li>
+<li>切换分支：git checkout <name> 或者 git switch <name></li>
+<li>创建+切换分支：git checkout -b <name> 或者 git switch -c <name></li>
+<li>合并某分支到当前分支：git merge <name> 或者 git merge –no-ff -m “提交说明” &lt;分支名&gt;</li>
+<li>删除已被合并过的分支：git branch -d <name></li>
+<li>删除还未被合并的分支：git branch -D <name></li>
+<li>分支合并时 –no-ff 的作用: 合并分支时，加上–no-ff 参数就可以用普通模式合并，合并后的历史有分支，能看出来曾经做过合并，而 Fast forward 合并就看不出来曾经做过合并。<br><a name="KeGjk"></a></li>
+</ol>
+<h2 id="4-3-解决冲突"><a href="#4-3-解决冲突" class="headerlink" title="4.3 解决冲突"></a>4.3 解决冲突</h2><blockquote>
+<p>前面我们合并分支时 Git 输出的信息有一个 <code>Fast-forward</code> Git 告诉我们，这次合并是“快进模式”，也就是直接把 master 指向 dev 的当前提交。但是合并操作并不总是简单的改变指针指向的这种 “快进模式”的。当 Git 无法自动合并分支时，就必须首先解决冲突。解决冲突后，再提交，合并完成。</p>
+</blockquote>
+<p>​</p>
+<p>先来制造一个冲突的场景<br />新建 feature1 本地分支：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git switch -c feature1</span><br><span class="line">Switched to a new branch &#39;feature1&#39;</span><br></pre></td></tr></table></figure>
+
+<p>修改 readme.txt 最后一行，改为下方文字后执行 git add . 和 git commit 提交。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Creating a new branch is quick AND simple.</span><br></pre></td></tr></table></figure>
+
+<p>切换到 master 分支并修改 readme.txt 文件最后一样为下方文字并进行提交：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Creating a new branch is quick &amp; simple.</span><br></pre></td></tr></table></figure>
+
+<p>现在，master 分支和 feature1 分支各自都分别有新的提交，变成了这样：<br /></p>
+<img src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/image4-10.png" class="">
+<p><br />这种情况下，Git 无法执行“快速合并”，因为 HEAD 指针简单的指向谁都不能完成最终的合并，只能试图把各自的修改合并起来，但这种合并就可能会有冲突。<br />我们切换到 master 分支后把 feature1 分支合并到 master 分支：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ git merge feature1</span><br><span class="line">Auto-merging readme.txt</span><br><span class="line">CONFLICT (content): Merge conflict in readme.txt</span><br><span class="line">Automatic merge failed; fix conflicts and then commit the result.</span><br></pre></td></tr></table></figure>
+
+<p>这个时候我们就需要手动解决冲突，冲突解决后再进行提交。<br />​</p>
+<p>解决冲突时你要清楚的知道 Current Change 和 Incoming Change 的代码都来自哪里。<br /></p>
+<img src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/image4-11.png" class="">
+<br />
+<br />最后就是删除掉 feature1 本地临时分支：
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git branch -d feature1</span><br><span class="line">Deleted branch feature1 (was 14096d0).</span><br></pre></td></tr></table></figure>
+
+<p><strong>拓展：</strong>使用 <code>git log --graph --pretty=oneline --abbrev-commit</code> 指令也可以看到分支的合并情况：<br />​</p>
+<p><strong>总结：</strong></p>
+<ol>
+<li>当 Git 无法自动合并分支时，就必须首先解决冲突。解决冲突后，再提交，合并完成。</li>
+<li>解决冲突就是把 Git 合并失败的文件手动编辑为我们希望的内容，再提交。</li>
+<li>用 git log –graph 命令可以看到分支合并图。<br><a name="DGmVX"></a></li>
+</ol>
+<h2 id="4-4-分支使用时常遇问题"><a href="#4-4-分支使用时常遇问题" class="headerlink" title="4.4 分支使用时常遇问题"></a>4.4 分支使用时常遇问题</h2><p><a name="GMdQg"></a></p>
+<h3 id="4-4-1-使用-git-stash-解决问题"><a href="#4-4-1-使用-git-stash-解决问题" class="headerlink" title="4.4.1 使用 git stash 解决问题"></a>4.4.1 使用 git stash 解决问题</h3><blockquote>
+<p><strong>场景1：</strong>当你正在开发一个功能 A 时，刚开发到一半突然接到需要在一小时内修复一个 bug，但是功能 A 的工作预计还要一天才能开发完，当时在 dev 分支开发的一一部分功能 A 功能也还没有提交，并不是你不想提交，而是工作只进行到一半，还没法提交，但是又必须在 1 小时内修复 bug 该怎么办？</p>
+</blockquote>
+<p><br />这个时候就可以用到 Git 提供的 stash 功能了：<br />​</p>
+<p>先把当前工作现场“储藏”起来（相当于还原到和服务器上一样的代码，当前工作区是干净状态）。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git stash</span><br><span class="line">Saved working directory and index state WIP on dev: f52c633 add merge</span><br></pre></td></tr></table></figure>
+
+<p>现在，用 git status 查看工作区，git 显示工作区是干净的，现在可以放心的修改 bug 了。<br />​</p>
+<p>现在修复 bug，需要把“现在存在一个 bug”改为“bug 修复完成”，然后提交。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ git add readme.txt </span><br><span class="line">$ git commit -m &quot;fix bug 101&quot;</span><br><span class="line">[issue-101 4c805e2] fix bug 101</span><br><span class="line"> 1 file changed, 1 insertion(+), 1 deletion(-)</span><br></pre></td></tr></table></figure>
+
+<p>bug 修复后，提交代码后使用 git status 发现当前工作区是干净的，刚才的工作现场存到哪去了？用 git stash list命令看看</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git stash list</span><br></pre></td></tr></table></figure>
+
+<p>是时候把存储起来的功能 A 代码恢复回来继续工作了，有两种恢复方式。</p>
+<ol>
+<li>一是用 git stash apply 恢复，但是恢复后，stash 内容并不删除，你需要用 git stash drop 来删除。</li>
+<li>用 git stash pop，恢复的同时把 stash 内容也删了</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git stash pop</span><br><span class="line">git stash apply</span><br></pre></td></tr></table></figure>
+
+<p>再用 git stash list 查看，就看不到任何 stash 内容了：<br />​</p>
+<p>你可以多次 stash，恢复的时候，先用 git stash list 查看，然后恢复指定的 stash，用命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git stash apply &lt;stash的索引值&gt;</span><br></pre></td></tr></table></figure>
+
+<p>删除保存的 stash：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git stash drop</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>场景 2：</strong>当你往远程仓库 push 代码时，本地版本 &lt; 远程版本时，并且你本地还有未 add 的代码时，Git 就会提示你 The current working tree is not clean。</p>
+</blockquote>
+<p>如果使用的是小乌龟的话它会这样提示：<br /></p>
+<img src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/image4-12.png" class="">
+<p><br />​</p>
+<p>这个时候你也可以先把本地为提交的代码使用 stash 功能给存储起来，把代码 push 到远程后再使用 git stash pop 或 git stash apply 把存储的代码给恢复。<br />​<br /></p>
+<blockquote>
+<p><strong>场景 3：</strong>平常我们新开发一个功能要建个分支，修改个 bug 也要建个分支，我们经常要对不同分支进行操作，然而原本我是想在 feature 分支开发一个新功能，但是代码却写在了 test 分支上了。</p>
+</blockquote>
+<p>​<br /></p>
+<ol>
+<li>在 test 分支上执行 git stash，先把代码存储起来。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git stash</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>执行 git switch feature 切换到 feature 分支。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git switch feature</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>执行 git stash pop 把存储的代码释放出来，并清空 stash 存储的代码。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git stash pop</span><br></pre></td></tr></table></figure>
+
+<p><a name="BePSh"></a></p>
+<h3 id="4-4-2-使用-cherry-pick-解决问题"><a href="#4-4-2-使用-cherry-pick-解决问题" class="headerlink" title="4.4.2 使用 cherry-pick 解决问题"></a>4.4.2 使用 cherry-pick 解决问题</h3><blockquote>
+<p><strong>场景1：</strong>假如我们要在 master 分支上修复 bug，bug 修复好后，我们一想 dev 是开发分支，如果 master 分支上存在 bug，那 dev 分支上肯定也有这样的一个 bug，那么我们要怎么做呢，难道要把修复 bug 的代码一行一行复制过去吗？</p>
+</blockquote>
+<p>​</p>
+<p>我们有更简单的方法：</p>
+<ol>
+<li>我们找到并修复 bug A 提交的 commitid</li>
+<li>然后切换到 dev 分支</li>
+<li>使用 git cherry-pick commitid 命令去复制提交为 commitid 的那次代码到 dev 分支</li>
+</ol>
+<p>​</p>
+<p>用 git cherry-pick，我们就不需要在 dev 分支上手动再把修改 bug 的过程重复一遍。<br />​<br /></p>
+<blockquote>
+<p><strong>场景 2：</strong>release 分支是项目的预发布环境，平时我们只能把 main 分支上的代码整个全部给合并到 release 分支上，这时候需求问现在需要给客户演示刚才小明同事新增的地图功能，但是现在 main 分支上的代码还没经过测试，不能完全合并过去，呃……</p>
+</blockquote>
+<p>​</p>
+<p>这个时候也可以使用 git cherry-pick 来实现上诉需求。具体做法可以参考下面步骤：<br />​<br /></p>
+<ol>
+<li>在 main 分支上通过 git log 查看日志，将自己提交的该功能对应的 commitid 值整理出来。</li>
+</ol>
+<img src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/image4-13.png" class="">
+
+<ol start="2">
+<li>如果本地没有 release 分支，需要先将 release 分支从远程仓库拉到本地仓库(如果本地有 release 分支，并且已与远程对应的 release 分支已关联，无需这一步，直接到下一步)</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout --track origin&#x2F;release</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>切换到 release 分支</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout release</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>在 release 分支上操作：通过 git cherry-pick &lt;commit 对应的 hash 值&gt;将当前 hash 对应提交的代码合并到 release 分支上去。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git cherry-pick &lt;commitid&gt;</span><br></pre></td></tr></table></figure>
+
+<ol start="5">
+<li>最后将本地合并好的 release 分支 push 到远程的 release 分支上去。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push origin release</span><br></pre></td></tr></table></figure>
+
+<p>​<br /></p>
+<blockquote>
+<p><strong>场景 3：</strong>在 main 分支上开发了 A、B、C、D 等功能，现在只需把 main 分支上的 A 功能合并到 release 分支，B、C、D 功能不做合并。</p>
+</blockquote>
+<p>​</p>
+<p>比如说我这个时候功能 A 的代码提交次数有多次 commitid3~commitid10 都是功能 A 的开发提交，或则是提交次数有多次但是 commitid 不是连续的，中间也有其它人提交。那么这两种情况下如果和功能 A 相关的开发有 10 次提交，那么我们需要执行 10 次 git cherry-pick commitid 吗？<br />​</p>
+<p>答案肯定是没有必要的，下面再来介绍一下有关  git cherry-pick 的拓展知识：<br /><strong>拓展：</strong>​</p>
+<ol>
+<li>单个 commit 合并</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git cherry-pick commitid</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>多个分开的 commit 一起合并</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git cherry-pick commit-id1 commit-id3 commit-id6</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>多个连续的 commit 合并， 将 commitid1到 commitid8 之间的所有提交合并到 release 分支上（不包含第一个 commitid）</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git cherry-pick commitid1..commitid8</span><br></pre></td></tr></table></figure>
+
+<p>每一次合并都可能会产生冲突，如果产生冲突，先解决冲突，然后将代码 commit 到本地仓库即可。<br />​</p>
+<p><strong>注意</strong>：测试无误之后，再将合并后的代码push到远程仓库。切记！<br><a name="MfbGH"></a></p>
+<h3 id="4-4-3-如何丢弃没有被合并过的分支"><a href="#4-4-3-如何丢弃没有被合并过的分支" class="headerlink" title="4.4.3 如何丢弃没有被合并过的分支"></a>4.4.3 如何丢弃没有被合并过的分支</h3><blockquote>
+<p><strong>场景：</strong>我们正在开发一个庞大的功能 B，为了不影响主分支上的功能，就新建了一个 feature-vulcan 分支来开发功能 B，功能开发完了，准备合并，接到领导通知说客户改变想法了，不想要此功能了，此功能又涉及到保密工作，所以客户要求要立即销毁。</p>
+</blockquote>
+<p>​</p>
+<p>所以我们执行 <code>git branch -d feature-vulcan</code>，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ git branch -d feature-vulcan</span><br><span class="line">error: The branch &#39;feature-vulcan&#39; is not fully merged.</span><br><span class="line">If you are sure you want to delete it, run &#39;git branch -D feature-vulcan&#39;.</span><br></pre></td></tr></table></figure>
+
+<p>销毁失败。Git友情提醒，feature-vulcan 分支还没有被合并，如果删除，将丢失掉修改，如果要强行删除，需要使用大写的 -D 参数。。<br />现在我们强行删除：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git branch -D feature-vulcan</span><br><span class="line">Deleted branch feature-vulcan (was 287773e).</span><br></pre></td></tr></table></figure>
+
+<p>终于删除成功！<br><a name="RqJUN"></a></p>
+<h3 id="4-4-4-本地分支是否到-push-到远程仓库"><a href="#4-4-4-本地分支是否到-push-到远程仓库" class="headerlink" title="4.4.4 本地分支是否到 push 到远程仓库"></a>4.4.4 本地分支是否到 push 到远程仓库</h3><p>本地分支往远程推送，那么，哪些分支需要推送，哪些不需要呢？</p>
+<ul>
+<li>master 分支是主分支，因此要时刻与远程同步</li>
+<li>dev 分支是开发分支，团队所有成员都需要在上面工作，所以也需要与远程同步</li>
+<li>bug 分支只用于在本地修复 bug，就没必要推到远程了，除非老板要看看你每周到底修复了几个 bug</li>
+<li>feature 分支是否推到远程，取决于你是否和你的小伙伴合作在上面开发</li>
+</ul>
+<p>总之，就是在 Git 中，分支完全可以在本地自己藏着玩，是否推送，视你的心情而定。<br><a name="XqZti"></a></p>
+<h3 id="4-4-5-总结"><a href="#4-4-5-总结" class="headerlink" title="4.4.5 总结"></a>4.4.5 总结</h3><ol>
+<li>修复 bug 时，我们会通过创建新的 bug 分支进行修复，然后合并，最后删除</li>
+<li>当手头工作没有完成时，先把工作现场 git stash 一下，然后去修复 bug，修复后，再 git stash pop，回到工作现场</li>
+<li>在 master 分支上修复的 bug，想要合并到当前 dev 分支，可以用 git cherry-pick <commitid> 命令，把 bug提交的修改“复制”到当前分支，避免重复劳动</li>
+<li>如果要丢弃一个没有被合并过的分支，可以通过 git branch -D <name> 强行删除<br><a name="oAc0v"></a></li>
+</ol>
+<h1 id="5-git-常用操作"><a href="#5-git-常用操作" class="headerlink" title="5 git 常用操作"></a>5 git 常用操作</h1><p><a name="IE8Y3"></a></p>
+<h2 id="5-1-如何把本地项目推送到远程仓库"><a href="#5-1-如何把本地项目推送到远程仓库" class="headerlink" title="5.1 如何把本地项目推送到远程仓库"></a>5.1 如何把本地项目推送到远程仓库</h2><blockquote>
+<p>场景：想把本地的一个项目文件存到 github 远程仓库。</p>
+</blockquote>
+<p>操作步骤：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1. 在本地建一个文件夹，例如 git-study-demo 作为本机工作区。</span><br><span class="line">2. 使用 git init 命令来初始化一个 Git 仓库。</span><br><span class="line">3. 把项目文件复制到 git-study-demo 目录下。</span><br><span class="line">4. 执行 git add . 把所有文件存到暂存区。</span><br><span class="line">5. 执行 git status 查看文件状态。</span><br><span class="line">6. 执行 git commit -m <span class="string">&quot;初始化项目模板&quot;</span>。把暂存区文件提交到本地库。</span><br><span class="line">7. git remote add origin https://github.com/beyond-yang/study-git-demo.git 添加远程版本库</span><br><span class="line">8. git push -u origin main 提交到远程仓库</span><br></pre></td></tr></table></figure>
+
+<p><strong>说明：</strong>​<br />git push -u origin main 命令中的 -u 参数其实就相当于记录了 push 到远端分支的默认值，这样当下次我们还想要继续 push 的这个远端分支的时候推送命令就可以简写成 git push 即可。<br><a name="TzObC"></a></p>
+<h2 id="5-2-git-log-退出方法"><a href="#5-2-git-log-退出方法" class="headerlink" title="5.2 git log 退出方法"></a>5.2 git log 退出方法</h2><p>使用 git log 命令之后，无法回到主页面，然后只能用暴力的方法解决，直接关闭命令窗口。<br /></p>
+<img src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/image5-1.png" class="">
+<p><br />其实很简单，输入字母 Q 即可退出。<br><a name="VDxeE"></a></p>
+<h2 id="5-3-删除分支"><a href="#5-3-删除分支" class="headerlink" title="5.3 删除分支"></a>5.3 删除分支</h2><p> 删除已经合并过的分支：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch -b feature-1</span><br></pre></td></tr></table></figure>
+
+<p>强行删除没有合并过的分支：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch -D feature-1</span><br></pre></td></tr></table></figure>
+
+<p><a name="ObQVn"></a></p>
+<h2 id="5-4-在本地创建和远程分支对应的分支"><a href="#5-4-在本地创建和远程分支对应的分支" class="headerlink" title="5.4 在本地创建和远程分支对应的分支"></a>5.4 在本地创建和远程分支对应的分支</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout -b branch-name origin&#x2F;branch-name</span><br></pre></td></tr></table></figure>
+
+<p><a name="MgBAl"></a></p>
+<h2 id="5-5-建立本地分支和远程分支的关联"><a href="#5-5-建立本地分支和远程分支的关联" class="headerlink" title="5.5 建立本地分支和远程分支的关联"></a>5.5 建立本地分支和远程分支的关联</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch --set-upstream-to&#x3D;origin&#x2F;&lt;branch&gt; dev</span><br></pre></td></tr></table></figure>
+
+<p><a name="obItg"></a></p>
+<h2 id="5-6-撤销合并操作"><a href="#5-6-撤销合并操作" class="headerlink" title="5.6 撤销合并操作"></a>5.6 撤销合并操作</h2><blockquote>
+<p><strong>场景1：</strong>需求说要把综合查询合并到 release 分支，目的是发布到预发布环境，代码合并后发现有 bug，说是要撤销这次的代码合并。</p>
+</blockquote>
+<p>release 分支是远程分支，肯定不能直接对远程分支进行撤销操作，可以在本地进行撤销后再 push 到远程上去：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git reset HEAD^</span><br></pre></td></tr></table></figure>
+
+<p><a name="VppfY"></a></p>
+<h1 id="6-个人使用习惯"><a href="#6-个人使用习惯" class="headerlink" title="6 个人使用习惯"></a>6 个人使用习惯</h1><p><a name="gZXtC"></a></p>
+<h2 id="6-1-查看提交日志"><a href="#6-1-查看提交日志" class="headerlink" title="6.1 查看提交日志"></a>6.1 查看提交日志</h2><p>查看提交日志喜欢使用界面化工具——例如小乌龟<br /></p>
+<img src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/image6-1.png" class="">
+<br />
+<img src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/image6-2.png" class="">
+<br />
+<img src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/image6-3.png" class="">
+<br />因为界面化工具不仅可以很方便的看出提交记录，还可以看出每次提交记录都修改了哪些文件，以及文件的修改内容。
+<a name="NaNmM"></a>
+
+<h2 id="6-2-撤销工作区的修改"><a href="#6-2-撤销工作区的修改" class="headerlink" title="6.2 撤销工作区的修改"></a>6.2 撤销工作区的修改</h2><p>撤销工作区修改喜欢用界面化工具——例如小乌龟<br /></p>
+<img src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/image6-4.png" class="">
+<p><a name="eVDW3"></a></p>
+<h2 id="6-3-提交代码"><a href="#6-3-提交代码" class="headerlink" title="6.3 提交代码"></a>6.3 提交代码</h2><p>提交代码喜欢用界面化工具——例如小乌龟<br />为了防止提交错误的代码或无用的代码，所以每次提交代码时都习惯看一下修改的内容都有哪些，如果发现有一些测试代码如 console.log 或 debugger 之类的。就删除掉后再提交。<br /></p>
+<img src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/image6-5.png" class="">
+<br />
+<img src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/image6-6.png" class="">
+<a name="Zovan"></a>
+
+<h1 id="7-记录工作中遇到的问题"><a href="#7-记录工作中遇到的问题" class="headerlink" title="7 记录工作中遇到的问题"></a>7 记录工作中遇到的问题</h1><p><a name="EV65y"></a></p>
+<h2 id="7-1-git-源换了之后应该怎么处理"><a href="#7-1-git-源换了之后应该怎么处理" class="headerlink" title="7.1 git 源换了之后应该怎么处理"></a>7.1 git 源换了之后应该怎么处理</h2><p><strong>场景说明：</strong>​<br />公司代码库迁移到另外的服务器，个人需要重新更新本地代码库，重新拉代码显然效率低，这时候只需要更换git源就可以轻松搞定<br />前提：本地代码已经更新到最新的 commit，更换源之后拉代码才不会出现冲突。<br /><strong>方法一：</strong>​</p>
+<ol>
+<li>进入本地仓库路径，进入 .git 目录</li>
+<li>修改 config 文件，将 url 换成现在的 git 仓库地址</li>
+</ol>
+<img src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/image7-1.png" class="">
+<p><br /><strong>方法二：</strong><br />第一步查看源地址：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git remote -v</span><br></pre></td></tr></table></figure>
+
+<p>第二步删除源地址：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git remote rm origin</span><br></pre></td></tr></table></figure>
+
+<p>第三步添加源地址：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git remote add origin git@git..gitxxx.com:fei&#x2F;stic.git</span><br></pre></td></tr></table></figure>
+
+<p>这就行了,然后git pull 拉取代码看有没有问题。<br />最后可以关联起来本地的分支(可忽略)：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch --set-upstream master origin&#x2F;master</span><br></pre></td></tr></table></figure>
+
+<p><a name="YDk67"></a></p>
+<h2 id="7-2-git-绿色、红色图标不显示问题的解决方案"><a href="#7-2-git-绿色、红色图标不显示问题的解决方案" class="headerlink" title="7.2 git 绿色、红色图标不显示问题的解决方案"></a>7.2 git 绿色、红色图标不显示问题的解决方案</h2><p>问题：在使用git的过程当中发现，项目文件上没有绿色图标，即便修改文件也没有红色图标显示git<br />绿色图标是指提交成功的，红色图标是指修改后还未提交的。没有图标显示，可是能够正常上传下载，在文件比较多的时候，不知道本身修改了哪些，容易出现错误。<br />解决步骤：</p>
+<ol>
+<li>win+r,regedit.exe，打开注册表 按照文件的层次关系依次找到blog</li>
+</ol>
+<p>HKEY_LOCAL_MACHINE\Software\Microsoft\windows\CurrentVersion\Explorer;排序<br />修改键名 Max Cached Icons (最大缓存图标) 的值为 2000 （没有这个键，能够新建）资源<br />重启电脑</p>
+<ol start="2">
+<li>打开后找到“HKEY_LOCAL_MACHINE–&gt;SOFTWARE–&gt;Microsoft–&gt;Windows–&gt;CurrentVersion–&gt;Explorer–&gt;ShellIconOverlayIdentifiers”这一项。将 Tortoise 相关的项都提到靠前的位置（重命名，在名称以前加几个空格）</li>
+</ol>
+<img src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/image7-2.png" class="">
+
+<ol start="3">
+<li>重启电脑或重启资源管理器后，绿色和红色图标就显示出来了。</li>
+</ol>
+<img src="/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/image7-3.png" class="">
+<p><a name="UvY1O"></a></p>
+</div><div class="article-licensing box"><div class="licensing-title"><p>Git常用功能总结</p><p><a href="https://ths-fe.github.io/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/">https://ths-fe.github.io/2022/03/07/Git%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E6%80%BB%E7%BB%93/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>杨静</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2022-03-07</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2023-08-05</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a class="" rel="noopener" target="_blank" title="CC BY-NC-SA 4.0" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a></p></div></div></div></div></div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/Git/">Git</a><a class="link-muted mr-2" rel="tag" href="/tags/%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD/">常用功能</a></div><div class="sharethis-inline-share-buttons"></div><script src="https://platform-api.sharethis.com/js/sharethis.js#property=5ea1492221690600121bcf3a&amp;product=inline-share-buttons&amp;cms=sop" defer></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/img/alipayqr.jpg" alt="支付宝"></span></a><a class="button donate" href="https://www.buymeacoffee.com/zapzqc?new=1" target="_blank" rel="noopener" data-type="buymeacoffee"><span class="icon is-small"><i class="fas fa-coffee"></i></span><span>送我杯咖啡</span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/img/wechatqr.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2022/08/04/git%E4%BD%BF%E7%94%A8/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">git使用</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2021/08/04/%E6%B5%85%E6%8B%B7%E8%B4%9D%E4%B8%8E%E6%B7%B1%E6%8B%B7%E8%B4%9D%20copy/"><span class="level-item">浅拷贝与深拷贝</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div class="content" id="valine-thread"></div><script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script><script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script><script>new Valine({
+            el: '#valine-thread' ,
+            appId: "4o5OfjCIGaSyqIwg7jop80Ge-gzGzoHsz",
+            appKey: "Rj9jcPLhW8WgWd6bDmXGmKaA",
+            placeholder: "欢迎评论交流",
+            avatar: "mm",
+            
+            meta: ["nick","mail","link"],
+            pageSize: 10,
+            lang: "zh-CN",
+            
+            highlight: true,
+            
+            
+            
+            
+            
+            requiredFields: [],
+        });</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="level is-mobile" href="#1-基础概念"><span class="level-left"><span class="level-item">1 基础概念</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#1-1-工作区-暂存区-本地仓库-远程仓库"><span class="level-left"><span class="level-item">1.1 工作区 / 暂存区 / 本地仓库 / 远程仓库</span></span></a></li><li><a class="level is-mobile" href="#1-2-相关的-Git-命令"><span class="level-left"><span class="level-item">1.2 相关的 Git 命令</span></span></a></li></ul></li><li><a class="level is-mobile" href="#2-基础配置"><span class="level-left"><span class="level-item">2 基础配置</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#2-1-设置提交用户"><span class="level-left"><span class="level-item">2.1 设置提交用户</span></span></a></li><li><a class="level is-mobile" href="#2-2-设置合并方式"><span class="level-left"><span class="level-item">2.2 设置合并方式</span></span></a></li><li><a class="level is-mobile" href="#2-3-设置换行符"><span class="level-left"><span class="level-item">2.3 设置换行符</span></span></a></li><li><a class="level is-mobile" href="#2-4-查看-Git-配置信息"><span class="level-left"><span class="level-item">2.4 查看 Git 配置信息</span></span></a></li></ul></li><li><a class="level is-mobile" href="#3-撤销修改"><span class="level-left"><span class="level-item">3 撤销修改</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#3-1-撤销工作区内容"><span class="level-left"><span class="level-item">3.1 撤销工作区内容</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#3-1-1-使用-git-checkout-撤销工作区修改"><span class="level-left"><span class="level-item">3.1.1 使用 git checkout 撤销工作区修改</span></span></a></li><li><a class="level is-mobile" href="#3-1-2-使用-git-restore-撤销工作区修改"><span class="level-left"><span class="level-item">3.1.2 使用 git restore 撤销工作区修改</span></span></a></li><li><a class="level is-mobile" href="#3-1-3-使用小乌龟撤销工作区修改"><span class="level-left"><span class="level-item">3.1.3 使用小乌龟撤销工作区修改</span></span></a></li></ul></li><li><a class="level is-mobile" href="#3-2-撤销暂存区内容"><span class="level-left"><span class="level-item">3.2 撤销暂存区内容</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#3-2-1-使用-git-reset-撤销暂存区内容"><span class="level-left"><span class="level-item">3.2.1 使用 git reset 撤销暂存区内容</span></span></a></li><li><a class="level is-mobile" href="#3-2-2-使用-git-restore-撤销暂存区内容"><span class="level-left"><span class="level-item">3.2.2 使用 git restore 撤销暂存区内容</span></span></a></li></ul></li><li><a class="level is-mobile" href="#3-3-撤销本地仓库内容（版本回退）"><span class="level-left"><span class="level-item">3.3 撤销本地仓库内容（版本回退）</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#3-3-1-使用-git-reset-实现版本回退"><span class="level-left"><span class="level-item">3.3.1 使用 git reset 实现版本回退</span></span></a></li></ul></li></ul></li><li><a class="level is-mobile" href="#4-分支管理"><span class="level-left"><span class="level-item">4 分支管理</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#4-1-分支说明"><span class="level-left"><span class="level-item">4.1 分支说明</span></span></a></li><li><a class="level is-mobile" href="#4-2-创建与合并分支"><span class="level-left"><span class="level-item">4.2 创建与合并分支</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#4-2-1-原理"><span class="level-left"><span class="level-item">4.2.1 原理</span></span></a></li><li><a class="level is-mobile" href="#4-2-2-实战"><span class="level-left"><span class="level-item">4.2.2 实战</span></span></a></li><li><a class="level is-mobile" href="#4-2-3-拓展内容"><span class="level-left"><span class="level-item">4.2.3 拓展内容</span></span></a></li><li><a class="level is-mobile" href="#4-2-4-总结"><span class="level-left"><span class="level-item">4.2.4 总结</span></span></a></li></ul></li><li><a class="level is-mobile" href="#4-3-解决冲突"><span class="level-left"><span class="level-item">4.3 解决冲突</span></span></a></li><li><a class="level is-mobile" href="#4-4-分支使用时常遇问题"><span class="level-left"><span class="level-item">4.4 分支使用时常遇问题</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#4-4-1-使用-git-stash-解决问题"><span class="level-left"><span class="level-item">4.4.1 使用 git stash 解决问题</span></span></a></li><li><a class="level is-mobile" href="#4-4-2-使用-cherry-pick-解决问题"><span class="level-left"><span class="level-item">4.4.2 使用 cherry-pick 解决问题</span></span></a></li><li><a class="level is-mobile" href="#4-4-3-如何丢弃没有被合并过的分支"><span class="level-left"><span class="level-item">4.4.3 如何丢弃没有被合并过的分支</span></span></a></li><li><a class="level is-mobile" href="#4-4-4-本地分支是否到-push-到远程仓库"><span class="level-left"><span class="level-item">4.4.4 本地分支是否到 push 到远程仓库</span></span></a></li><li><a class="level is-mobile" href="#4-4-5-总结"><span class="level-left"><span class="level-item">4.4.5 总结</span></span></a></li></ul></li></ul></li><li><a class="level is-mobile" href="#5-git-常用操作"><span class="level-left"><span class="level-item">5 git 常用操作</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#5-1-如何把本地项目推送到远程仓库"><span class="level-left"><span class="level-item">5.1 如何把本地项目推送到远程仓库</span></span></a></li><li><a class="level is-mobile" href="#5-2-git-log-退出方法"><span class="level-left"><span class="level-item">5.2 git log 退出方法</span></span></a></li><li><a class="level is-mobile" href="#5-3-删除分支"><span class="level-left"><span class="level-item">5.3 删除分支</span></span></a></li><li><a class="level is-mobile" href="#5-4-在本地创建和远程分支对应的分支"><span class="level-left"><span class="level-item">5.4 在本地创建和远程分支对应的分支</span></span></a></li><li><a class="level is-mobile" href="#5-5-建立本地分支和远程分支的关联"><span class="level-left"><span class="level-item">5.5 建立本地分支和远程分支的关联</span></span></a></li><li><a class="level is-mobile" href="#5-6-撤销合并操作"><span class="level-left"><span class="level-item">5.6 撤销合并操作</span></span></a></li></ul></li><li><a class="level is-mobile" href="#6-个人使用习惯"><span class="level-left"><span class="level-item">6 个人使用习惯</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#6-1-查看提交日志"><span class="level-left"><span class="level-item">6.1 查看提交日志</span></span></a></li><li><a class="level is-mobile" href="#6-2-撤销工作区的修改"><span class="level-left"><span class="level-item">6.2 撤销工作区的修改</span></span></a></li><li><a class="level is-mobile" href="#6-3-提交代码"><span class="level-left"><span class="level-item">6.3 提交代码</span></span></a></li></ul></li><li><a class="level is-mobile" href="#7-记录工作中遇到的问题"><span class="level-left"><span class="level-item">7 记录工作中遇到的问题</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#7-1-git-源换了之后应该怎么处理"><span class="level-left"><span class="level-item">7.1 git 源换了之后应该怎么处理</span></span></a></li><li><a class="level is-mobile" href="#7-2-git-绿色、红色图标不显示问题的解决方案"><span class="level-left"><span class="level-item">7.2 git 绿色、红色图标不显示问题的解决方案</span></span></a></li></ul></li></ul></div></div><style>.menu-list > li > a.is-active + .menu-list { display: block; }.menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div><div class="card widget" data-type="adsense"><div class="card-content"><div class="menu"><h3 class="menu-label"> </h3><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6826040978803389" data-ad-slot="1033672070" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/ths.png" alt="思路大前端团队" height="28"></a><p class="is-size-7"><span>&copy; 2023 杨静</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a><br><span id="busuanzi_container_site_uv">共<span id="busuanzi_value_site_uv">0</span>个访客</span></p></div><div class="level-end"></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" async></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>

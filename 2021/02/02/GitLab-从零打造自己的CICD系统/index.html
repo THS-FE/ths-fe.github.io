@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>GitLab-从零打造自己的 CI/CD 系统 - 思路大前端团队</title><link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#f7f7f7"><meta name="application-name" content="思路大前端"><meta name="msapplication-TileImage" content="/img/favicon.ico"><meta name="msapplication-TileColor" content="#f7f7f7"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="思路大前端"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta description="本文从基本概念到实践操作，一步一步教会您如何打造自己的CI&amp;#x2F;CD系统"><meta property="og:type" content="blog"><meta property="og:title" content="GitLab-从零打造自己的 CI/CD 系统"><meta property="og:url" content="https://ths-fe.github.io/2021/02/02/GitLab-%E4%BB%8E%E9%9B%B6%E6%89%93%E9%80%A0%E8%87%AA%E5%B7%B1%E7%9A%84CICD%E7%B3%BB%E7%BB%9F/"><meta property="og:site_name" content="思路大前端团队"><meta property="og:description" content="本文从基本概念到实践操作，一步一步教会您如何打造自己的CI&amp;#x2F;CD系统"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://ths-fe.github.io/2021/02/02/GitLab-%E4%BB%8E%E9%9B%B6%E6%89%93%E9%80%A0%E8%87%AA%E5%B7%B1%E7%9A%84CICD%E7%B3%BB%E7%BB%9F/cover.jpg"><meta property="article:published_time" content="2021-02-02T14:48:12.000Z"><meta property="article:modified_time" content="2023-08-05T13:20:43.720Z"><meta property="article:author" content="刘莹鑫"><meta property="article:tag" content="Gitlab CI"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="/2021/02/02/GitLab-%E4%BB%8E%E9%9B%B6%E6%89%93%E9%80%A0%E8%87%AA%E5%B7%B1%E7%9A%84CICD%E7%B3%BB%E7%BB%9F/cover.jpg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://ths-fe.github.io/2021/02/02/GitLab-%E4%BB%8E%E9%9B%B6%E6%89%93%E9%80%A0%E8%87%AA%E5%B7%B1%E7%9A%84CICD%E7%B3%BB%E7%BB%9F/"},"headline":"思路大前端团队","image":["https://ths-fe.github.io/2021/02/02/GitLab-%E4%BB%8E%E9%9B%B6%E6%89%93%E9%80%A0%E8%87%AA%E5%B7%B1%E7%9A%84CICD%E7%B3%BB%E7%BB%9F/cover.jpg"],"datePublished":"2021-02-02T14:48:12.000Z","dateModified":"2023-08-05T13:20:43.720Z","author":{"@type":"Person","name":"刘莹鑫"},"description":"本文从基本概念到实践操作，一步一步教会您如何打造自己的CI&#x2F;CD系统"}</script><link rel="canonical" href="https://ths-fe.github.io/2021/02/02/GitLab-%E4%BB%8E%E9%9B%B6%E6%89%93%E9%80%A0%E8%87%AA%E5%B7%B1%E7%9A%84CICD%E7%B3%BB%E7%BB%9F/"><link rel="icon" href="/img/favicon.ico"><link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.13.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/monokai.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><script>var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?fd8cc3421abec7b8f4e6bc337e25c7d1";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();</script><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><script src="https://www.googletagmanager.com/gtag/js?id=UA-72716512-3" async></script><script>window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+    
+        gtag('config', 'UA-72716512-3');</script><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><script data-ad-client="ca-pub-6826040978803389" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" async></script><meta name="generator" content="Hexo 5.2.0"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/ths.png" alt="思路大前端团队" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">博客</a><a class="navbar-item" href="/fe">大前端技术体系</a><a class="navbar-item" href="/gis">GIS技术体系</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/about">关于我们</a></div><div class="navbar-end"><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><div class="card-image"><span class="image is-7by3"><img class="fill" src="/2021/02/02/GitLab-%E4%BB%8E%E9%9B%B6%E6%89%93%E9%80%A0%E8%87%AA%E5%B7%B1%E7%9A%84CICD%E7%B3%BB%E7%BB%9F/cover.jpg" alt="GitLab-从零打造自己的 CI/CD 系统"></span></div><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2021-02-02T14:48:12.000Z" title="2021-02-02T14:48:12.000Z">2021-02-02</time>发表</span><span class="level-item"><time dateTime="2023-08-05T13:20:43.720Z" title="2023-08-05T13:20:43.720Z">2023-08-05</time>更新</span><span class="level-item"> 刘莹鑫 </span><span class="level-item"><a class="link-muted" href="/categories/%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90-%E4%BA%A4%E4%BB%98-%E9%83%A8%E7%BD%B2/">持续集成&amp;交付&amp;部署</a><span> / </span><a class="link-muted" href="/categories/%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90-%E4%BA%A4%E4%BB%98-%E9%83%A8%E7%BD%B2/Gitlab/">Gitlab</a></span><span class="level-item">31 分钟读完 (大约4696个字)</span><span class="level-item" id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv">0</span>次访问</span></div></div><h1 class="title is-3 is-size-4-mobile">GitLab-从零打造自己的 CI/CD 系统</h1><div class="content"><h1 id="1-为什么要做-CI-CD（持续集成、持续交付、持续部署）"><a href="#1-为什么要做-CI-CD（持续集成、持续交付、持续部署）" class="headerlink" title="1 为什么要做 CI/CD（持续集成、持续交付、持续部署）"></a>1 为什么要做 CI/CD（持续集成、持续交付、持续部署）</h1><h2 id="1-1-公司项目-产品开发-发布现状"><a href="#1-1-公司项目-产品开发-发布现状" class="headerlink" title="1.1 公司项目/产品开发-发布现状"></a>1.1 公司项目/产品开发-发布现状</h2><p><img src="%E5%BC%80%E5%8F%91%E7%8E%B0%E7%8A%B6.png" alt="公司项目/产品开发-发布现状"></p>
+<ol>
+<li>开发人员开发阶段通过代码仓库实现多人协作开发。</li>
+<li>开发完成后，开发人员在本机运行编译，等待编译打包。</li>
+<li>打包完后通过远程桌面部署最新的包到测试环境。</li>
+<li>通知测试人员进行测试验证。</li>
+<li>测试人员反馈 BUG，开发人员修改后，重复 2.3.4。</li>
+<li>测试通过，准备某个晚上半夜或者周末上线生产环境。</li>
+<li>测试人员等待到半夜或者周末验证生产环境系统。</li>
+</ol>
+<h2 id="1-2-存在问题"><a href="#1-2-存在问题" class="headerlink" title="1.2 存在问题"></a>1.2 存在问题</h2><h3 id="1-2-1-工作效率低"><a href="#1-2-1-工作效率低" class="headerlink" title="1.2.1 工作效率低"></a>1.2.1 工作效率低</h3><p>重复性工作较多，编译打包的过程浪费开发资源，每次测试部署正常 10 到 20 分钟。</p>
+<h3 id="1-2-2-容易出现低级错误"><a href="#1-2-2-容易出现低级错误" class="headerlink" title="1.2.2 容易出现低级错误"></a>1.2.2 容易出现低级错误</h3><p>产品/项目成果交付全部采用手工操作，打包编译过程中各种莫名其妙问题。</p>
+<h3 id="1-2-3-不能尽早的发现问题，要花费更大的代价修复"><a href="#1-2-3-不能尽早的发现问题，要花费更大的代价修复" class="headerlink" title="1.2.3 不能尽早的发现问题，要花费更大的代价修复"></a>1.2.3 不能尽早的发现问题，要花费更大的代价修复</h3><p>项目经理及需求人员不清楚项目进展，不能提前把空风险；开发团队成员间不能及时发现合并代码后的问题。</p>
+<h3 id="1-2-4-功能开发完后，发现不是客户想要的效果"><a href="#1-2-4-功能开发完后，发现不是客户想要的效果" class="headerlink" title="1.2.4 功能开发完后，发现不是客户想要的效果"></a>1.2.4 功能开发完后，发现不是客户想要的效果</h3><p>一般都是等项目整体功能开发完成后给客户看，客户不能尽早看到成果，最后发现不是想要的效果。</p>
+<h3 id="1-2-5-测试深度不够，上线项目问题较多"><a href="#1-2-5-测试深度不够，上线项目问题较多" class="headerlink" title="1.2.5 测试深度不够，上线项目问题较多"></a>1.2.5 测试深度不够，上线项目问题较多</h3><p>测试人员测试基本属于功能性测试，上线后往往发现一些未测试到的功能及问题。</p>
+<h3 id="1-2-6-测试成本较高"><a href="#1-2-6-测试成本较高" class="headerlink" title="1.2.6 测试成本较高"></a>1.2.6 测试成本较高</h3><p>需要投入大量的测试人员进行测试<br><strong>存在以上这些问题，我们应该要怎么做呢？</strong></p>
+<h2 id="1-3-CI-CD（持续集成、持续交付、持续部署）"><a href="#1-3-CI-CD（持续集成、持续交付、持续部署）" class="headerlink" title="1.3 CI/CD（持续集成、持续交付、持续部署）"></a>1.3 CI/CD（持续集成、持续交付、持续部署）</h2><p>要解决以上问题，可以通过软件开发的持续方法来解决。<br>软件开发的持续方法是基于自动执行脚本，以最大程度地减少在开发时引入错误的机会。从开发新代码到部署新代码，几乎不需要人工干预，甚至根本不需要干预。<br>它涉及到在每次小的迭代中就不断地构建，测试和部署代码更改，从而减少了基于错误或失败的先前版本开发新版本代码的机会。<br><strong>使用软件开发的持续方法能够实现快速迭代，保持高质量，避免不必要的成本投入</strong>。</p>
+<h3 id="1-3-1-持续集成-CI（Continuous-integration）"><a href="#1-3-1-持续集成-CI（Continuous-integration）" class="headerlink" title="1.3.1 持续集成 CI（Continuous integration）"></a>1.3.1 持续集成 CI（<strong>Continuous integration</strong>）</h3><p>通过持续合并团队开发人员代码并进行自动化构建及测试来确保没有集成问题并及早发现任何问题的一种做法。<br><img src="%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90.jpg" alt="持续集成"><br>投入：</p>
+<ul>
+<li>需要为每个新功能，改进或错误修复编写自动化测试。（单元测试、集成测试等）</li>
+<li>需要一个持续集成服务器（jenkins、GitLab CI），该服务器可以监视代码仓库并针对推送的每个新提交自动运行测试。</li>
+<li>尽可能多地提交代码，合并更改。</li>
+</ul>
+<p>产出：</p>
+<ul>
+<li>减少 BUG，因为通过自动化测试可以获取测试结果，避免将一些问题提交到交付生产中。</li>
+<li>编译部署产品更顺利，因为集成时问题都已解决。</li>
+<li>开发者可以无缝工作，不需要间断的来解决问题，因为开发者可以很快获得构建失败的结果，在开始下一个任务之前就可以很快解决。</li>
+<li>测试成本降低，因为集成服务器可以一秒运行几百个测试用例。</li>
+<li>测试团队花更少的时间测试，可以重点关注测试上的改进。</li>
+</ul>
+<h3 id="1-3-2-持续交付-CD（Continuous-Delivery）"><a href="#1-3-2-持续交付-CD（Continuous-Delivery）" class="headerlink" title="1.3.2 持续交付 CD（Continuous Delivery）"></a>1.3.2 持续交付 CD（<strong>Continuous Delivery</strong>）</h3><p>在持续集成的基础上，进行验收测试（QA）,通过验收测试后发布到预发布环境中，预发布环境到生产环境的发布，需要通过手动点击触发自动部署。也就是所有的变更都可以被部署到生产环境中，但是不会自动触发部署。<br><img src="%E6%8C%81%E7%BB%AD%E4%BA%A4%E4%BB%98.jpg" alt="持续交付"><br>投入：</p>
+<ul>
+<li>要有持续集成的基础，测试用例需要覆盖足够的代码。</li>
+<li>部署需要自动化，只是触发部署是手动的。</li>
+<li>团队需要增加新功能标识，避免未完成的新功能进入待发布的产品。</li>
+</ul>
+<p>产出：</p>
+<ul>
+<li>部署软件变得非常简单。团队不需要提前几天准备发布。</li>
+<li>可以提高发布频率，用户可以尽早接触到新功能。</li>
+<li>每次都是小的更改，对决策的压力要小得多，可以更快地迭代。</li>
+</ul>
+<h3 id="1-3-3-持续部署-CD（Continuous-Deployment）"><a href="#1-3-3-持续部署-CD（Continuous-Deployment）" class="headerlink" title="1.3.3 持续部署 CD（Continuous Deployment）"></a>1.3.3 持续部署 CD（<strong>Continuous Deployment</strong>）</h3><p>在持续集成的基础上，进行验收测试（QA）,通过验收测试后发布到预发布环境中，预发布环境到生产环境的发布自动完成。持续部署可以加速用户反馈新功能，避免发布日带来的压力。开发可以着力于开发系统，开发结束后几分钟就可以触达到用户。<br><img src="%E6%8C%81%E7%BB%AD%E9%83%A8%E7%BD%B2.jpg" alt="持续部署"><br>投入：</p>
+<ul>
+<li>测试必须要做到足够。测试的质量将决定发布的质量。</li>
+<li>文档建设需要和产品部署保持同步。</li>
+<li>新功能的发布需要协调其他部门，包括售后支持&amp;市场&amp;推广等。</li>
+</ul>
+<p>产出：</p>
+<ul>
+<li>快速的发布节奏，因为每个新功能一旦完成都会自动的发布给用户。</li>
+<li>发布风险降低，修复问题更容易，因为每次变更都是小步迭代发布。</li>
+<li>用户可以看到持续性的优化和质量提升，而不是非要等到按月，按季度，甚至按年。</li>
+</ul>
+<h3 id="1-3-4-它们之间的关系"><a href="#1-3-4-它们之间的关系" class="headerlink" title="1.3.4 它们之间的关系"></a>1.3.4 它们之间的关系</h3><p>持续集成是持续交付和持续部署的一部分。持续部署和持续交付区别在于持续部署是自动执行发布，持续交付需要手动点击触发自动发布。<br>![CICD之间关系](CICD 之间关系.png)</p>
+<h1 id="2-GitLab"><a href="#2-GitLab" class="headerlink" title="2 GitLab"></a>2 GitLab</h1><h2 id="2-1-GitLab-CI-CD"><a href="#2-1-GitLab-CI-CD" class="headerlink" title="2.1 GitLab CI/CD"></a>2.1 GitLab CI/CD</h2><p>GitLab CI / CD 是 GitLab 内置的工具，可以将所有软件开发的持续方法（持续集成、持续交付、持续部署）应用于软件，而无需第三方应用程序。（使用过 Jenkins 的，可以理解为他跟 Jenkins 一样的功能，只是它是 GitLab 自带的，使用起来更简单）</p>
+<h2 id="2-2-GitLab-Runner"><a href="#2-2-GitLab-Runner" class="headerlink" title="2.2 GitLab-Runner"></a>2.2 GitLab-Runner</h2><p>GitLab Runner 用于运行项目持续集成、持续部署脚本并将结果发送回 GitLab，与 GitLab CI/CD 一起使用。</p>
+<h2 id="2-3-GitLab、GitLab-CI-、GitLab-Runner-关系"><a href="#2-3-GitLab、GitLab-CI-、GitLab-Runner-关系" class="headerlink" title="2.3 GitLab、GitLab CI 、GitLab-Runner 关系"></a>2.3 GitLab、GitLab CI 、GitLab-Runner 关系</h2><p>开发推送代码到 GitLab，GitLab 检测项目中是否存在 .gitlab-ci.yml 配置，通过该配置找到指定的 GitLab-Runner，runner 执行提前配置好的脚本，进行编译、 集成、测试、交付、部署，一切顺利地话会分发到各个服务器（测试服务器、预发布服务器、正式服务器等），此时一个迭代开发上线流程走完。</p>
+<p><img src="gitLab-runner.png" alt="GitLab、GitLab CI 、GitLab-Runner关系"></p>
+<h2 id="2-4-gitlab-ci-yml"><a href="#2-4-gitlab-ci-yml" class="headerlink" title="2.4 .gitlab-ci.yml"></a>2.4 .gitlab-ci.yml</h2><p>项目根目录下的一个文件，记录了一系列的阶段和执行规则。GitLab-CI 在检测到代码 push 后会解析它，根据里面的内容调用该项目可访问的 Runner 来运行。</p>
+<h3 id="2-4-1-YAML-常用语法说明"><a href="#2-4-1-YAML-常用语法说明" class="headerlink" title="2.4.1 YAML 常用语法说明"></a>2.4.1 YAML 常用语法说明</h3><ul>
+<li>通过类似大纲的缩进方式组织层级（空格，不能使用跳格字符(TAB)）</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">job1:</span></span><br><span class="line">  <span class="attr">script:</span> <span class="string">&quot;execute-script-for-job1&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">job2:</span></span><br><span class="line">  <span class="attr">script:</span> <span class="string">&quot;execute-script-for-job2&quot;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>“# “号注释，而且只能是一行的注释，也就是单行注释</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">job1:</span> <span class="comment"># 这是一个注释</span></span><br><span class="line">  <span class="attr">script:</span> <span class="string">&quot;execute-script-for-job1&quot;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>短杠+空格+内容表示数组的一项，以下例子中代表 stages 里边有三项，转换为 JSON 来理解的话是{“stages”:[“build”,”test”,”deploy”]}</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">stages:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">build</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">test</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">deploy</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>对象使用冒号+空格（ :   ）分开键值和内容，以下例子中代表 variables 里边有三项，转换为 JSON 来理解的话是{“variables”:{“deployServer”:”<a href="mailto:&#x77;&#x65;&#x69;&#104;&#x75;&#x40;&#49;&#57;&#50;&#x2e;&#49;&#54;&#56;&#x2e;&#x30;&#46;&#x31;&#x38;&#51;">&#x77;&#x65;&#x69;&#104;&#x75;&#x40;&#49;&#57;&#50;&#x2e;&#49;&#54;&#56;&#x2e;&#x30;&#46;&#x31;&#x38;&#51;</a>“,”deployDirectory”:”……”,”deployWebUrl”:”…….”}}</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">variables:</span></span><br><span class="line">  <span class="attr">deployServer:</span> <span class="string">weihu@192.168.0.183</span></span><br><span class="line">  <span class="attr">deployDirectory:</span> <span class="string">\Product\test\nginx-1.18.0\html\pinxx</span></span><br><span class="line">  <span class="attr">deployWebUrl:</span> <span class="string">http://192.168.0.183:8104/pinxx</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>字符串可以不加引号</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">variables:</span></span><br><span class="line">  <span class="attr">deployTarget:</span> <span class="string">weihu@192.168.0.183:/Product/test/</span></span><br></pre></td></tr></table></figure>
+
+<p>了解更多：<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/YAML">https://zh.wikipedia.org/wiki/YAML</a></p>
+<h3 id="2-4-2-相关概念"><a href="#2-4-2-相关概念" class="headerlink" title="2.4.2 相关概念"></a>2.4.2 相关概念</h3><p><img src="%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5.png" alt="相关概念"></p>
+<ul>
+<li><p>Pipeline（流水线）：每次推送到 GitLab 的代码会根据项目 .gitlab-ci.yml 文件产生一个流水线，流水线就是一个分成不同阶段(stage)的作业(job)的集合。</p>
+</li>
+<li><p>Stage（阶段）：阶段是对批量的作业(job)的一个逻辑上的划分，每个 GitLab CI/CD 都必须包含至少一个 Stage。多个 Stage 默认是按照顺序执行的，默认情况下如果其中任何一个 Stage 失败，则后续的 Stage 不会被执行，整个 CI 过程被认为失败，当然这种默认行为也可以通过配置去修改它。</p>
+</li>
+<li><p>job（作业）：作业就是运行器(Runner)要执行的指令集合。当一个 Stage 执行的时候，与其关联的所有 Job 都会被执行。在有足够 Runner 的前提下,同一阶段的所有作业会并发执行。作业状态直接影响阶段的状态。</p>
+</li>
+</ul>
+<h3 id="2-4-3-常用配置（点击关键词有惊喜）"><a href="#2-4-3-常用配置（点击关键词有惊喜）" class="headerlink" title="2.4.3 常用配置（点击关键词有惊喜）"></a>2.4.3 常用配置（点击关键词有惊喜）</h3><table>
+<thead>
+<tr>
+<th align="left">关键词</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/yaml/README.html#script"><code>script</code></a></td>
+<td align="left">在作业里边会被 runner 执行的脚本，脚本执行的目录为你项目的目录</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/yaml/README.html#after_script"><code>after_script</code></a></td>
+<td align="left">在作业运行后执行的脚本，可以全局定义，也可以在作业中定义</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/yaml/README.html#allow_failure"><code>allow_failure</code></a></td>
+<td align="left">允许一个作业失败后影响流水线的失败</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/yaml/README.html#artifacts"><code>artifacts</code></a></td>
+<td align="left">翻译过来是制品的意思，会将流水线过程中的一些文件、文件夹打包生成一个外部可下载的链接，还用于在后续作业中传递缓存。有以下属性：1.paths 文件路径 2.exclude 要排除的文件 3.name 制品名称 4.expose_as 在 UI 页面导出名 5.untracked 布尔类型，是否将 git 忽略的文件加到制品中 6.when on_success；on_failure；always 何时上传制品 7.expire_in 过期时间默认 30 天 8.reports 收集测试报告</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/yaml/README.html#before_script"><code>before_script</code></a></td>
+<td align="left">在作业运行前执行的脚本，可以全局定义，也可以在作业中定义</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/yaml/README.html#cache"><code>cache</code></a></td>
+<td align="left">缓存一些文件，用于后续任务使用。比如 node_modules、maven 下载的包这些缓存下来，可以大大优化流水线效率</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/yaml/README.html#coverage"><code>coverage</code></a></td>
+<td align="left">用于获取项目的代码覆盖率</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/yaml/README.html#dependencies"><code>dependencies</code></a></td>
+<td align="left">提供要从哪些作业获取制品</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/yaml/README.html#environment"><code>environment</code></a></td>
+<td align="left">作业部署到的环境</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/yaml/README.html#onlyexcept-basic"><code>except</code></a></td>
+<td align="left">限定什么条件下不创建作业</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/yaml/README.html#extends"><code>extends</code></a></td>
+<td align="left">配置作业继承的一些配置条目</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/yaml/README.html#image"><code>image</code></a></td>
+<td align="left">指定 docker 镜像为基础运行环境</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/yaml/README.html#include"><code>include</code></a></td>
+<td align="left">引入外部的 YAML 文件</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/yaml/README.html#interruptible"><code>interruptible</code></a></td>
+<td align="left">定义在新的运行使其冗余时是否可以取消该作业</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/yaml/README.html#onlyexcept-basic"><code>only</code></a></td>
+<td align="left">可以限定特定分支，特定 tag 等才执行作业</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/yaml/README.html#pages"><code>pages</code></a></td>
+<td align="left">用于将静态内容上传到 GitLab</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/yaml/README.html#parallel"><code>parallel</code></a></td>
+<td align="left">一个作业并行多少个实例</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/yaml/README.html#release"><code>release</code></a></td>
+<td align="left">用于创建一个 release</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/yaml/README.html#resource_group"><code>resource_group</code></a></td>
+<td align="left">限制作业并发执行</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/yaml/README.html#retry"><code>retry</code></a></td>
+<td align="left">设置一个任务在某种情况下的重试次数</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/yaml/README.html#rules"><code>rules</code></a></td>
+<td align="left">规定任务的执行规则，使用表达式来确定哪些作业执行哪些不执行等等</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/yaml/README.html#services"><code>services</code></a></td>
+<td align="left">使用 docker 服务镜像</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/yaml/README.html#stage"><code>stage</code></a></td>
+<td align="left">翻译过来是阶段的意思，用于归类作业，按照阶段定义的顺序来执行</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/yaml/README.html#tags"><code>tags</code></a></td>
+<td align="left">指定该项目可访问范围内用于执行任务的 runner，跟注册 runner 时的 tag 对应</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/yaml/README.html#timeout"><code>timeout</code></a></td>
+<td align="left">设置一个任务的超时时间</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/yaml/README.html#trigger"><code>trigger</code></a></td>
+<td align="left">一个项目的流水线触发另一个项目的流水线执行</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/yaml/README.html#variables"><code>variables</code></a></td>
+<td align="left">定义变量</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/yaml/README.html#when"><code>when</code></a></td>
+<td align="left">什么时候去运行这个作业. 比如: <code>when:manual</code> 手动执行一个作业、 <code>when:delayed</code>延迟执行作业</td>
+</tr>
+</tbody></table>
+<p>了解更多：<a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/yaml/README.html">https://docs.gitlab.com/ee/ci/yaml/README.html</a><br>配置示例：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">before_script:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;Start pipelines&quot;</span></span><br><span class="line"><span class="attr">variables:</span></span><br><span class="line">  <span class="attr">deployTarget:</span> <span class="string">weihu@192.168.0.183:/Product/test/</span></span><br><span class="line"></span><br><span class="line"><span class="attr">cache:</span></span><br><span class="line">  <span class="attr">key:</span></span><br><span class="line">    <span class="attr">files:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">package.json</span></span><br><span class="line">  <span class="attr">paths:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">node_modules</span></span><br><span class="line"><span class="attr">stages:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">build</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">test</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">deploy</span></span><br><span class="line"><span class="attr">build-job:</span></span><br><span class="line">  <span class="attr">before_script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;Start build job&quot;</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">build</span></span><br><span class="line">  <span class="attr">tags:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">vue</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;build ..........&quot;</span></span><br><span class="line">  <span class="attr">after_script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;End of build&quot;</span></span><br><span class="line"><span class="attr">test-job:</span></span><br><span class="line">  <span class="attr">before_script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;Start test job&quot;</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">test</span></span><br><span class="line">  <span class="attr">tags:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">vue</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;test..........&quot;</span></span><br><span class="line">  <span class="attr">after_script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;End of test&quot;</span></span><br><span class="line"><span class="attr">deploy-job:</span></span><br><span class="line">  <span class="attr">before_script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;Start deploy job&quot;</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">deploy</span></span><br><span class="line">  <span class="attr">tags:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">vue</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;deploy..........&quot;</span></span><br><span class="line">  <span class="attr">after_script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;End of deploy&quot;</span></span><br><span class="line"><span class="attr">after_script:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;End of pipelines&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="2-5-通知"><a href="#2-5-通知" class="headerlink" title="2.5 通知"></a>2.5 通知</h2><p>通过设置通知您可以随时了解 GitLab 中发生了什么事情，比如可以设置通知获取 CI 构建结果。</p>
+<h3 id="2-5-1-编辑通知"><a href="#2-5-1-编辑通知" class="headerlink" title="2.5.1 编辑通知"></a>2.5.1 编辑通知</h3><p><img src="%E9%80%9A%E7%9F%A5%E8%AE%BE%E7%BD%AE.png" alt="通知设置"></p>
+<p>编辑通知设置：</p>
+<ol>
+<li>点击个人资料图片，然后选择<strong>设置</strong> 。</li>
+<li>点击左侧边栏中的<strong>通知</strong> 。</li>
+<li>编辑所需的通知设置。 编辑的设置将自动保存并启用。</li>
+</ol>
+<p><strong>这些通知设置仅适用于您。 它们不会影响同一项目或组中其他任何人收到的通知</strong>。</p>
+<h3 id="2-5-2-通知设置示例"><a href="#2-5-2-通知设置示例" class="headerlink" title="2.5.2 通知设置示例"></a>2.5.2 通知设置示例</h3><p>需求：设置 xxx 项目只在构建失败后发送通知邮件。</p>
+<p><img src="%E8%87%AA%E5%AE%9A%E4%B9%89%E9%80%9A%E7%9F%A5.png" alt="自定义通知"></p>
+<p><a target="_blank" rel="noopener" href="https://www.bookstack.cn/read/gitlab-doc-zh/docs-410.md"><code>了解更多</code></a></p>
+<h1 id="3-快速上手"><a href="#3-快速上手" class="headerlink" title="3 快速上手"></a>3 快速上手</h1><h2 id="3-1-场景"><a href="#3-1-场景" class="headerlink" title="3.1 场景"></a>3.1 场景</h2><p>实现产品拼夕夕（vue 的 PC 端站点）在开发人员提交一个小功能到代码仓库后自动部署到测试服务器上，产品经理可以及时看到产品开发情况,开发人员也能及时发现集成的问题。</p>
+<h2 id="3-2-环境准备"><a href="#3-2-环境准备" class="headerlink" title="3.2 环境准备"></a>3.2 环境准备</h2><h3 id="3-2-1-部署应用的测试服务器环境"><a href="#3-2-1-部署应用的测试服务器环境" class="headerlink" title="3.2.1 部署应用的测试服务器环境"></a>3.2.1 部署应用的测试服务器环境</h3><ol>
+<li>这里使用一台 Windows server 2008 R2 Enterprise，服务器 IP 为 192.168.0.183，服务器用户名 weihu。</li>
+<li>服务器 web 容器安装：这里使用 nginx,nginx 静态资源目录为默认的 D:\Product\test\nginx-1.18.0\html\，端口设置为 8104，在 html 目录下创建 pinxx 目录用于部署拼夕夕产品（服务器已有其他 web 容器也可以直接使用，比如 node 服务、tomcat 等）</li>
+<li>安装服务器的 OpenSSH 并配置免密登录，参照以下文档配置：<a target="_blank" rel="noopener" href="https://www.yuque.com/docs/share/d3254cc2-2f11-4080-8af1-4b267b6c8235#">https://www.yuque.com/docs/share/d3254cc2-2f11-4080-8af1-4b267b6c8235?#</a> 《Windows OpenSSH》</li>
+</ol>
+<p><strong>注：同一台服务器/ PC，只需要配置一次 OpenSSH，其他项目都可以基于此 SSH 进行远程配置</strong>。</p>
+<h3 id="3-2-2-GitLab-Runner-安装"><a href="#3-2-2-GitLab-Runner-安装" class="headerlink" title="3.2.2 GitLab-Runner 安装"></a>3.2.2 GitLab-Runner 安装</h3><ol>
+<li>这里使用一台 Windows server 2012 R2 Standard,服务器 IP 为 192.168.0.231，服务器用户名为 administrator。（也可以直接使用上边 183 的服务器进行安装，这里是为了演示通过 SSH 远程部署）</li>
+<li>安装配置 GitLab-Runner，参照以下文档配置：<a target="_blank" rel="noopener" href="https://www.yuque.com/docs/share/36b9f6ce-a9e2-47ff-ad4c-61a4b3f4256f#">https://www.yuque.com/docs/share/36b9f6ce-a9e2-47ff-ad4c-61a4b3f4256f?#</a> 《GitLab-Runner 安装配置(windows)》</li>
+</ol>
+<p><strong>注：一台安装了 GitLab-Runner 的服务器/PC 可以供多个项目使用，具有相同打包需求的项目，可以使用已有的 GitLab-Runner</strong>。</p>
+<h2 id="3-3-项目配置"><a href="#3-3-项目配置" class="headerlink" title="3.3 项目配置"></a>3.3 项目配置</h2><p>假设拼夕夕项目代码已经上传至代码仓库 GitLab，在“GitLab-Runner 安装”章节也已经为该项目注册了 tags 为“android、node、vue、ionic”的 GitLab-Runner。</p>
+<ol>
+<li>添加 CI/CD 配置文件：登录 GitLab 打开拼夕夕项目详情页面，点击“Set up CI/CD”配置按钮，会打开新建 .gitlab-ci.yml 页面（也可以在自己本机项目根目录新建该文件）。</li>
+</ol>
+<p><img src="%E9%A1%B9%E7%9B%AE%E9%85%8D%E7%BD%AE.png" alt="项目配置"></p>
+<ol start="2">
+<li>在打开的 .gitlab-ci.yml 文件中，编写以下内容：</li>
+</ol>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">before_script:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;Start pipelines&quot;</span></span><br><span class="line">  <span class="comment"># 定义变量</span></span><br><span class="line"><span class="attr">variables:</span></span><br><span class="line">  <span class="comment"># 部署的服务器</span></span><br><span class="line">  <span class="attr">deployServer:</span> <span class="string">weihu@192.168.0.183</span></span><br><span class="line">  <span class="comment"># 部署的服务器位置（相对ssh 根路径）</span></span><br><span class="line">  <span class="attr">deployDirectory:</span> <span class="string">\Product\test\nginx-1.18.0\html\pinxx</span></span><br><span class="line">  <span class="comment"># 测试环境地址</span></span><br><span class="line">  <span class="attr">deployWebUrl:</span> <span class="string">http://192.168.0.183:8104/pinxx</span></span><br><span class="line">  <span class="comment"># npm 源地址</span></span><br><span class="line">  <span class="attr">npmRegistry:</span> <span class="string">http://192.168.0.180:4873</span></span><br><span class="line">  <span class="comment"># sassBinary 下载源</span></span><br><span class="line">  <span class="attr">sassBinaryDownloadUrl:</span> <span class="string">https://npm.taobao.org/mirrors/node-sass/</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义三个阶段</span></span><br><span class="line"><span class="attr">stages:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">build</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">test</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">deploy</span></span><br><span class="line"><span class="comment"># 定义build作业</span></span><br><span class="line"><span class="attr">build-job:</span></span><br><span class="line">  <span class="attr">before_script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;Start build job&quot;</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">build</span></span><br><span class="line">  <span class="attr">tags:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">vue</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;build ..........&quot;</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">npm</span> <span class="string">config</span> <span class="string">set</span> <span class="string">registry</span> <span class="string">$npmRegistry</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">npm</span> <span class="string">config</span> <span class="string">set</span> <span class="string">sass_binary_site</span> <span class="string">$sassBinaryDownloadUrl</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">npm</span> <span class="string">install</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">npm</span> <span class="string">run</span> <span class="string">build</span></span><br><span class="line">  <span class="attr">cache:</span></span><br><span class="line">    <span class="attr">key:</span></span><br><span class="line">      <span class="attr">files:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">package.json</span></span><br><span class="line">    <span class="attr">paths:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">node_modules</span></span><br><span class="line">  <span class="attr">after_script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;End of build&quot;</span></span><br><span class="line">  <span class="attr">artifacts:</span></span><br><span class="line">    <span class="attr">expire_in:</span> <span class="number">1</span> <span class="string">week</span></span><br><span class="line">    <span class="attr">paths:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">dist/</span></span><br><span class="line"><span class="comment"># 定义一个测试作业</span></span><br><span class="line"><span class="attr">test-job:</span></span><br><span class="line">  <span class="attr">before_script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;Start test job&quot;</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">test</span></span><br><span class="line">  <span class="attr">tags:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">vue</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;test..........&quot;</span></span><br><span class="line">  <span class="attr">after_script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;End of test&quot;</span></span><br><span class="line"><span class="comment"># 定义个部署作业</span></span><br><span class="line"><span class="attr">deploy-job:</span></span><br><span class="line">  <span class="attr">before_script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;Start deploy job&quot;</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">deploy</span></span><br><span class="line">  <span class="attr">dependencies:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">build-job</span></span><br><span class="line">  <span class="attr">tags:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">vue</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;deploy..........&quot;</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">scp</span> <span class="string">-r</span> <span class="string">dist/*</span> <span class="string">$deployServer&#x27;:&#x27;$deployDirectory</span></span><br><span class="line">  <span class="attr">environment:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">staging</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">$deployWebUrl</span></span><br><span class="line">  <span class="attr">after_script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;End of deploy&quot;</span></span><br><span class="line"><span class="attr">after_script:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;End of pipelines&quot;</span></span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>提交以上文件会自动触发流水线，可以切换到流水线页面查看流水线执行进度。</li>
+</ol>
+<p><img src="%E6%B5%81%E6%B0%B4%E7%BA%BF%E8%BF%9B%E5%BA%A6.png" alt="流水线"></p>
+</div><div class="article-licensing box"><div class="licensing-title"><p>GitLab-从零打造自己的 CI/CD 系统</p><p><a href="https://ths-fe.github.io/2021/02/02/GitLab-%E4%BB%8E%E9%9B%B6%E6%89%93%E9%80%A0%E8%87%AA%E5%B7%B1%E7%9A%84CICD%E7%B3%BB%E7%BB%9F/">https://ths-fe.github.io/2021/02/02/GitLab-%E4%BB%8E%E9%9B%B6%E6%89%93%E9%80%A0%E8%87%AA%E5%B7%B1%E7%9A%84CICD%E7%B3%BB%E7%BB%9F/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>刘莹鑫</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2021-02-02</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2023-08-05</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a class="" rel="noopener" target="_blank" title="CC BY-NC-SA 4.0" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a></p></div></div></div></div></div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/Gitlab-CI/">Gitlab CI</a></div><div class="sharethis-inline-share-buttons"></div><script src="https://platform-api.sharethis.com/js/sharethis.js#property=5ea1492221690600121bcf3a&amp;product=inline-share-buttons&amp;cms=sop" defer></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/img/alipayqr.jpg" alt="支付宝"></span></a><a class="button donate" href="https://www.buymeacoffee.com/zapzqc?new=1" target="_blank" rel="noopener" data-type="buymeacoffee"><span class="icon is-small"><i class="fas fa-coffee"></i></span><span>送我杯咖啡</span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/img/wechatqr.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2021/02/04/Windows-OpenSSH%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">Windows OpenSSH 安装与配置</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2021/01/31/30%E5%88%86%E9%92%9F%E5%BF%AB%E9%80%9F%E6%8E%8C%E6%8F%A1%E5%BE%AE%E5%89%8D%E7%AB%AFqiankun%E7%9A%84%E6%89%80%E6%9C%89%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF/"><span class="level-item">30分钟快速掌握微前端qiankun的所有核心技术</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div class="content" id="valine-thread"></div><script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script><script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script><script>new Valine({
+            el: '#valine-thread' ,
+            appId: "4o5OfjCIGaSyqIwg7jop80Ge-gzGzoHsz",
+            appKey: "Rj9jcPLhW8WgWd6bDmXGmKaA",
+            placeholder: "欢迎评论交流",
+            avatar: "mm",
+            
+            meta: ["nick","mail","link"],
+            pageSize: 10,
+            lang: "zh-CN",
+            
+            highlight: true,
+            
+            
+            
+            
+            
+            requiredFields: [],
+        });</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="level is-mobile" href="#1-为什么要做-CI-CD（持续集成、持续交付、持续部署）"><span class="level-left"><span class="level-item">1 为什么要做 CI/CD（持续集成、持续交付、持续部署）</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#1-1-公司项目-产品开发-发布现状"><span class="level-left"><span class="level-item">1.1 公司项目/产品开发-发布现状</span></span></a></li><li><a class="level is-mobile" href="#1-2-存在问题"><span class="level-left"><span class="level-item">1.2 存在问题</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#1-2-1-工作效率低"><span class="level-left"><span class="level-item">1.2.1 工作效率低</span></span></a></li><li><a class="level is-mobile" href="#1-2-2-容易出现低级错误"><span class="level-left"><span class="level-item">1.2.2 容易出现低级错误</span></span></a></li><li><a class="level is-mobile" href="#1-2-3-不能尽早的发现问题，要花费更大的代价修复"><span class="level-left"><span class="level-item">1.2.3 不能尽早的发现问题，要花费更大的代价修复</span></span></a></li><li><a class="level is-mobile" href="#1-2-4-功能开发完后，发现不是客户想要的效果"><span class="level-left"><span class="level-item">1.2.4 功能开发完后，发现不是客户想要的效果</span></span></a></li><li><a class="level is-mobile" href="#1-2-5-测试深度不够，上线项目问题较多"><span class="level-left"><span class="level-item">1.2.5 测试深度不够，上线项目问题较多</span></span></a></li><li><a class="level is-mobile" href="#1-2-6-测试成本较高"><span class="level-left"><span class="level-item">1.2.6 测试成本较高</span></span></a></li></ul></li><li><a class="level is-mobile" href="#1-3-CI-CD（持续集成、持续交付、持续部署）"><span class="level-left"><span class="level-item">1.3 CI/CD（持续集成、持续交付、持续部署）</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#1-3-1-持续集成-CI（Continuous-integration）"><span class="level-left"><span class="level-item">1.3.1 持续集成 CI（Continuous integration）</span></span></a></li><li><a class="level is-mobile" href="#1-3-2-持续交付-CD（Continuous-Delivery）"><span class="level-left"><span class="level-item">1.3.2 持续交付 CD（Continuous Delivery）</span></span></a></li><li><a class="level is-mobile" href="#1-3-3-持续部署-CD（Continuous-Deployment）"><span class="level-left"><span class="level-item">1.3.3 持续部署 CD（Continuous Deployment）</span></span></a></li><li><a class="level is-mobile" href="#1-3-4-它们之间的关系"><span class="level-left"><span class="level-item">1.3.4 它们之间的关系</span></span></a></li></ul></li></ul></li><li><a class="level is-mobile" href="#2-GitLab"><span class="level-left"><span class="level-item">2 GitLab</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#2-1-GitLab-CI-CD"><span class="level-left"><span class="level-item">2.1 GitLab CI/CD</span></span></a></li><li><a class="level is-mobile" href="#2-2-GitLab-Runner"><span class="level-left"><span class="level-item">2.2 GitLab-Runner</span></span></a></li><li><a class="level is-mobile" href="#2-3-GitLab、GitLab-CI-、GitLab-Runner-关系"><span class="level-left"><span class="level-item">2.3 GitLab、GitLab CI 、GitLab-Runner 关系</span></span></a></li><li><a class="level is-mobile" href="#2-4-gitlab-ci-yml"><span class="level-left"><span class="level-item">2.4 .gitlab-ci.yml</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#2-4-1-YAML-常用语法说明"><span class="level-left"><span class="level-item">2.4.1 YAML 常用语法说明</span></span></a></li><li><a class="level is-mobile" href="#2-4-2-相关概念"><span class="level-left"><span class="level-item">2.4.2 相关概念</span></span></a></li><li><a class="level is-mobile" href="#2-4-3-常用配置（点击关键词有惊喜）"><span class="level-left"><span class="level-item">2.4.3 常用配置（点击关键词有惊喜）</span></span></a></li></ul></li><li><a class="level is-mobile" href="#2-5-通知"><span class="level-left"><span class="level-item">2.5 通知</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#2-5-1-编辑通知"><span class="level-left"><span class="level-item">2.5.1 编辑通知</span></span></a></li><li><a class="level is-mobile" href="#2-5-2-通知设置示例"><span class="level-left"><span class="level-item">2.5.2 通知设置示例</span></span></a></li></ul></li></ul></li><li><a class="level is-mobile" href="#3-快速上手"><span class="level-left"><span class="level-item">3 快速上手</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#3-1-场景"><span class="level-left"><span class="level-item">3.1 场景</span></span></a></li><li><a class="level is-mobile" href="#3-2-环境准备"><span class="level-left"><span class="level-item">3.2 环境准备</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#3-2-1-部署应用的测试服务器环境"><span class="level-left"><span class="level-item">3.2.1 部署应用的测试服务器环境</span></span></a></li><li><a class="level is-mobile" href="#3-2-2-GitLab-Runner-安装"><span class="level-left"><span class="level-item">3.2.2 GitLab-Runner 安装</span></span></a></li></ul></li><li><a class="level is-mobile" href="#3-3-项目配置"><span class="level-left"><span class="level-item">3.3 项目配置</span></span></a></li></ul></li></ul></div></div><style>.menu-list > li > a.is-active + .menu-list { display: block; }.menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div><div class="card widget" data-type="adsense"><div class="card-content"><div class="menu"><h3 class="menu-label"> </h3><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6826040978803389" data-ad-slot="1033672070" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/ths.png" alt="思路大前端团队" height="28"></a><p class="is-size-7"><span>&copy; 2023 刘莹鑫</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a><br><span id="busuanzi_container_site_uv">共<span id="busuanzi_value_site_uv">0</span>个访客</span></p></div><div class="level-end"></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" async></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>

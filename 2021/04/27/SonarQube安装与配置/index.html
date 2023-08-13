@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>SonarQube安装与配置 - 思路大前端团队</title><link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#f7f7f7"><meta name="application-name" content="思路大前端"><meta name="msapplication-TileImage" content="/img/favicon.ico"><meta name="msapplication-TileColor" content="#f7f7f7"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="思路大前端"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta description="在写代码过程中，难免出现代码写的不规范或存在一些静态的 bug，这时一个良好的代码审查工具就很有必要，而 SonarQube 正好满足这个要求"><meta property="og:type" content="blog"><meta property="og:title" content="SonarQube安装与配置"><meta property="og:url" content="https://ths-fe.github.io/2021/04/27/SonarQube%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/"><meta property="og:site_name" content="思路大前端团队"><meta property="og:description" content="在写代码过程中，难免出现代码写的不规范或存在一些静态的 bug，这时一个良好的代码审查工具就很有必要，而 SonarQube 正好满足这个要求"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://ths-fe.github.io/2021/04/27/SonarQube%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/cover.jpg"><meta property="article:published_time" content="2021-04-27T14:25:29.000Z"><meta property="article:modified_time" content="2023-08-05T13:20:43.783Z"><meta property="article:author" content="刘莹鑫"><meta property="article:tag" content="质量控制"><meta property="article:tag" content="SonarQube"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="/2021/04/27/SonarQube%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/cover.jpg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://ths-fe.github.io/2021/04/27/SonarQube%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/"},"headline":"思路大前端团队","image":["https://ths-fe.github.io/2021/04/27/SonarQube%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/cover.jpg"],"datePublished":"2021-04-27T14:25:29.000Z","dateModified":"2023-08-05T13:20:43.783Z","author":{"@type":"Person","name":"刘莹鑫"},"description":"在写代码过程中，难免出现代码写的不规范或存在一些静态的 bug，这时一个良好的代码审查工具就很有必要，而 SonarQube 正好满足这个要求"}</script><link rel="canonical" href="https://ths-fe.github.io/2021/04/27/SonarQube%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/"><link rel="icon" href="/img/favicon.ico"><link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.13.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/monokai.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><script>var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?fd8cc3421abec7b8f4e6bc337e25c7d1";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();</script><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><script src="https://www.googletagmanager.com/gtag/js?id=UA-72716512-3" async></script><script>window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+    
+        gtag('config', 'UA-72716512-3');</script><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><script data-ad-client="ca-pub-6826040978803389" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" async></script><meta name="generator" content="Hexo 5.2.0"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/ths.png" alt="思路大前端团队" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">博客</a><a class="navbar-item" href="/fe">大前端技术体系</a><a class="navbar-item" href="/gis">GIS技术体系</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/about">关于我们</a></div><div class="navbar-end"><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><div class="card-image"><span class="image is-7by3"><img class="fill" src="/2021/04/27/SonarQube%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/cover.jpg" alt="SonarQube安装与配置"></span></div><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2021-04-27T14:25:29.000Z" title="2021-04-27T14:25:29.000Z">2021-04-27</time>发表</span><span class="level-item"><time dateTime="2023-08-05T13:20:43.783Z" title="2023-08-05T13:20:43.783Z">2023-08-05</time>更新</span><span class="level-item"> 刘莹鑫 </span><span class="level-item"><a class="link-muted" href="/categories/%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90-%E4%BA%A4%E4%BB%98-%E9%83%A8%E7%BD%B2/">持续集成&amp;交付&amp;部署</a><span> / </span><a class="link-muted" href="/categories/%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90-%E4%BA%A4%E4%BB%98-%E9%83%A8%E7%BD%B2/%E8%B4%A8%E9%87%8F%E6%8E%A7%E5%88%B6/">质量控制</a></span><span class="level-item">25 分钟读完 (大约3721个字)</span><span class="level-item" id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv">0</span>次访问</span></div></div><h1 class="title is-3 is-size-4-mobile">SonarQube安装与配置</h1><div class="content"><h1 id="1-写在最前面"><a href="#1-写在最前面" class="headerlink" title="1 写在最前面"></a>1 写在最前面</h1><p>在写代码过程中，难免出现代码写的不规范或存在一些静态的 bug，这时一个良好的代码审查工具就很有必要，而 SonarQube 正好满足这个要求。</p>
+<h1 id="2-SonarQube-介绍"><a href="#2-SonarQube-介绍" class="headerlink" title="2 SonarQube 介绍"></a>2 SonarQube 介绍</h1><p><a target="_blank" rel="noopener" href="https://docs.sonarqube.org/">SonarQube</a> 是一款自动代码审查工具，可以检测代码中的 bug 、缺陷和代码气味。它可以与现有的 CI 工具集成，以支持持续代码检查。</p>
+<h1 id="3-典型开发过程"><a href="#3-典型开发过程" class="headerlink" title="3 典型开发过程"></a>3 典型开发过程</h1><p><img src="3-1.png" alt="img"></p>
+<ul>
+<li>开发人员在 IDE 中开发代码（可使用 SonarLint 在编写代码时检测和修复问题），然后将其代码提交到代码仓库中。</li>
+</ul>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.sonarlint.org/">SonarLint</a> 是一个 IDE 扩展，可以帮助你在编写代码时检测和修复质量问题。</p>
+</blockquote>
+<ul>
+<li>持续集成(我们使用 GitLab CI)工具检出最新代码、构建和运行单元测试，并由集成 SonarQube 的扫描器分析结果。</li>
+<li>扫描器程序将结果发布到 SonarQube 服务器，该服务器通过SonarQube界面，电子邮件等向开发人员提供反馈。</li>
+</ul>
+<h1 id="4-SonarQube-安装、配置"><a href="#4-SonarQube-安装、配置" class="headerlink" title="4 SonarQube 安装、配置"></a>4 SonarQube 安装、配置</h1><blockquote>
+<p>此章节普通开发人员可忽略。</p>
+</blockquote>
+<h2 id="4-1-准备工作"><a href="#4-1-准备工作" class="headerlink" title="4.1 准备工作"></a>4.1 准备工作</h2><h3 id="4-1-1-系统设置"><a href="#4-1-1-系统设置" class="headerlink" title="4.1.1 系统设置"></a>4.1.1 系统设置</h3><p>在命令行窗口执行依次以下命令操作：</p>
+<ul>
+<li>设置一个进程可能拥有的最大内存映射区域数。</li>
+</ul>
+<blockquote>
+<p>不设置这个， sonarqube 启动不起来，</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;vm.max_map_count=262144&quot;</span> &gt;&gt; /etc/sysctl.conf</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>查看设置的结果：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sysctl -p</span><br></pre></td></tr></table></figure>
+
+<p><img src="4.1.1-1.png" alt="image.png"></p>
+<h3 id="4-1-2-Docker-及-Compose-安装"><a href="#4-1-2-Docker-及-Compose-安装" class="headerlink" title="4.1.2 Docker 及 Compose 安装"></a>4.1.2 Docker 及 Compose 安装</h3><p>本教程忽略，可参考<a target="_blank" rel="noopener" href="https://www.yuque.com/docs/share/3f190b9a-321d-4155-96fd-02b66f8f6d97#">https://www.yuque.com/docs/share/3f190b9a-321d-4155-96fd-02b66f8f6d97?#</a> 《Docker安装（资源仓库在线安装）》</p>
+<h2 id="4-2-创建挂载目录"><a href="#4-2-创建挂载目录" class="headerlink" title="4.2 创建挂载目录"></a>4.2 创建挂载目录</h2><blockquote>
+<p>该操作用于建立容器和宿主机之间的目录映射，方便管理和维护。</p>
+</blockquote>
+<p>依次执行以下命令：</p>
+<ul>
+<li>创建 SonarQube 数据库、日志、配置等存放目录</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p /home/sonarqube &amp;&amp; <span class="built_in">cd</span> /home/sonarqube</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>创建 SonarQube 映射文件目录</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p /home/sonarqube/postgres &amp;&amp; \</span><br><span class="line">mkdir -p /home/sonarqube/data &amp;&amp; \</span><br><span class="line">mkdir -p /home/sonarqube/extensions &amp;&amp; \</span><br><span class="line">mkdir -p /home/sonarqube/logs &amp;&amp; \</span><br><span class="line">mkdir -p /home/sonarqube/conf</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>创建 postgresql 数据库挂载目录</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p /home/sonarqube/postgresql &amp;&amp;\</span><br><span class="line">mkdir -p /home/sonarqube/datasql</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>目录设置为 777 权限，避免权限问题</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 777 ./*</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-3-根据以上创建文件目录信息创建-docker-compose-yml"><a href="#4-3-根据以上创建文件目录信息创建-docker-compose-yml" class="headerlink" title="4.3 根据以上创建文件目录信息创建 docker-compose.yml"></a>4.3 根据以上创建文件目录信息创建 docker-compose.yml</h2><p>在 /home/sonarqube/ 目录下创建 docker-compose.yml文件，内容为以下内容：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;3&#x27;</span></span><br><span class="line"><span class="attr">services:</span> </span><br><span class="line">  <span class="attr">postgres:</span> </span><br><span class="line">    <span class="attr">image:</span> <span class="string">postgres</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">sonarqube_postgres</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">5432</span><span class="string">:5432</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/home/sonarqube/postgresql/:/var/lib/postgresql</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/home/sonarqube/datasql/:/var/lib/postgresql/data</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="attr">TZ:</span> <span class="string">Asia/BeiJing</span>    </span><br><span class="line">      <span class="attr">POSTGRES_USER:</span> <span class="string">sonar</span>   </span><br><span class="line">      <span class="attr">POSTGRES_PASSWORD:</span> <span class="string">sxxxx</span></span><br><span class="line">      <span class="attr">POSTGRES_DB:</span> <span class="string">sonar</span></span><br><span class="line">    <span class="attr">networks:</span> </span><br><span class="line">      <span class="bullet">-</span> <span class="string">sonar-network</span></span><br><span class="line">  <span class="attr">sonar:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">sonarqube</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span> </span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">sonarqube</span></span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">postgres</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/home/sonarqube/extensions:/opt/sonarqube/extensions</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/home/sonarqube/logs:/opt/sonarqube/logs</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/home/sonarqube/data:/opt/sonarqube/data</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/home/sonarqube/conf:/opt/sonarqube/conf</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">9000</span><span class="string">:9000</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="attr">SONARQUBE_JDBC_USERNAME:</span> <span class="string">sonar</span></span><br><span class="line">      <span class="attr">SONARQUBE_JDBC_PASSWORD:</span> <span class="string">sxxxx</span></span><br><span class="line">      <span class="attr">SONARQUBE_JDBC_URL:</span> <span class="string">jdbc:postgresql://postgres:5432/sonar</span></span><br><span class="line">    <span class="attr">networks:</span> </span><br><span class="line">      <span class="bullet">-</span> <span class="string">sonar-network</span></span><br><span class="line"><span class="attr">networks:</span></span><br><span class="line">  <span class="attr">sonar-network:</span></span><br><span class="line">    <span class="attr">driver:</span> <span class="string">bridge</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="4-4-拉取镜像并启动容器服务"><a href="#4-4-拉取镜像并启动容器服务" class="headerlink" title="4.4 拉取镜像并启动容器服务"></a>4.4 拉取镜像并启动容器服务</h2><p>在创建 docker-compose.yml 文件的目录下执行以下命令：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">docker-compose</span> <span class="string">up</span> <span class="string">-d</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>该操作首次执行会从互联网下载镜像文件，请确保系统可以联网。</p>
+</blockquote>
+<h2 id="4-5-首次访问"><a href="#4-5-首次访问" class="headerlink" title="4.5 首次访问"></a>4.5 首次访问</h2><p>访问地址为：服务器IP+端口，本例为 <a target="_blank" rel="noopener" href="http://192.168.44.6:9000/">http://192.168.44.6:9000/</a> 。登录后用户名密码都为 admin admin, 登录后进行修改。<br><img src="4.5-1.png" alt="image.png"></p>
+<h2 id="4-6-系统配置"><a href="#4-6-系统配置" class="headerlink" title="4.6 系统配置"></a>4.6 系统配置</h2><h3 id="4-6-1-设置中文"><a href="#4-6-1-设置中文" class="headerlink" title="4.6.1 设置中文"></a>4.6.1 设置中文</h3><p>按照图示在应用市场安装中文语言包，安装后按照提示重启即可。</p>
+<p><img src="4.6.1-1.png" alt="image.png"></p>
+<h3 id="4-6-2-邮件配置"><a href="#4-6-2-邮件配置" class="headerlink" title="4.6.2 邮件配置"></a>4.6.2 邮件配置</h3><ul>
+<li>使用管理员登录系统，按照图示依次点击进入配置页面，配置-&gt;配置-&gt;通用。</li>
+</ul>
+<p><img src="4.6.2-1.png" alt="image.png"></p>
+<ul>
+<li>按照以下截图进行邮件配置。</li>
+</ul>
+<p><img src="4.6.2-2.png" alt="image.png"></p>
+<blockquote>
+<h3 id="Email-prefix：发邮件时，邮件标题会默认带上该前缀。其他配置项，根据自己邮箱SMTP配置及认证信息进行配置，这里不做详述。"><a href="#Email-prefix：发邮件时，邮件标题会默认带上该前缀。其他配置项，根据自己邮箱SMTP配置及认证信息进行配置，这里不做详述。" class="headerlink" title="Email prefix：发邮件时，邮件标题会默认带上该前缀。其他配置项，根据自己邮箱SMTP配置及认证信息进行配置，这里不做详述。"></a>Email prefix：发邮件时，邮件标题会默认带上该前缀。其他配置项，根据自己邮箱SMTP配置及认证信息进行配置，这里不做详述。</h3></blockquote>
+<h3 id="4-6-3-GitLab-集成配置"><a href="#4-6-3-GitLab-集成配置" class="headerlink" title="4.6.3 GitLab 集成配置"></a>4.6.3 GitLab 集成配置</h3><p>目前不支持，需要 GitLab https　且目前版本为开源社区版本，这里不做具体配置说明。<br><img src="4.6.3-1.png" alt="image.png"><br><img src="4.6.3-2.png" alt="image.png"></p>
+<h3 id="4-6-4-LDAP-配置"><a href="#4-6-4-LDAP-配置" class="headerlink" title="4.6.4 LDAP 配置"></a>4.6.4 LDAP 配置</h3><ul>
+<li>在安装阶段创建的宿主机挂载目录对应的文件 sonarqube/conf/sonar.properties 添加以下内容：</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># LDAP configuration</span><br><span class="line"># General Configuration</span><br><span class="line">sonar.security.realm=LDAP</span><br><span class="line">ldap.url=ldap://192.168.0.xx:389</span><br><span class="line">ldap.bindDn=gitlab@internal.ths.com.cn</span><br><span class="line">ldap.bindPassword=xxx</span><br><span class="line"></span><br><span class="line"># User Configuration</span><br><span class="line">ldap.user.baseDn=OU=研发xx,OU=思路xx,DC=domain,DC=solution,DC=com</span><br><span class="line">ldap.user.request=(&amp;(objectClass=user)(sAMAccountName=&#123;login&#125;))</span><br><span class="line">ldap.user.realNameAttribute=displayName</span><br><span class="line">ldap.user.emailAttribute=userPrincipalName</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>重启 sonarqube</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker restart sonarqube</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意这里使用网页中的重启功能是不好使的，需要重启整个容器。</p>
+</blockquote>
+<p>以下为启动后在安装阶段创建的宿主机挂载目录下  /home/sonarqube/logs/web.log 中看到的内容。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">2021.04.15 09:42:28 INFO  web[][org.sonar.INFO] Security realm: LDAP</span><br><span class="line">2021.04.15 09:42:28 INFO  web[][o.s.a.l.LdapSettingsManager] User mapping: LdapUserMapping&#123;baseDn&#x3D;OU&#x3D;研发中心,OU&#x3D;思路创新,DC&#x3D;domain,DC&#x3D;solution,DC&#x3D;com, request&#x3D;(&amp;(objectClass&#x3D;user)(sAMAccountName&#x3D;&#123;0&#125;)), realNameAttribute&#x3D;displayName, emailAttribute&#x3D;userPrincipalName&#125;</span><br><span class="line">2021.04.15 09:42:28 INFO  web[][o.s.a.l.LdapSettingsManager] Group mapping: LdapGroupMapping&#123;baseDn&#x3D;OU&#x3D;研发中心,OU&#x3D;思路创新,DC&#x3D;domain,DC&#x3D;solution,DC&#x3D;com, idAttribute&#x3D;cn, requiredUserAttributes&#x3D;[uid], request&#x3D;(&amp;(objectClass&#x3D;posixGroup)(memberUid&#x3D;&#123;0&#125;))&#125;</span><br><span class="line">2021.04.15 09:42:28 INFO  web[][o.s.a.l.LdapContextFactory] Test LDAP connection on ldap:&#x2F;&#x2F;192.168.0.13:389: OK</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-7-扫描器安装"><a href="#4-7-扫描器安装" class="headerlink" title="4.7 扫描器安装"></a>4.7 扫描器安装</h2><h3 id="4-7-1-Windows-环境"><a href="#4-7-1-Windows-环境" class="headerlink" title="4.7.1 Windows 环境"></a>4.7.1 Windows 环境</h3><h4 id="4-7-1-1-准备工作"><a href="#4-7-1-1-准备工作" class="headerlink" title="4.7.1.1 准备工作"></a>4.7.1.1 准备工作</h4><p>打开对应网站，按照截图下载Windows版本<br><a target="_blank" rel="noopener" href="https://docs.sonarqube.org/latest/analysis/scan/sonarscanner/">https://docs.sonarqube.org/latest/analysis/scan/sonarscanner/</a><br><img src="4.7.1.1-1.png" alt="image.png"></p>
+<h4 id="4-7-1-2-配置"><a href="#4-7-1-2-配置" class="headerlink" title="4.7.1.2 配置"></a>4.7.1.2 配置</h4><ul>
+<li>将刚才下载的压缩包解压到要存放 扫描器的服务器上。</li>
+</ul>
+<p><img src="4.7.1.2-1.png" alt="image.png"></p>
+<ul>
+<li>配置环境变量</li>
+</ul>
+<p>将解压目录下到bin文件夹的路径配置到环境变量中。</p>
+<blockquote>
+<p>本例环境变量配置内容为：D:\Program Files\sonar-scanner-4.6.0.2311-windows\bin;具体如何操作，本例不做详细讲解。</p>
+</blockquote>
+<p><img src="4.7.1.2-2.png" alt="image.png"></p>
+<ul>
+<li>验证</li>
+</ul>
+<p>命令行输入以下命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sonar-scanner -v</span><br></pre></td></tr></table></figure>
+
+<p><img src="4.7.1.2-3.png" alt="image.png"></p>
+<blockquote>
+<p>注意：配合跟 GitLab-Runner 一块使用时，初次配置完 sonar-scanner 环境变量，需要重启下 GitLab-Runner 服务，不然找不到 sonar-scanner 命令。</p>
+</blockquote>
+<h3 id="4-7-2-Linux-环境"><a href="#4-7-2-Linux-环境" class="headerlink" title="4.7.2 Linux 环境"></a>4.7.2 Linux 环境</h3><h4 id="4-7-2-1-准备工作"><a href="#4-7-2-1-准备工作" class="headerlink" title="4.7.2.1 准备工作"></a>4.7.2.1 准备工作</h4><p>打开对应网站，按照截图下载 Linux 版本<br><a target="_blank" rel="noopener" href="https://docs.sonarqube.org/latest/analysis/scan/sonarscanner/">https://docs.sonarqube.org/latest/analysis/scan/sonarscanner/</a><br><img src="4.7.2.1-1.png" alt="image.png"></p>
+<h4 id="4-7-2-2-配置"><a href="#4-7-2-2-配置" class="headerlink" title="4.7.2.2 配置"></a>4.7.2.2 配置</h4><ul>
+<li>通过 xshell 等 Linux 运维工具将刚才下载的压缩包上传到服务器上</li>
+<li>解决压缩包</li>
+</ul>
+<p><img src="4.7.2.2-1.png" alt="image.png"></p>
+<ul>
+<li>配置环境变量</li>
+</ul>
+<p>编辑 /etc/profile 文件，添加解压后的 bin 目录路径进入该文件，本例为 /home/sonar-scanner/bin<br><img src="4.7.2.2-2.png" alt="image.png"></p>
+<ul>
+<li>执行命令使配置环境变量生效</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source /etc/profile</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>验证</li>
+</ul>
+<p>命令行输入以下命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sonar-scanner -v</span><br></pre></td></tr></table></figure>
+
+<p><img src="4.7.2.2-3.png" alt="image.png"></p>
+<h2 id="4-8-常见问题"><a href="#4-8-常见问题" class="headerlink" title="4.8 常见问题"></a>4.8 常见问题</h2><h3 id="4-8-1-执行安装命令后报以下信息：WARNING-IPv4-forwarding-is-disabled-Networking-will-not-work"><a href="#4-8-1-执行安装命令后报以下信息：WARNING-IPv4-forwarding-is-disabled-Networking-will-not-work" class="headerlink" title="4.8.1  执行安装命令后报以下信息：WARNING: IPv4 forwarding is disabled. Networking will not work"></a>4.8.1  执行安装命令后报以下信息：WARNING: IPv4 forwarding is disabled. Networking will not work</h3><p><img src="4.8.1-1.png" alt="image.png"><br>分析：系统设置问题<br>解决：</p>
+<ul>
+<li>在宿主机上执行 echo “net.ipv4.ip_forward=1” &gt;&gt;/usr/lib/sysctl.d/00-system.conf</li>
+<li>systemctl restart network &amp;&amp; systemctl restart docker</li>
+</ul>
+<p><img src="4.8.1-2.png" alt="image.png"></p>
+<h3 id="4-8-2-代码扫描结果名称乱码"><a href="#4-8-2-代码扫描结果名称乱码" class="headerlink" title="4.8.2 代码扫描结果名称乱码"></a>4.8.2 代码扫描结果名称乱码</h3><p>通过在项目中创建 sonar-project.properties 方式进行项目扫描，当存在项目名称为中午时扫描结果出现乱码<br><img src="4.8.2-1.png" alt="image.png"><br>分析：汉字在 .properties 中可能需要进行 Unicode编码。<br>解决：<br>使用命令行扫码，没有乱码问题</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sonar-scanner.bat -D<span class="string">&quot;sonar.projectName=测试123哈哈哈&quot;</span> -D<span class="string">&quot;sonar.projectKey=VUE3-PINXX2&quot;</span> -D<span class="string">&quot;sonar.sources=src&quot;</span> -D<span class="string">&quot;sonar.exclusions=src/js/i18n/**/*&quot;</span> -D<span class="string">&quot;sonar.sourceEncoding=UTF-8&quot;</span> -D<span class="string">&quot;sonar.login=f82121212ccccc&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-8-3-Linux-执行-sonar-scanner-报“Could-not-find-‘java’-executable-in-JAVA-HOME-or-PATH-”"><a href="#4-8-3-Linux-执行-sonar-scanner-报“Could-not-find-‘java’-executable-in-JAVA-HOME-or-PATH-”" class="headerlink" title="4.8.3 Linux 执行 sonar-scanner 报“Could not find ‘java’ executable in JAVA_HOME or PATH.”"></a>4.8.3 Linux 执行 sonar-scanner 报“Could not find ‘java’ executable in JAVA_HOME or PATH.”</h3><p><img src="4.8.3-1.png" alt="image.png"><br>分析：根据错误是找不到 Java 的可执行程序，通过安装Jdk 发现错误依旧存在，最后发现 sonar-scanner 自带的有 jre ，那就是应该用的自带的 jre，尝试给 jre 目录下的 java 赋予权限解决。<br>解决：进入 sonar-scanner 所在的目录，转到Java所在目录，执行以下命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 755 java</span><br></pre></td></tr></table></figure>
+
+<h1 id="5-SonarLint-安装"><a href="#5-SonarLint-安装" class="headerlink" title="5 SonarLint 安装"></a>5 SonarLint 安装</h1><ul>
+<li>打开 VS Code 左侧的 Extensions 模块，搜索SonarLint,点击安装即可。</li>
+</ul>
+<p><img src="5-1.png" alt="image.png"></p>
+<ul>
+<li>安装后重启 VS Code，保证插件生效。只需打开一个JS、TS、Python、Java、HTML或PHP文件，开始编码，你就会开始看到 SonarLint 报告的问题。问题会在代码中突出显示，也会在“问题”面板中列出。</li>
+</ul>
+<p><img src="5-2.png" alt="image.png"></p>
+<h1 id="6-GitLab-安装"><a href="#6-GitLab-安装" class="headerlink" title="6 GitLab 安装"></a>6 GitLab 安装</h1><blockquote>
+<p>已安装，可忽略。传送：<a target="_blank" rel="noopener" href="https://www.yuque.com/heq286/dswu9s/uk2ef0">https://www.yuque.com/heq286/dswu9s/uk2ef0</a></p>
+</blockquote>
+<h1 id="7-GitLab-CI-配置"><a href="#7-GitLab-CI-配置" class="headerlink" title="7 GitLab CI 配置"></a>7 GitLab CI 配置</h1><p>按照以下说明，进行配置<br><a target="_blank" rel="noopener" href="http://223.223.179.203:8929/common-resource/gitlab-ci/-/blob/master/README.md">http://223.223.179.203:8929/common-resource/gitlab-ci/-/blob/master/README.md</a></p>
+<h1 id="8-快速上手"><a href="#8-快速上手" class="headerlink" title="8 快速上手"></a>8 快速上手</h1><p>本快速上手教程，基于<a target="_blank" rel="noopener" href="http://223.223.179.203:8929/common-resource/gitlab-ci/-/blob/master/README.md"> 流水线模板</a> 进行。可先查看 GitLab CI 配置章节。</p>
+<h2 id="8-1-获取-Sonar-Token"><a href="#8-1-获取-Sonar-Token" class="headerlink" title="8.1 获取 Sonar Token"></a>8.1 获取 Sonar Token</h2><ul>
+<li>使用公司域账号登录 <a target="_blank" rel="noopener" href="http://192.168.0.134:9000/">http://192.168.0.134:9000/</a></li>
+</ul>
+<p><img src="8.1-1.png" alt="image.png"></p>
+<ul>
+<li>进入个人中心-我的账号</li>
+</ul>
+<p><img src="8.1-2.png" alt="image.png"></p>
+<ul>
+<li>生成 token</li>
+</ul>
+<p>输入 token 标识名称，点击生成，即可生成 token。该 token 只会显示一次，需要在当前页面复制保存。当该token不再使用时，可以在该页面点击回收进行删除。<br><img src="8.1-3.png" alt="image.png"></p>
+<blockquote>
+<p>为了规范，这里的令牌名称按照 GitLab 中的项目名称输入，可以直接在 GitLab 项目列表页面获取。<br>举例：AN20049 深圳市生态环境局大鹏管理局-大鹏新区生态环境动态监测系统（二期） / 前端 / 微应用 / 固定源<br><img src="8.1-4.png" alt="image.png"></p>
+</blockquote>
+<h2 id="8-2-配置-GitLab-CI"><a href="#8-2-配置-GitLab-CI" class="headerlink" title="8.2 配置 GitLab CI"></a>8.2 配置 GitLab CI</h2><ul>
+<li>在项目根目录新建 .gitlab-ci.yml 文件(注意是以“.”开头的文件)</li>
+<li>拷贝以下示例配置信息，修改相关变量信息为自己项目相关部署信息</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">include:  - remote: <span class="string">&#x27;http://223.223.179.203:8929/common-resource/gitlab-ci/-/raw/master/templates/web-pipeline.yml&#x27;</span>  <span class="comment"># 定义变量variables:  # 必填，部署的测试服务器地址,前提是该服务器已配置好ssh免登，格式：服务器用户名@ip，如：weihu@192.168.0.183  SIT_SERVER: &quot;weihu@192.168.0.183(根据实际需求修改)&quot;  # 必填，部署的测试服务器中的物理路径（相对ssh 根路径）,需要先在服务器上对应位置创建目录，如：\Product\nginx-1.18.0\html\arcgis  SIT_DIRECTORY: &quot;\Product\nginx-1.18.0\html\pindd(根据实际需求修改)&quot;   # 测试环境应用的地址，部署后可以访问的HTTP地址  SIT_WEB_URL: &quot;http://192.168.0.183:8104/pindd(根据实际需求修改)&quot;   # 项目类型：project、product,设置对应的项目类型，会自动匹配对应的gitlab-runner，原则上产品类型的项目设置product，项目类型的设置project  PROJECT_TYPE: &quot;project&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="http://223.223.179.203:8929/common-resource/gitlab-ci/-/blob/master/README.md">查看更多配置</a></p>
+<ul>
+<li>配置 SONAR_TOKEN</li>
+</ul>
+<ol>
+<li>登录 GitLab 打开对应的项目页面-点击设置-CI/CD</li>
+</ol>
+<p><img src="8.2-1.png" alt="image.png"></p>
+<ol start="2">
+<li>找到变量那一项，展开</li>
+</ol>
+<p><img src="8.2-2.png" alt="image.png"></p>
+<ol start="3">
+<li>点击添加变量</li>
+</ol>
+<p><img src="8.2-3.png" alt="image.png"></p>
+<ol start="4">
+<li>添加变量</li>
+</ol>
+<blockquote>
+<p>SONAR_TOKEN key 名称不能修改，该名称跟模板文件中的 key 名称一致。Value值来自上一步在 Sonar 系统中获取。</p>
+</blockquote>
+<p><img src="8.2-4.png" alt="image.png"></p>
+<ol start="5">
+<li>添加后效果</li>
+</ol>
+<blockquote>
+<p>可以在该页面进行编辑及删除等操作</p>
+</blockquote>
+<p><img src="8.2-5.png" alt="image.png"></p>
+<h2 id="8-3-修改-Git-strategy-为-git-clone"><a href="#8-3-修改-Git-strategy-为-git-clone" class="headerlink" title="8.3 修改 Git  strategy 为 git clone"></a>8.3 修改 Git  strategy 为 git clone</h2><p>在 GitLab 项目 CICD 中 General pipeline 展开，将 Git  strategy 为 git clone 。<br><img src="8.3-1.png" alt="image.png"><br>该设置会使 Sonar 在分析时，获取文件作者信息。<br><img src="8.3-2.png" alt="image.png"></p>
+<h2 id="8-4-提交代码验证配置"><a href="#8-4-提交代码验证配置" class="headerlink" title="8.4 提交代码验证配置"></a>8.4 提交代码验证配置</h2><p>以上配置完毕后，即可提交代码进行首次代码扫描。</p>
+<ul>
+<li>提交代码后可查看流水线运行情况</li>
+</ul>
+<p><img src="8.4-1.png" alt="image.png"><br><img src="8.4-2.png" alt="image.png"></p>
+<ul>
+<li>待流水线跑完，即可登录 SonarQube 进行扫描结果查看。</li>
+</ul>
+<blockquote>
+<p>注意这里要点击所有。</p>
+</blockquote>
+<p><img src="8.4-3.png" alt="image.png"><br><img src="8.4-4.png" alt="image.png"><br><img src="8.4-5.png" alt="image.png"></p>
+<h1 id="9-其他"><a href="#9-其他" class="headerlink" title="9 其他"></a>9 其他</h1><h2 id="9-1-系统升级"><a href="#9-1-系统升级" class="headerlink" title="9.1 系统升级"></a>9.1 系统升级</h2><p>当 SonarQube 使用一段时间后，管理员登录系统后，发现有新的版本可用（如下图），这时可进行更新操作。<br><img src="9.1-1.png" alt="image.png"><br>跨多个非LTS版本的升级可直接进行升级。但如果升级版本跨了一个或多个LTS版本，则必须首先迁移到每个中间LTS，然后再迁移到目标版本。</p>
+<ul>
+<li>示例1 –从7.1&gt; 8.1，升级过程为7.1&gt; 7.9.6 LTS&gt; 8.1</li>
+<li>示例2 –从8.2&gt; 8.9 LTS，升级过程为8.2&gt;最新的8.9 LTS。</li>
+<li>示例3 –从6.7.7 LTS&gt; 8.9 LTS，升级过程为6.7.7 LTS&gt; 7.9.6 LTS&gt;最新的8.9 LTS。</li>
+</ul>
+<p><strong>本升级教程只记录跨多个非LTS版本的升级，如果是跨多个LTS版本的升级，重复多次升级操作即可。</strong></p>
+<h3 id="9-1-1-数据库备份"><a href="#9-1-1-数据库备份" class="headerlink" title="9.1.1 数据库备份"></a>9.1.1 数据库备份</h3><blockquote>
+<p>此操作是为了防止在升级过程中出现的异常情况或误操作导致数据丢失做备份。升级过程如果正常，此备份没有用。</p>
+</blockquote>
+<h4 id="9-1-1-1-安装数据库管理工具"><a href="#9-1-1-1-安装数据库管理工具" class="headerlink" title="9.1.1.1 安装数据库管理工具"></a>9.1.1.1 安装数据库管理工具</h4><ul>
+<li>拉取 pgadmin4  数据库管理工具镜像</li>
+</ul>
+<p><img src="9.1.1.1-1.png" alt="image.png"></p>
+<ul>
+<li>启动 pgadmin4 容器</li>
+</ul>
+<p><img src="9.1.1.1-2.png" alt="image.png"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -p 5050:80 \    -e <span class="string">&quot;PGADMIN_DEFAULT_EMAIL=liuyx@internal.ths.com.cn&quot;</span> \    -e <span class="string">&quot;PGADMIN_DEFAULT_PASSWORD=s*****n&quot;</span> \    -d dpage/pgadmin4</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>这里的邮箱及密码是待会要登录管理系统的密码</p>
+</blockquote>
+<ul>
+<li>打开管理页面输入用户名密码（上一步设置的）登录</li>
+</ul>
+<p><img src="9.1.1.1-3.png" alt="image.png"></p>
+<h4 id="9-1-1-2-创建服务器连接"><a href="#9-1-1-2-创建服务器连接" class="headerlink" title="9.1.1.2 创建服务器连接"></a>9.1.1.2 创建服务器连接</h4><p><img src="9.1.1.2-1.png" alt="image.png"><br><img src="9.1.1.2-2.png" alt="image.png"></p>
+<blockquote>
+<p>本示例中的数据库连接等配置，对应 SonarQube 安装章节设置值。</p>
+</blockquote>
+<h4 id="9-1-1-3-执行备份"><a href="#9-1-1-3-执行备份" class="headerlink" title="9.1.1.3 执行备份"></a>9.1.1.3 执行备份</h4><p><img src="9.1.1.3-1.png" alt="image.png"><br><img src="9.1.1.3-2.png" alt="image.png"><br><img src="9.1.1.3-3.png" alt="image.png"></p>
+<h3 id="9-1-2-升级"><a href="#9-1-2-升级" class="headerlink" title="9.1.2 升级"></a>9.1.2 升级</h3><ul>
+<li>修改之前安装 SonarQube 的 docker-compose.yml 文件,添加要升级的版本 TAG ，本示例路径：/home/sonarqube/docker-compose.yml</li>
+</ul>
+<p><img src="9.1.2-1.png" alt="image.png"></p>
+<ul>
+<li>在 docker-compose.yml 文件所在目录下执行 docker-compose up -d</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+
+<p><img src="9.1.2-2.png" alt="image.png"></p>
+<ul>
+<li>命令执行完后，访问系统地址，出现以下界面</li>
+</ul>
+<p><img src="9.1.2-3.png" alt="image.png"></p>
+<ul>
+<li>打开本示例系统设置地址 <a target="_blank" rel="noopener" href="http://192.168.0.134:9000/setup">http://192.168.0.134:9000/setup</a> ，点击升级</li>
+</ul>
+<p><img src="9.1.2-4.png" alt="image.png"><br><img src="9.1.2-5.png" alt="image.png"></p>
+<ul>
+<li>执行以上操作完成后，重新使用admin登录，确认版本是否已升级成功</li>
+</ul>
+<p><img src="9.1.2-6.png" alt="image.png"></p>
+<ul>
+<li>点击了解这个风险</li>
+</ul>
+<p><img src="9.1.2-7.png" alt="image.png"></p>
+<ul>
+<li>到系统界面查看版本已经升级到指定版本了</li>
+</ul>
+<p><img src="9.1.2-8.png" alt="image.png"></p>
+<h2 id="9-2-系统迁移"><a href="#9-2-系统迁移" class="headerlink" title="9.2 系统迁移"></a>9.2 系统迁移</h2><blockquote>
+<p>为防止迁移过程中数据丢失，建议迁移前进行数据库备份。</p>
+</blockquote>
+<ul>
+<li>将容器和宿主机之间的映射目录，整体迁移到新的机器。例如本例中老机器的目录为/home/sonarqube/下的所有文件：</li>
+</ul>
+<p><img src="9.2-1.png" alt="image.png"></p>
+<ul>
+<li>拷贝到新的机器上目录设置为 777 权限，避免权限问题</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 777 ./*</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>根据迁移文件目录信息更新 docker-compose.yml</li>
+<li>在 docker-compose.yml 文件的目录下执行以下命令：</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">docker-compose</span> <span class="string">up</span> <span class="string">-d</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>该操作首次执行会从互联网下载镜像文件，请确保系统可以联网。</p>
+</blockquote>
+<ul>
+<li>执行完成后，打开登录页验证，服务器IP+端口（docker-compose.yml 中配置端口）</li>
+</ul>
+</div><div class="article-licensing box"><div class="licensing-title"><p>SonarQube安装与配置</p><p><a href="https://ths-fe.github.io/2021/04/27/SonarQube%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/">https://ths-fe.github.io/2021/04/27/SonarQube%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>刘莹鑫</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2021-04-27</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2023-08-05</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a class="" rel="noopener" target="_blank" title="CC BY-NC-SA 4.0" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a></p></div></div></div></div></div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/%E8%B4%A8%E9%87%8F%E6%8E%A7%E5%88%B6/">质量控制</a><a class="link-muted mr-2" rel="tag" href="/tags/SonarQube/">SonarQube</a></div><div class="sharethis-inline-share-buttons"></div><script src="https://platform-api.sharethis.com/js/sharethis.js#property=5ea1492221690600121bcf3a&amp;product=inline-share-buttons&amp;cms=sop" defer></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/img/alipayqr.jpg" alt="支付宝"></span></a><a class="button donate" href="https://www.buymeacoffee.com/zapzqc?new=1" target="_blank" rel="noopener" data-type="buymeacoffee"><span class="icon is-small"><i class="fas fa-coffee"></i></span><span>送我杯咖啡</span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/img/wechatqr.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2021/07/02/Vue3%E5%85%A5%E9%97%A8/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">Vue3入门</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2021/04/17/GitLab%E5%AE%89%E8%A3%85%E3%80%81%E5%A4%87%E4%BB%BD%E3%80%81%E6%81%A2%E5%A4%8D%E4%B8%8E%E5%8D%87%E7%BA%A7/"><span class="level-item">GitLab 安装、备份、恢复与升级</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div class="content" id="valine-thread"></div><script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script><script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script><script>new Valine({
+            el: '#valine-thread' ,
+            appId: "4o5OfjCIGaSyqIwg7jop80Ge-gzGzoHsz",
+            appKey: "Rj9jcPLhW8WgWd6bDmXGmKaA",
+            placeholder: "欢迎评论交流",
+            avatar: "mm",
+            
+            meta: ["nick","mail","link"],
+            pageSize: 10,
+            lang: "zh-CN",
+            
+            highlight: true,
+            
+            
+            
+            
+            
+            requiredFields: [],
+        });</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="level is-mobile" href="#1-写在最前面"><span class="level-left"><span class="level-item">1 写在最前面</span></span></a></li><li><a class="level is-mobile" href="#2-SonarQube-介绍"><span class="level-left"><span class="level-item">2 SonarQube 介绍</span></span></a></li><li><a class="level is-mobile" href="#3-典型开发过程"><span class="level-left"><span class="level-item">3 典型开发过程</span></span></a></li><li><a class="level is-mobile" href="#4-SonarQube-安装、配置"><span class="level-left"><span class="level-item">4 SonarQube 安装、配置</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#4-1-准备工作"><span class="level-left"><span class="level-item">4.1 准备工作</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#4-1-1-系统设置"><span class="level-left"><span class="level-item">4.1.1 系统设置</span></span></a></li><li><a class="level is-mobile" href="#4-1-2-Docker-及-Compose-安装"><span class="level-left"><span class="level-item">4.1.2 Docker 及 Compose 安装</span></span></a></li></ul></li><li><a class="level is-mobile" href="#4-2-创建挂载目录"><span class="level-left"><span class="level-item">4.2 创建挂载目录</span></span></a></li><li><a class="level is-mobile" href="#4-3-根据以上创建文件目录信息创建-docker-compose-yml"><span class="level-left"><span class="level-item">4.3 根据以上创建文件目录信息创建 docker-compose.yml</span></span></a></li><li><a class="level is-mobile" href="#4-4-拉取镜像并启动容器服务"><span class="level-left"><span class="level-item">4.4 拉取镜像并启动容器服务</span></span></a></li><li><a class="level is-mobile" href="#4-5-首次访问"><span class="level-left"><span class="level-item">4.5 首次访问</span></span></a></li><li><a class="level is-mobile" href="#4-6-系统配置"><span class="level-left"><span class="level-item">4.6 系统配置</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#4-6-1-设置中文"><span class="level-left"><span class="level-item">4.6.1 设置中文</span></span></a></li><li><a class="level is-mobile" href="#4-6-2-邮件配置"><span class="level-left"><span class="level-item">4.6.2 邮件配置</span></span></a></li><li><a class="level is-mobile" href="#Email-prefix：发邮件时，邮件标题会默认带上该前缀。其他配置项，根据自己邮箱SMTP配置及认证信息进行配置，这里不做详述。"><span class="level-left"><span class="level-item">Email prefix：发邮件时，邮件标题会默认带上该前缀。其他配置项，根据自己邮箱SMTP配置及认证信息进行配置，这里不做详述。</span></span></a></li><li><a class="level is-mobile" href="#4-6-3-GitLab-集成配置"><span class="level-left"><span class="level-item">4.6.3 GitLab 集成配置</span></span></a></li><li><a class="level is-mobile" href="#4-6-4-LDAP-配置"><span class="level-left"><span class="level-item">4.6.4 LDAP 配置</span></span></a></li></ul></li><li><a class="level is-mobile" href="#4-7-扫描器安装"><span class="level-left"><span class="level-item">4.7 扫描器安装</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#4-7-1-Windows-环境"><span class="level-left"><span class="level-item">4.7.1 Windows 环境</span></span></a></li><li><a class="level is-mobile" href="#4-7-2-Linux-环境"><span class="level-left"><span class="level-item">4.7.2 Linux 环境</span></span></a></li></ul></li><li><a class="level is-mobile" href="#4-8-常见问题"><span class="level-left"><span class="level-item">4.8 常见问题</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#4-8-1-执行安装命令后报以下信息：WARNING-IPv4-forwarding-is-disabled-Networking-will-not-work"><span class="level-left"><span class="level-item">4.8.1  执行安装命令后报以下信息：WARNING: IPv4 forwarding is disabled. Networking will not work</span></span></a></li><li><a class="level is-mobile" href="#4-8-2-代码扫描结果名称乱码"><span class="level-left"><span class="level-item">4.8.2 代码扫描结果名称乱码</span></span></a></li><li><a class="level is-mobile" href="#4-8-3-Linux-执行-sonar-scanner-报“Could-not-find-‘java’-executable-in-JAVA-HOME-or-PATH-”"><span class="level-left"><span class="level-item">4.8.3 Linux 执行 sonar-scanner 报“Could not find ‘java’ executable in JAVA_HOME or PATH.”</span></span></a></li></ul></li></ul></li><li><a class="level is-mobile" href="#5-SonarLint-安装"><span class="level-left"><span class="level-item">5 SonarLint 安装</span></span></a></li><li><a class="level is-mobile" href="#6-GitLab-安装"><span class="level-left"><span class="level-item">6 GitLab 安装</span></span></a></li><li><a class="level is-mobile" href="#7-GitLab-CI-配置"><span class="level-left"><span class="level-item">7 GitLab CI 配置</span></span></a></li><li><a class="level is-mobile" href="#8-快速上手"><span class="level-left"><span class="level-item">8 快速上手</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#8-1-获取-Sonar-Token"><span class="level-left"><span class="level-item">8.1 获取 Sonar Token</span></span></a></li><li><a class="level is-mobile" href="#8-2-配置-GitLab-CI"><span class="level-left"><span class="level-item">8.2 配置 GitLab CI</span></span></a></li><li><a class="level is-mobile" href="#8-3-修改-Git-strategy-为-git-clone"><span class="level-left"><span class="level-item">8.3 修改 Git  strategy 为 git clone</span></span></a></li><li><a class="level is-mobile" href="#8-4-提交代码验证配置"><span class="level-left"><span class="level-item">8.4 提交代码验证配置</span></span></a></li></ul></li><li><a class="level is-mobile" href="#9-其他"><span class="level-left"><span class="level-item">9 其他</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#9-1-系统升级"><span class="level-left"><span class="level-item">9.1 系统升级</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#9-1-1-数据库备份"><span class="level-left"><span class="level-item">9.1.1 数据库备份</span></span></a></li><li><a class="level is-mobile" href="#9-1-2-升级"><span class="level-left"><span class="level-item">9.1.2 升级</span></span></a></li></ul></li><li><a class="level is-mobile" href="#9-2-系统迁移"><span class="level-left"><span class="level-item">9.2 系统迁移</span></span></a></li></ul></li></ul></div></div><style>.menu-list > li > a.is-active + .menu-list { display: block; }.menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div><div class="card widget" data-type="adsense"><div class="card-content"><div class="menu"><h3 class="menu-label"> </h3><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6826040978803389" data-ad-slot="1033672070" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/ths.png" alt="思路大前端团队" height="28"></a><p class="is-size-7"><span>&copy; 2023 刘莹鑫</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a><br><span id="busuanzi_container_site_uv">共<span id="busuanzi_value_site_uv">0</span>个访客</span></p></div><div class="level-end"></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" async></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>

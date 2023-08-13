@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>GitLab 安装、备份、恢复与升级 - 思路大前端团队</title><link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#f7f7f7"><meta name="application-name" content="思路大前端"><meta name="msapplication-TileImage" content="/img/favicon.ico"><meta name="msapplication-TileColor" content="#f7f7f7"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="思路大前端"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta description="本文详细介绍了 GitLab 的安装、备份、恢复与升级操作"><meta property="og:type" content="blog"><meta property="og:title" content="GitLab 安装、备份、恢复与升级"><meta property="og:url" content="https://ths-fe.github.io/2021/04/17/GitLab%E5%AE%89%E8%A3%85%E3%80%81%E5%A4%87%E4%BB%BD%E3%80%81%E6%81%A2%E5%A4%8D%E4%B8%8E%E5%8D%87%E7%BA%A7/"><meta property="og:site_name" content="思路大前端团队"><meta property="og:description" content="本文详细介绍了 GitLab 的安装、备份、恢复与升级操作"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://ths-fe.github.io/2021/04/17/GitLab%E5%AE%89%E8%A3%85%E3%80%81%E5%A4%87%E4%BB%BD%E3%80%81%E6%81%A2%E5%A4%8D%E4%B8%8E%E5%8D%87%E7%BA%A7/cover.jpg"><meta property="article:published_time" content="2021-04-17T13:00:30.000Z"><meta property="article:modified_time" content="2023-08-05T13:20:43.771Z"><meta property="article:author" content="刘莹鑫"><meta property="article:tag" content="Gitlab CI"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="/2021/04/17/GitLab%E5%AE%89%E8%A3%85%E3%80%81%E5%A4%87%E4%BB%BD%E3%80%81%E6%81%A2%E5%A4%8D%E4%B8%8E%E5%8D%87%E7%BA%A7/cover.jpg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://ths-fe.github.io/2021/04/17/GitLab%E5%AE%89%E8%A3%85%E3%80%81%E5%A4%87%E4%BB%BD%E3%80%81%E6%81%A2%E5%A4%8D%E4%B8%8E%E5%8D%87%E7%BA%A7/"},"headline":"思路大前端团队","image":["https://ths-fe.github.io/2021/04/17/GitLab%E5%AE%89%E8%A3%85%E3%80%81%E5%A4%87%E4%BB%BD%E3%80%81%E6%81%A2%E5%A4%8D%E4%B8%8E%E5%8D%87%E7%BA%A7/cover.jpg"],"datePublished":"2021-04-17T13:00:30.000Z","dateModified":"2023-08-05T13:20:43.771Z","author":{"@type":"Person","name":"刘莹鑫"},"description":"本文详细介绍了 GitLab 的安装、备份、恢复与升级操作"}</script><link rel="canonical" href="https://ths-fe.github.io/2021/04/17/GitLab%E5%AE%89%E8%A3%85%E3%80%81%E5%A4%87%E4%BB%BD%E3%80%81%E6%81%A2%E5%A4%8D%E4%B8%8E%E5%8D%87%E7%BA%A7/"><link rel="icon" href="/img/favicon.ico"><link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.13.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/monokai.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><script>var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?fd8cc3421abec7b8f4e6bc337e25c7d1";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();</script><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><script src="https://www.googletagmanager.com/gtag/js?id=UA-72716512-3" async></script><script>window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+    
+        gtag('config', 'UA-72716512-3');</script><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><script data-ad-client="ca-pub-6826040978803389" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" async></script><meta name="generator" content="Hexo 5.2.0"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/ths.png" alt="思路大前端团队" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">博客</a><a class="navbar-item" href="/fe">大前端技术体系</a><a class="navbar-item" href="/gis">GIS技术体系</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/about">关于我们</a></div><div class="navbar-end"><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><div class="card-image"><span class="image is-7by3"><img class="fill" src="/2021/04/17/GitLab%E5%AE%89%E8%A3%85%E3%80%81%E5%A4%87%E4%BB%BD%E3%80%81%E6%81%A2%E5%A4%8D%E4%B8%8E%E5%8D%87%E7%BA%A7/cover.jpg" alt="GitLab 安装、备份、恢复与升级"></span></div><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2021-04-17T13:00:30.000Z" title="2021-04-17T13:00:30.000Z">2021-04-17</time>发表</span><span class="level-item"><time dateTime="2023-08-05T13:20:43.771Z" title="2023-08-05T13:20:43.771Z">2023-08-05</time>更新</span><span class="level-item"> 刘莹鑫 </span><span class="level-item"><a class="link-muted" href="/categories/%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90-%E4%BA%A4%E4%BB%98-%E9%83%A8%E7%BD%B2/">持续集成&amp;交付&amp;部署</a><span> / </span><a class="link-muted" href="/categories/%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90-%E4%BA%A4%E4%BB%98-%E9%83%A8%E7%BD%B2/Gitlab/">Gitlab</a></span><span class="level-item">19 分钟读完 (大约2873个字)</span><span class="level-item" id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv">0</span>次访问</span></div></div><h1 class="title is-3 is-size-4-mobile">GitLab 安装、备份、恢复与升级</h1><div class="content"><h1 id="1-前置工作"><a href="#1-前置工作" class="headerlink" title="1 前置工作"></a>1 前置工作</h1><h2 id="1-1-操作系统"><a href="#1-1-操作系统" class="headerlink" title="1.1 操作系统"></a>1.1 操作系统</h2><p>准备一台装有 Centos7(8) Linux 操作系统的机器。<br>由于要安装 docker ，根据 docker 官方说明，支持 x86_64 / amd64 和 ARM64 / AARCH64 两种架构的操作系统，本示例安装的 x86_64 Centos7 Linux （之前开始用 GitLab 时，官方还未正式支持 Centos8）。<br>Centos7 系统镜像下载地址：<a target="_blank" rel="noopener" href="http://isoredirect.centos.org/centos/7/isos/x86_64/">http://isoredirect.centos.org/centos/7/isos/x86_64/</a><br>Centos8 系统镜像下载地址：<a target="_blank" rel="noopener" href="http://isoredirect.centos.org/centos/8/isos/x86_64/">http://isoredirect.centos.org/centos/8/isos/x86_64/</a><br>如果系统还没安装，可以通过该地址进行下载镜像，进行系统安装。<br>根据本人经验（官方未找到相关说明）, 机器配置至少 8G 内存（目前在用的机器一般使用都是在 6G 左右），4核 2U 。当然，配置越高越好。<br>以下为当前示例机器刚启动服务时的资源占用情况：<br><img src="1.1-1.png" alt="image.png"></p>
+<h2 id="1-2-Docker-安装（资源仓库在线安装）"><a href="#1-2-Docker-安装（资源仓库在线安装）" class="headerlink" title="1.2 Docker 安装（资源仓库在线安装）"></a>1.2 <strong>Docker 安装（资源仓库在线安装）</strong></h2><p>使用该方式的前提条件是所安装的机器可以连接互联网。</p>
+<h3 id="1-2-1-移除机器上旧版本相关安装内容"><a href="#1-2-1-移除机器上旧版本相关安装内容" class="headerlink" title="1.2.1 移除机器上旧版本相关安装内容"></a>1.2.1 移除机器上旧版本相关安装内容</h3><blockquote>
+<p>新机器可以不做该操作</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">sudo yum remove docker \</span><br><span class="line">                  docker-client \</span><br><span class="line">                  docker-client-latest \</span><br><span class="line">                  docker-common \</span><br><span class="line">                  docker-latest \</span><br><span class="line">                  docker-latest-logrotate \</span><br><span class="line">                  docker-logrotate \</span><br><span class="line">                  docker-engine</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-2-2-使用仓库进行安装"><a href="#1-2-2-使用仓库进行安装" class="headerlink" title="1.2.2 使用仓库进行安装"></a>1.2.2 使用仓库进行安装</h3><h4 id="1-2-2-1-安装-yum-utils"><a href="#1-2-2-1-安装-yum-utils" class="headerlink" title="1.2.2.1 安装 yum-utils"></a>1.2.2.1 安装 yum-utils</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y yum-utils</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-2-2-2-添加-docker-仓库源"><a href="#1-2-2-2-添加-docker-仓库源" class="headerlink" title="1.2.2.2 添加 docker 仓库源"></a>1.2.2.2 添加 docker 仓库源</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo yum-config-manager \</span><br><span class="line">    --add-repo \</span><br><span class="line">    https://download.docker.com/linux/centos/docker-ce.repo</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-2-3-安装-docker-相关"><a href="#1-2-3-安装-docker-相关" class="headerlink" title="1.2.3 安装 docker 相关"></a>1.2.3 安装 docker 相关</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install docker-ce docker-ce-cli containerd.io</span><br></pre></td></tr></table></figure>
+
+<p><img src="1.2.3-1.png" alt="image.png"></p>
+<h3 id="1-2-4-启动-docker"><a href="#1-2-4-启动-docker" class="headerlink" title="1.2.4 启动 docker"></a>1.2.4 启动 docker</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl start docker</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-2-5-测试-docker-安装是否成功"><a href="#1-2-5-测试-docker-安装是否成功" class="headerlink" title="1.2.5 测试 docker 安装是否成功"></a>1.2.5 测试 docker 安装是否成功</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run hello-world</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-2-6-设置开机启动"><a href="#1-2-6-设置开机启动" class="headerlink" title="1.2.6 设置开机启动"></a>1.2.6 设置开机启动</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl <span class="built_in">enable</span> docker</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-2-7-安装-Compose"><a href="#1-2-7-安装-Compose" class="headerlink" title="1.2.7 安装 Compose"></a>1.2.7 安装 Compose</h3><ol>
+<li>运行命令下载 Compose</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo curl -L <span class="string">&quot;https://github.com/docker/compose/releases/download/1.28.5/docker-compose-<span class="subst">$(uname -s)</span>-<span class="subst">$(uname -m)</span>&quot;</span> -o /usr/<span class="built_in">local</span>/bin/docker-compose</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>应用执行权限</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo chmod +x /usr/<span class="built_in">local</span>/bin/docker-compose</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>验证安装结果</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose --version</span><br></pre></td></tr></table></figure>
+
+<p><img src="1.2.7-1.png" alt="img"></p>
+<h1 id="2-GitLab-安装"><a href="#2-GitLab-安装" class="headerlink" title="2 GitLab 安装"></a>2 GitLab 安装</h1><h2 id="2-1-设置-GitLab-卷位置-docker-宿主机的文件目录"><a href="#2-1-设置-GitLab-卷位置-docker-宿主机的文件目录" class="headerlink" title="2.1 设置 GitLab 卷位置(docker 宿主机的文件目录)"></a>2.1 设置 GitLab 卷位置(docker 宿主机的文件目录)</h2><p>在命令行执行以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> GITLAB_HOME=/srv/gitlab</span><br></pre></td></tr></table></figure>
+
+<p>GitLab容器使用主机挂载的卷来存储持久数据：</p>
+<table>
+<thead>
+<tr>
+<th>主机位置</th>
+<th>容器位置</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>$GITLAB_HOME/data</code></td>
+<td><code>/var/opt/gitlab</code></td>
+<td>应用存储应用数据</td>
+</tr>
+<tr>
+<td><code>$GITLAB_HOME/logs</code></td>
+<td><code>/var/log/gitlab</code></td>
+<td>用于存储应用日志</td>
+</tr>
+<tr>
+<td><code>$GITLAB_HOME/config</code></td>
+<td><code>/etc/gitlab</code></td>
+<td>用于存储 GitLab 配置文件</td>
+</tr>
+</tbody></table>
+<h2 id="2-2-安装"><a href="#2-2-安装" class="headerlink" title="2.2 安装"></a>2.2 安装</h2><ol>
+<li>创建 docker-compose.yml 文件在你的 linux 主机上</li>
+</ol>
+<blockquote>
+<p>docker-compose.yml 建议备份该文件，用于后续升级。</p>
+</blockquote>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">web:</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">&#x27;gitlab/gitlab-ee:latest&#x27;</span></span><br><span class="line">  <span class="attr">container_name:</span> <span class="string">gitlab2021</span></span><br><span class="line">  <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">  <span class="attr">hostname:</span> <span class="string">&#x27;192.168.44.6&#x27;</span></span><br><span class="line">  <span class="attr">environment:</span></span><br><span class="line">    <span class="attr">GITLAB_OMNIBUS_CONFIG:</span> <span class="string">|</span></span><br><span class="line">      <span class="string">external_url</span> <span class="string">&#x27;http://192.168.44.6:8929&#x27;</span></span><br><span class="line">      <span class="string">gitlab_rails[&#x27;gitlab_shell_ssh_port&#x27;]</span> <span class="string">=</span> <span class="number">2224</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&#x27;8929:8929&#x27;</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&#x27;2224:22&#x27;</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&#x27;$GITLAB_HOME/config:/etc/gitlab&#x27;</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&#x27;$GITLAB_HOME/logs:/var/log/gitlab&#x27;</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&#x27;$GITLAB_HOME/data:/var/opt/gitlab&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>如果安装一个版本是为了恢复以前 gitlab 的数据，需要保证 image 版本一致。image: ‘gitlab/gitlab-ee:latest’ latest  需要换成指定版本的号，例如我这里是 <a target="_blank" rel="noopener" href="https://hub.docker.com/layers/gitlab/gitlab-ee/13.6.1-ee.0/images/sha256-a62f1baac61265f894db7e359e172d32e57eb34657377b7ce3d15c76cac7054b?context=explore">13.6.1-ee.0</a> 。</p>
+</blockquote>
+<p><img src="2.2-1.png" alt="image.png"></p>
+<ol start="2">
+<li>拉取 GitLab 镜像 并后台启动</li>
+</ol>
+<p>在 docker-compose.yml 文件目录下执行以下命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>该操作会等待比较久，大概1000M的下载量。</p>
+</blockquote>
+<ol start="3">
+<li>访问地址测试是否安装成功</li>
+</ol>
+<p>本例中的访问地址为：<a target="_blank" rel="noopener" href="http://192.168.44.6:8929/users/sign_in">http://192.168.44.6:8929/users/sign_in</a></p>
+<h2 id="2-3-配置"><a href="#2-3-配置" class="headerlink" title="2.3 配置"></a>2.3 配置</h2><p>本例中 GitLab 系统的配置文件在该目录下（$GITLAB_HOME/config）: /srv/gitlab/config/gitlab.rb</p>
+<h3 id="2-3-1-LDAP"><a href="#2-3-1-LDAP" class="headerlink" title="2.3.1 LDAP"></a>2.3.1 LDAP</h3><p>该配置主要用于开启公司域账号登录。</p>
+<ol>
+<li>在 /srv/gitlab/config/gitlab.rb 文件中添加以下配置：</li>
+</ol>
+<blockquote>
+<p>可以在该文件中搜索 ldap ，找到指定注释掉的地方，将该内容粘贴进去</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">gitlab_rails[&#39;ldap_enabled&#39;] &#x3D; true</span><br><span class="line">gitlab_rails[&#39;ldap_servers&#39;] &#x3D; YAML.load &lt;&lt;-&#39;EOS&#39; ###! **remember to close this block with &#39;EOS&#39; below**</span><br><span class="line">main: # &#39;main&#39; is the GitLab &#39;provider ID&#39; of this LDAP server</span><br><span class="line">  label: &#39;域用户&#39;</span><br><span class="line">  host: &#39;192.168.0.xx&#39;</span><br><span class="line">  port: 389</span><br><span class="line">  uid: &#39;sAMAccountName&#39;</span><br><span class="line">  bind_dn: &#39;CN&#x3D;xxxx,OU&#x3D;研发xx,OU&#x3D;思路xx,DC&#x3D;domain,DC&#x3D;solution,DC&#x3D;com&#39;</span><br><span class="line">  password: &#39;xxxxx&#39;</span><br><span class="line">  encryption: &#39;plain&#39; # &quot;tls&quot; or &quot;ssl&quot; or &quot;plain&quot;</span><br><span class="line">  #bind_dn: &#39;OU&#x3D;思路xx,DC&#x3D;domain,DC&#x3D;solution,DC&#x3D;com&#39;</span><br><span class="line">  </span><br><span class="line">  active_directory: true</span><br><span class="line">  allow_username_or_email_login: true</span><br><span class="line">  block_auto_created_users: false</span><br><span class="line">  base: &#39;dc&#x3D;domain,dc&#x3D;solution,dc&#x3D;com&#39;</span><br><span class="line">  user_filter: &#39;(userPrincipalName&#x3D;*)&#39;</span><br><span class="line">EOS</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>执行命令使配置生效</li>
+</ol>
+<blockquote>
+<p>gitlab2021 为 docker 容器ID或者容器名称，运行后最后一行为“gitlab Reconfigured!”才说明是加载新配置成功，否则就是根据报错信息找错误。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -t gitlab2021 gitlab-ctl reconfigure</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>执行命令查看 ldap 配置是否正常</li>
+</ol>
+<blockquote>
+<p>执行命令后能查询出用户信息列表即正常</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -t gitlab2021 gitlab-rake gitlab:ldap:check</span><br></pre></td></tr></table></figure>
+
+<p><img src="2.3.1-1.png" alt="image.png"></p>
+<h3 id="2-3-2-SMTP"><a href="#2-3-2-SMTP" class="headerlink" title="2.3.2 SMTP"></a>2.3.2 SMTP</h3><p>该配置主要用于开启使用公司 exchange服务器的 SMTP协议 发送邮件通知。</p>
+<ol>
+<li>在 /srv/gitlab/config/gitlab.rb 文件中添加以下配置：</li>
+</ol>
+<blockquote>
+<p>可以在文件中搜索 smtp ,按照以下配置解开注释并修改值</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">gitlab_rails[<span class="string">&#x27;smtp_enable&#x27;</span>] = <span class="literal">true</span></span><br><span class="line">gitlab_rails[<span class="string">&#x27;smtp_address&#x27;</span>] = <span class="string">&quot;192.168.0.x&quot;</span></span><br><span class="line">gitlab_rails[<span class="string">&#x27;smtp_port&#x27;</span>] = 465</span><br><span class="line">gitlab_rails[<span class="string">&#x27;smtp_user_name&#x27;</span>] = <span class="string">&quot;zhangsan&quot;</span></span><br><span class="line">gitlab_rails[<span class="string">&#x27;smtp_password&#x27;</span>] = <span class="string">&quot;xxxxxx&quot;</span></span><br><span class="line">gitlab_rails[<span class="string">&#x27;smtp_domain&#x27;</span>] = <span class="string">&quot;thsdomain&quot;</span></span><br><span class="line">gitlab_rails[<span class="string">&#x27;smtp_authentication&#x27;</span>] = <span class="string">&quot;login&quot;</span></span><br><span class="line">gitlab_rails[<span class="string">&#x27;smtp_enable_starttls_auto&#x27;</span>] = <span class="literal">true</span></span><br><span class="line">gitlab_rails[<span class="string">&#x27;smtp_tls&#x27;</span>] = <span class="literal">false</span></span><br><span class="line">gitlab_rails[<span class="string">&#x27;smtp_ssl&#x27;</span>] = <span class="literal">false</span></span><br><span class="line">gitlab_rails[<span class="string">&#x27;smtp_force_ssl&#x27;</span>] = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">gitlab_rails[<span class="string">&#x27;smtp_openssl_verify_mode&#x27;</span>] = <span class="string">&#x27;none&#x27;</span></span><br><span class="line"></span><br><span class="line">gitlab_rails[<span class="string">&#x27;gitlab_email_enabled&#x27;</span>] = <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">gitlab_rails[<span class="string">&#x27;gitlab_email_from&#x27;</span>] = <span class="string">&#x27;zhangsan@xxx.ths.com.cn&#x27;</span></span><br><span class="line"></span><br><span class="line">gitlab_rails[<span class="string">&#x27;gitlab_email_display_name&#x27;</span>] = <span class="string">&#x27;git server&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>执行命令使配置生效</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -t gitlab2021 gitlab-ctl reconfigure</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>依次输入以下命令，检查 smtp 配置是否正确</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// 进入容器所在的 bash</span><br><span class="line">docker <span class="built_in">exec</span> -it gitlab2021 bin/bash</span><br><span class="line">// 在容器所在的 bash 中执行  gitlab-rails console</span><br><span class="line">gitlab-rails console -e production</span><br><span class="line">// 测试邮件发送，如无错误产生，查看目标邮箱是否有邮件收到</span><br><span class="line">Notify.test_email(<span class="string">&#x27;liuyx@xxx.ths.com.cn&#x27;</span>,<span class="string">&#x27;Message Subject&#x27;</span>,<span class="string">&#x27;message Body&#x27;</span>).deliver_now</span><br></pre></td></tr></table></figure>
+
+<h1 id="3-备份"><a href="#3-备份" class="headerlink" title="3 备份"></a>3 备份</h1><h2 id="3-1-编写备份脚本"><a href="#3-1-编写备份脚本" class="headerlink" title="3.1 编写备份脚本"></a>3.1 编写备份脚本</h2><p>在 linux  上创建备份脚本文件，本例中在目录 /srv 下创建 gitlab_backup.sh，内容为以下内容：</p>
+<blockquote>
+<p>该脚本会执行指定 GitLab 所在容器内的备份命令，备份除了 artifacts 外的所有内容（配置文件除外），gitlab2021为容器ID或容器名称</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">！ /bin/bash</span></span><br><span class="line">docker exec -t gitlab2021 gitlab-backup create SKIP=artifacts</span><br></pre></td></tr></table></figure>
+
+<p>如需手动立即执行备份，可在该脚本文件所在目录下命令行窗口执行以下命令或直接执行脚本内命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sh gitlab_backup.sh</span><br></pre></td></tr></table></figure>
+
+<p><img src="3.1-1.png" alt="image.png"></p>
+<h2 id="3-2-编写自动上传备份文件到远程服务器脚本（ssh-免密上传）"><a href="#3-2-编写自动上传备份文件到远程服务器脚本（ssh-免密上传）" class="headerlink" title="3.2 编写自动上传备份文件到远程服务器脚本（ssh 免密上传）"></a>3.2 编写自动上传备份文件到远程服务器脚本（ssh 免密上传）</h2><p>在 linux 上创建备份脚本文件，本例中在目录 /srv 下创建 auto_backup_to_remote.sh，内容为以下内容：</p>
+<blockquote>
+<p>该脚本执行后会将本机指定目录下的备份文件上传到远程服务器的指定目录上。远程的备份的服务器需要支持SSH 免密上传，windows 系统配置可参看另外一篇文章<a target="_blank" rel="noopener" href="https://ths.js.org/2021/02/04/Windows-OpenSSH%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/">https://ths.js.org/2021/02/04/Windows-OpenSSH%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/</a> 《Windows OpenSSH 安装与配置》</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> gitlab 备份路径,该路径为 gitlab 默认的备份路径</span></span><br><span class="line"></span><br><span class="line">LocalBackDir=/srv/gitlab/data/backups</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 远程备份服务器 gitlab备份文件将传送到该路径</span></span><br><span class="line"></span><br><span class="line">RemoteBackDir=/gitlabDataBackup</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 远程备份服务器 登录账户</span></span><br><span class="line"></span><br><span class="line">RemoteUser=administrator</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 远程备份服务器 IP地址</span></span><br><span class="line"></span><br><span class="line">RemoteIP=192.168.0.231</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">当前系统日期</span></span><br><span class="line"></span><br><span class="line">DATE=`date +&quot;%Y-%m-%d&quot;`</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">Log存放路径</span></span><br><span class="line"></span><br><span class="line">LogFile=$LocalBackDir/log/$DATE.log</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 查找 本地备份目录下 时间为60分钟之内的，并且后缀为.tar的gitlab备份文件</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> BACKUPFILE_SEND_TO_REMOTE=$(find /data/gitlabData/backups -<span class="built_in">type</span> f -mmin -60  -name <span class="string">&#x27;*.tar*&#x27;</span>)</span></span><br><span class="line">BACKUPFILE_SEND_TO_REMOTE=$(find /srv/gitlab/data/backups -type f -mmin -60  -name &#x27;*.tar*&#x27;)</span><br><span class="line"><span class="meta">#</span><span class="bash">新建日志文件</span></span><br><span class="line"></span><br><span class="line">touch $LogFile</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">追加日志到日志文件</span></span><br><span class="line"></span><br><span class="line">echo &quot;Gitlab auto backup to remote server, start at  $(date +&quot;%Y-%m-%d %H:%M:%S&quot;)&quot; &gt;&gt;  $LogFile</span><br><span class="line"></span><br><span class="line">echo &quot;---------------------------------------------------------------------------&quot; &gt;&gt; $LogFile</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 输出日志，打印出每次scp的文件名</span></span><br><span class="line"></span><br><span class="line">echo &quot;---------------------The file to scp to remote server is: $BACKUPFILE_SEND_TO_REMOTE-------------------------------&quot; &gt;&gt; $LogFile</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">备份到远程服务器</span></span><br><span class="line"></span><br><span class="line">scp $BACKUPFILE_SEND_TO_REMOTE $RemoteUser@$RemoteIP:$RemoteBackDir</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 查找本地备份路径下，超过3天 且文件后缀为.tar 的 Gitlab备份文件 然后删除</span></span><br><span class="line"></span><br><span class="line">find $LocalBackDir -type f -mtime +3 -name &#x27;*.tar*&#x27; -exec rm &#123;&#125; \;</span><br><span class="line">echo &quot;删除$(find $LocalBackDir -type f -mtime +3 -name &#x27;*.tar*&#x27;)3天前文件成功, start at  $(date +&quot;%Y-%m-%d %H:%M:%S&quot;)&quot; &gt;&gt;  $LogFile</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">追加日志到日志文件</span></span><br><span class="line"></span><br><span class="line">echo &quot;---------------------------------------------------------------------------&quot; &gt;&gt; $LogFile</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="3-3-设置系统定时任务，执行脚本"><a href="#3-3-设置系统定时任务，执行脚本" class="headerlink" title="3.3 设置系统定时任务，执行脚本"></a>3.3 设置系统定时任务，执行脚本</h2><p>编辑 /etc/crontab 系统配置文件，新增以下内容：</p>
+<blockquote>
+<p>该配置会在凌晨两点执行备份脚本，3点执行备份上传远程服务器脚本。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">00 02    * * *   root   sh /srv/gitlab_backup.sh</span><br><span class="line">00 03    * * *   root   /srv/auto_backup_to_remote.sh</span><br></pre></td></tr></table></figure>
+
+<p>重启服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart crond</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-4-配置文件备份"><a href="#3-4-配置文件备份" class="headerlink" title="3.4 配置文件备份"></a>3.4 配置文件备份</h2><p>以上备份命令不会备份配置文件，需手动进行备份。<br>备份文件路径：/srv/gitlab/config（建议整个目录都备份）<br>gitlab.rb 每次修改配置后需要进行备份。<br>gitlab-secrets.json 建议进行迁移或者升级前进行备份。</p>
+<blockquote>
+<p>GitLab提供的备份 Rake 任务不存储配置文件。主要原因是包含了用于双因素身份验证的加密信息和 CI/CD 安全变量。将加密信息与密钥存储在同一位置就违背了使用加密的目的。</p>
+</blockquote>
+<h1 id="4-恢复"><a href="#4-恢复" class="headerlink" title="4 恢复"></a>4 恢复</h1><blockquote>
+<p>在执行恢复之前，需要安装好一个正常的 GitLab ，版本要跟备份文件的 GitLab 版本一致。</p>
+</blockquote>
+<h2 id="4-1-恢复配置文件"><a href="#4-1-恢复配置文件" class="headerlink" title="4.1 恢复配置文件"></a>4.1 恢复配置文件</h2><p>将 gitlab.rb 、 gitlab-secrets.json等config目录之前备份的文件拷贝到新安装的 GitLab 对应目录下（本示例为/srv/gitlab/config）</p>
+<h2 id="4-2-恢复数据"><a href="#4-2-恢复数据" class="headerlink" title="4.2 恢复数据"></a>4.2 恢复数据</h2><ol>
+<li>将要恢复的备份数据拷贝到将要恢复的 GitLab 所在的机器上（/srv/gitlab/data/backups/）。</li>
+</ol>
+<p><img src="4.2-1.png" alt="image.png"></p>
+<ol start="2">
+<li>依次执行以下命令</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it gitlab2021 bin/bash</span><br><span class="line">gitlab-ctl stop unicorn</span><br><span class="line">gitlab-ctl stop puma</span><br><span class="line">gitlab-ctl stop sidekiq</span><br><span class="line"><span class="comment"># Verify</span></span><br><span class="line">gitlab-ctl status</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>指定在第一步拷贝过来的备份文件进行恢复</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 接着第二步中的命令继续执行以下命令</span></span><br><span class="line">gitlab-backup restore BACKUP=1616176926_2021_03_19_13.6.1-ee</span><br></pre></td></tr></table></figure>
+
+<p><img src="4.2-2.png" alt="img"><br>出现以上内容，输入 yes 继续。<br>恢复过程中出现以下错误，可以忽略（目前没有发现有什么影响）。<br><img src="4.2-3.png" alt="image.png"></p>
+<ol start="4">
+<li>启动</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gitlab-ctl start</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-3-常见问题"><a href="#4-3-常见问题" class="headerlink" title="4.3 常见问题"></a>4.3 常见问题</h2><ol>
+<li>在执行恢复数据时，出现以下问题</li>
+</ol>
+<p><img src="4.3-1.png" alt="image.png"><br>分析：备份文件与要恢复的 GitLab 版本要保持一致。<br>解决：方法一，安装与备份文件相同的版本的 GitLab 后进行备份<br>方法二，将老系统升级到与新的 GitLab 版本一致，然后手动立即进行一次备份生成备份文件，使用该备份文件进行还原。</p>
+<ol start="2">
+<li>未完待续…..</li>
+</ol>
+<h1 id="5-升级"><a href="#5-升级" class="headerlink" title="5 升级"></a>5 升级</h1><h2 id="5-1-执行升级操作"><a href="#5-1-执行升级操作" class="headerlink" title="5.1 执行升级操作"></a>5.1 执行升级操作</h2><ol>
+<li>升级前需要先进行手动备份。</li>
+<li>找到最初安装 GitLab 时的 docker-compose.yml 文件，在该目录下执行以下命令</li>
+</ol>
+<blockquote>
+<p>注意查看该文件内的 image 配置项，如果是 gitlab/gitlab-ee:latest ，则可安装最新的企业版本，也可修改latest 指定版本</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> GITLAB_HOME=/srv/gitlab</span><br><span class="line">docker-compose pull</span><br><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>执行以上命令后需等待几分钟（以下截图属于正常现象），几分钟后查看 GitLab 网址是否正常。</li>
+</ul>
+<p><img src="5.1-1.png" alt="image.png"><br><img src="5.1-2.png" alt="image.png"><br>升级前截图：<br><img src="5.1-3.png" alt="image.png"><br>升级后截图：</p>
+<p><img src="5.1-4.png" alt="image.png"></p>
+<h2 id="5-2-常见问题"><a href="#5-2-常见问题" class="headerlink" title="5.2 常见问题"></a>5.2 常见问题</h2><ol>
+<li>镜像文件下载完成后，启动失败。</li>
+</ol>
+<p><img src="5.2-1.png" alt="image.png"><br>分析：可能是网络原因。<br>解决：重新执行即可。</p>
+</div><div class="article-licensing box"><div class="licensing-title"><p>GitLab 安装、备份、恢复与升级</p><p><a href="https://ths-fe.github.io/2021/04/17/GitLab%E5%AE%89%E8%A3%85%E3%80%81%E5%A4%87%E4%BB%BD%E3%80%81%E6%81%A2%E5%A4%8D%E4%B8%8E%E5%8D%87%E7%BA%A7/">https://ths-fe.github.io/2021/04/17/GitLab%E5%AE%89%E8%A3%85%E3%80%81%E5%A4%87%E4%BB%BD%E3%80%81%E6%81%A2%E5%A4%8D%E4%B8%8E%E5%8D%87%E7%BA%A7/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>刘莹鑫</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2021-04-17</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2023-08-05</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a class="" rel="noopener" target="_blank" title="CC BY-NC-SA 4.0" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a></p></div></div></div></div></div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/Gitlab-CI/">Gitlab CI</a></div><div class="sharethis-inline-share-buttons"></div><script src="https://platform-api.sharethis.com/js/sharethis.js#property=5ea1492221690600121bcf3a&amp;product=inline-share-buttons&amp;cms=sop" defer></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/img/alipayqr.jpg" alt="支付宝"></span></a><a class="button donate" href="https://www.buymeacoffee.com/zapzqc?new=1" target="_blank" rel="noopener" data-type="buymeacoffee"><span class="icon is-small"><i class="fas fa-coffee"></i></span><span>送我杯咖啡</span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/img/wechatqr.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2021/04/27/SonarQube%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">SonarQube安装与配置</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2021/04/06/Jest%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"><span class="level-item">Jest单元测试环境搭建</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div class="content" id="valine-thread"></div><script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script><script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script><script>new Valine({
+            el: '#valine-thread' ,
+            appId: "4o5OfjCIGaSyqIwg7jop80Ge-gzGzoHsz",
+            appKey: "Rj9jcPLhW8WgWd6bDmXGmKaA",
+            placeholder: "欢迎评论交流",
+            avatar: "mm",
+            
+            meta: ["nick","mail","link"],
+            pageSize: 10,
+            lang: "zh-CN",
+            
+            highlight: true,
+            
+            
+            
+            
+            
+            requiredFields: [],
+        });</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="level is-mobile" href="#1-前置工作"><span class="level-left"><span class="level-item">1 前置工作</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#1-1-操作系统"><span class="level-left"><span class="level-item">1.1 操作系统</span></span></a></li><li><a class="level is-mobile" href="#1-2-Docker-安装（资源仓库在线安装）"><span class="level-left"><span class="level-item">1.2 Docker 安装（资源仓库在线安装）</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#1-2-1-移除机器上旧版本相关安装内容"><span class="level-left"><span class="level-item">1.2.1 移除机器上旧版本相关安装内容</span></span></a></li><li><a class="level is-mobile" href="#1-2-2-使用仓库进行安装"><span class="level-left"><span class="level-item">1.2.2 使用仓库进行安装</span></span></a></li><li><a class="level is-mobile" href="#1-2-3-安装-docker-相关"><span class="level-left"><span class="level-item">1.2.3 安装 docker 相关</span></span></a></li><li><a class="level is-mobile" href="#1-2-4-启动-docker"><span class="level-left"><span class="level-item">1.2.4 启动 docker</span></span></a></li><li><a class="level is-mobile" href="#1-2-5-测试-docker-安装是否成功"><span class="level-left"><span class="level-item">1.2.5 测试 docker 安装是否成功</span></span></a></li><li><a class="level is-mobile" href="#1-2-6-设置开机启动"><span class="level-left"><span class="level-item">1.2.6 设置开机启动</span></span></a></li><li><a class="level is-mobile" href="#1-2-7-安装-Compose"><span class="level-left"><span class="level-item">1.2.7 安装 Compose</span></span></a></li></ul></li></ul></li><li><a class="level is-mobile" href="#2-GitLab-安装"><span class="level-left"><span class="level-item">2 GitLab 安装</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#2-1-设置-GitLab-卷位置-docker-宿主机的文件目录"><span class="level-left"><span class="level-item">2.1 设置 GitLab 卷位置(docker 宿主机的文件目录)</span></span></a></li><li><a class="level is-mobile" href="#2-2-安装"><span class="level-left"><span class="level-item">2.2 安装</span></span></a></li><li><a class="level is-mobile" href="#2-3-配置"><span class="level-left"><span class="level-item">2.3 配置</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#2-3-1-LDAP"><span class="level-left"><span class="level-item">2.3.1 LDAP</span></span></a></li><li><a class="level is-mobile" href="#2-3-2-SMTP"><span class="level-left"><span class="level-item">2.3.2 SMTP</span></span></a></li></ul></li></ul></li><li><a class="level is-mobile" href="#3-备份"><span class="level-left"><span class="level-item">3 备份</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#3-1-编写备份脚本"><span class="level-left"><span class="level-item">3.1 编写备份脚本</span></span></a></li><li><a class="level is-mobile" href="#3-2-编写自动上传备份文件到远程服务器脚本（ssh-免密上传）"><span class="level-left"><span class="level-item">3.2 编写自动上传备份文件到远程服务器脚本（ssh 免密上传）</span></span></a></li><li><a class="level is-mobile" href="#3-3-设置系统定时任务，执行脚本"><span class="level-left"><span class="level-item">3.3 设置系统定时任务，执行脚本</span></span></a></li><li><a class="level is-mobile" href="#3-4-配置文件备份"><span class="level-left"><span class="level-item">3.4 配置文件备份</span></span></a></li></ul></li><li><a class="level is-mobile" href="#4-恢复"><span class="level-left"><span class="level-item">4 恢复</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#4-1-恢复配置文件"><span class="level-left"><span class="level-item">4.1 恢复配置文件</span></span></a></li><li><a class="level is-mobile" href="#4-2-恢复数据"><span class="level-left"><span class="level-item">4.2 恢复数据</span></span></a></li><li><a class="level is-mobile" href="#4-3-常见问题"><span class="level-left"><span class="level-item">4.3 常见问题</span></span></a></li></ul></li><li><a class="level is-mobile" href="#5-升级"><span class="level-left"><span class="level-item">5 升级</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#5-1-执行升级操作"><span class="level-left"><span class="level-item">5.1 执行升级操作</span></span></a></li><li><a class="level is-mobile" href="#5-2-常见问题"><span class="level-left"><span class="level-item">5.2 常见问题</span></span></a></li></ul></li></ul></div></div><style>.menu-list > li > a.is-active + .menu-list { display: block; }.menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div><div class="card widget" data-type="adsense"><div class="card-content"><div class="menu"><h3 class="menu-label"> </h3><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6826040978803389" data-ad-slot="1033672070" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/ths.png" alt="思路大前端团队" height="28"></a><p class="is-size-7"><span>&copy; 2023 刘莹鑫</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a><br><span id="busuanzi_container_site_uv">共<span id="busuanzi_value_site_uv">0</span>个访客</span></p></div><div class="level-end"></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" async></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>
